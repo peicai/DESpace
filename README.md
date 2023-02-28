@@ -7,7 +7,7 @@ SVGs are then identified by testing the significance of spatial clusters.
 
 Check the vignettes for a description of the main conceptual and mathematical aspects, as well as usage guidelines.
 
-A pre-print will follow shortly (~summer 2023).
+A pre-print will follow shortly.
 
 ## Bioconductor installation 
 `DESpace` is available on [Bioconductor](https://bioconductor.org/packages/DESpace) and can be installed with the command:

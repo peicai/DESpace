@@ -64,12 +64,10 @@ data("results_individual_test", package = "DESpace")
 merge_res = top_results(results_DESpace_test$gene_results, 
                         results_individual_test)
 head(merge_res,3)
-
 # 'select = "FDR"' can be used to visualize adjusted p-values for each spatial cluster.
 merge_res = top_results(results_DESpace_test$gene_results, 
                         results_individual_test, select = "FDR")
 head(merge_res,3)
-
 # Specify the cluster of interest and check top genes detected by DESpace_test.
 results_WM_both = top_results(cluster_results = results_individual_test, 
                               cluster = "WM", high_low = "both")

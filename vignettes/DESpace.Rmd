@@ -28,8 +28,8 @@ editor_options:
 
 ```{r setup, echo=FALSE, results="hide"}
 knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
-                      dev="png",
-                      message=TRUE, error=FALSE, warning=TRUE)
+                        dev="png",
+                        message=TRUE, error=FALSE, warning=TRUE)
 library(utils)
 ```
 
@@ -128,25 +128,24 @@ The library size, UMI counts, ratio of mitochondrial chromosome (chM) expression
 spe1 <- scuttle::addPerCellQC(spe1,)
 # Remove combined set of low-quality spots
 spe1 <- spe1[, !(colData(spe1)$sum < 10 |                     # library size
-                   colData(spe1)$detected < 10 |         # number of expressed genes
-                   colData(spe1)$expr_chrM_ratio > 0.30|  # mitochondrial expression ratio
-                   colData(spe1)$cell_count > 10)]        # number of cells per spot
+                colData(spe1)$detected < 10 |         # number of expressed genes
+                colData(spe1)$expr_chrM_ratio > 0.30|  # mitochondrial expression ratio
+                colData(spe1)$cell_count > 10)]        # number of cells per spot
 # Sample 2:
 # Calculate per-spot QC metrics and store in colData
 spe2 <- scuttle::addPerCellQC(spe2,)
 # Remove combined set of low-quality spots
 spe2 <- spe2[, !(colData(spe2)$sum < 20 |
-                   colData(spe2)$detected < 15 |
-                   colData(spe2)$expr_chrM_ratio > 0.35|
-                   colData(spe2)$cell_count > 8)]
+                colData(spe2)$detected < 15 |
+                colData(spe2)$expr_chrM_ratio > 0.35|
+                colData(spe2)$cell_count > 8)]
 # Sample 3:
 spe3 <- scuttle::addPerCellQC(spe3,)
 # Remove combined set of low-quality spots
 spe3 <- spe3[, !(colData(spe3)$sum < 25 |
-                   colData(spe3)$detected < 25 |
-                   colData(spe3)$expr_chrM_ratio > 0.3|
-                   colData(spe3)$cell_count > 15)]
-
+                colData(spe3)$detected < 25 |
+                colData(spe3)$expr_chrM_ratio > 0.3|
+                colData(spe3)$cell_count > 15)]
 ```
 
 Then, we discard lowly abundant genes, which were detected in less than 20 spots.
@@ -154,14 +153,14 @@ Then, we discard lowly abundant genes, which were detected in less than 20 spots
 ```{r QC genes}
 # For each sample i:
 for(i in seq_len(3)){
-  spe_i <- eval(parse(text = paste0("spe", i)))
-  # Select QC threshold for lowly expressed genes: at least 20 non-zero spots:
-  qc_low_gene <- rowSums(assays(spe_i)$counts > 0) >=20
-  # Remove lowly abundant genes
-  spe_i = spe_i[qc_low_gene,]
-  assign(paste0("spe", i), spe_i)
-  print(paste0("Dimension of spe", i, ": "))
-  print(dim(spe_i))
+    spe_i <- eval(parse(text = paste0("spe", i)))
+    # Select QC threshold for lowly expressed genes: at least 20 non-zero spots:
+    qc_low_gene <- rowSums(assays(spe_i)$counts > 0) >=20
+    # Remove lowly abundant genes
+    spe_i = spe_i[qc_low_gene,]
+    assign(paste0("spe", i), spe_i)
+    print(paste0("Dimension of spe", i, ": "))
+    print(dim(spe_i))
 }
 ```
 
@@ -242,8 +241,8 @@ Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment
 ```{r DESpace}
 set.seed(123)
 results <- DESpace_test(spe = spe3,
-                          spatial_cluster = spatial_cluster, 
-                          verbose = TRUE)
+                        spatial_cluster = spatial_cluster, 
+                        verbose = TRUE)
 ```
 
 A list of results is returned.
@@ -296,11 +295,10 @@ Note that parallelizing the script will increase the memory requirement: if memo
 
 ```{r individual cluster test}
 BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 123)
-
 set.seed(123)
 cluster_results <- individual_test(spe3, edgeR_y = results$estimated_y,
-                                   spatial_cluster = spatial_cluster,
-                                   BPPARAM = BPPARAM)
+                                    spatial_cluster = spatial_cluster,
+                                    BPPARAM = BPPARAM)
 ```
 
 `individual_test()` returns a list containing the results of the individual cluster tests.
@@ -321,7 +319,6 @@ Below, `gene_PValue` and `gene_FDR` columns refer to the gene-level testing, whi
 ```{r top results all}
 merge_res = top_results(results$gene_results, cluster_results)
 head(merge_res,3)
-
 merge_res = top_results(results$gene_results, cluster_results, select = "FDR")
 head(merge_res,3)
 ```
@@ -401,12 +398,12 @@ spe3 <- spe3[CommonGene,]
 # Combine three samples
 spe.combined = cbind(spe1, spe2, spe3, deparse.level = 1)
 ggplot(as.data.frame(colData(spe.combined)), aes(x=array_col, y=array_row, color=factor(layer_guess_reordered))) + 
-  geom_point() + 
-  facet_wrap(~sample_id) +
-  theme_void() +
-  scale_y_reverse() +
-  theme(legend.position="bottom") + 
-  labs(color = "", title = "Manually annotated spatial clusters")
+    geom_point() + 
+    facet_wrap(~sample_id) +
+    theme_void() +
+    scale_y_reverse() +
+    theme(legend.position="bottom") + 
+    labs(color = "", title = "Manually annotated spatial clusters")
 ```
 
 ### Spatially resolved (multi-sample) clustering
@@ -459,18 +456,14 @@ Note that column names of spatial coordinates of spots should be `row` and `col`
 ```{r top SVGs expression plot [multi]}
 feature = multi_results$gene_results$gene_id[seq_len(3)]
 feature
-
 samples = unique(colData(spe.combined)$sample_id)
-
 spot_plots <- purrr::map(seq_along(feature), function(j) {
-  spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
-  
-  spot_plots <- FeaturePlot(spe_j, feature, coordinates = coordinates,
+    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
+    spot_plots <- FeaturePlot(spe_j, feature, coordinates = coordinates,
                             spatial_cluster = spatial_cluster,
                             title = TRUE, Annotated_cluster = TRUE,
                             legend_layer = TRUE)
-  
-  return(spot_plots)
+    return(spot_plots)
 })
 patchwork::wrap_plots(spot_plots, ncol=1)
 ```
@@ -483,11 +476,10 @@ For a multi-sample testing, set `replicates = TRUE` in `individual_test()`.
 ```{r individual cluster test [multiple-sample]}
 # we can use the BPPARAM object computed before:
 # BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 100)
-
 set.seed(123)
 cluster_results <- individual_test(spe.combined, edgeR_y = multi_results$estimated_y,
-                                   replicates = TRUE, spatial_cluster = spatial_cluster,
-                                   BPPARAM = BPPARAM)
+                                replicates = TRUE, spatial_cluster = spatial_cluster,
+                                BPPARAM = BPPARAM)
 ```
 
 `individual_test()` returns a list containing the results of individual clusters, specified in `cluster` parameter.
@@ -543,26 +535,20 @@ feature_high = rownames(results_WM_both$high_genes)[seq_len(3)]
 feature_low = rownames(results_WM_both$low_genes)[seq_len(3)]
 plot_list_high <- list()
 plot_list_low <- list()
-
 samples = unique(colData(spe.combined)$sample_id)
-
 for(j in seq_along(feature_high)){
-  spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
-  
-  plot_list_high[[j]] <- FeaturePlot(spe_j, feature_high, 
-                                   coordinates = coordinates,
-                                   spatial_cluster = spatial_cluster, 
-                                   cluster = 'WM', Annotated_cluster = TRUE,
-                                   legend_layer = TRUE, title = TRUE)
-
-  plot_list_low[[j]] <- FeaturePlot(spe_j, feature_low, 
-                                   coordinates = coordinates,
-                                   spatial_cluster = spatial_cluster, 
-                                   cluster = 'WM', Annotated_cluster = TRUE,
-                                   legend_layer = TRUE, title = TRUE)
-
+    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
+    plot_list_high[[j]] <- FeaturePlot(spe_j, feature_high, 
+                                coordinates = coordinates,
+                                spatial_cluster = spatial_cluster, 
+                                cluster = 'WM', Annotated_cluster = TRUE,
+                                legend_layer = TRUE, title = TRUE)
+    plot_list_low[[j]] <- FeaturePlot(spe_j, feature_low, 
+                                coordinates = coordinates,
+                                spatial_cluster = spatial_cluster, 
+                                cluster = 'WM', Annotated_cluster = TRUE,
+                                legend_layer = TRUE, title = TRUE)
 }
-
 # Expression plots for SVGs with higher abundance in WM, than in non-WM tissue
 patchwork::wrap_plots(plot_list_high, ncol=1)
 # Expression plots for SVGs with lower abundance in WM, than in non-WM tissue

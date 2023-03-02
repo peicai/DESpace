@@ -28,7 +28,7 @@ Depends: R (>= 4.2.0)
 Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, ggpubr, 
         scales, SummarizedExperiment, S4Vectors, BiocGenerics, data.table, assertthat, 
         cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods
-Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub,
+Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, concaveman,
         spatialLIBD, purrr, scuttle, utils
 VignetteBuilder: knitr
 RoxygenNote: 7.2.3

@@ -1,7 +1,7 @@
 Package: DESpace
 Type: Package
 Title: DESpace: a framework to discover spatially variable genes
-Version: 0.99.1
+Version: 0.99.2
 Description: Intuitive framework for identifying spatially variable genes (SVGs) via edgeR, 
   a popular method for performing differential expression analyses.
   Based on pre-annotated spatial clusters as summarized spatial information, 

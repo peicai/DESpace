@@ -38,20 +38,9 @@
 #' @param title_size Text size.
 #' @return Returns a ggplot object.
 #' @examples
-#' # Connect to ExperimentHub
-#' ehub <- ExperimentHub::ExperimentHub()
-#' # Download the example spe data
-#' spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-#' spe_all
-#' 
-#' # Only use one sample:
-#' library(SpatialExperiment)
-#' spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-#' rm(spe_all)
-#' # Select small set of random genes for faster runtime in this example
-#' set.seed(123)
-#' sel_genes <- sample(dim(spe3)[1],500)
-#' spe3 <- spe3[sel_genes,]
+#' # load the input data:
+#' data("LIBD_subset", package = "DESpace")
+#' LIBD_subset
 #' 
 #' # load pre-computed results (obtained via `DESpace_test`)
 #' data("results_DESpace_test", package = "DESpace")
@@ -67,7 +56,9 @@
 #' # Visualize the gene expression of the top three genes
 #' feature = results_DESpace_test$gene_results$gene_id[seq_len(3)]
 #' feature
-#' FeaturePlot(spe3, feature, ncol = 3, title = TRUE)
+#' library(SpatialExperiment)
+#' FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
+#'             ncol = 3, title = TRUE)
 #' 
 #' @family spatial plotting functions
 #'
@@ -110,6 +101,10 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
     ## extract expression from logcounts if a gene name is passed.
     ## otherwise, assume a vector of counts was passed and let
     ## .make_vertices helpers check validity
+    if (assay.type %notin%  assayNames(spe)){
+        message("assay.type is missing in assayNames(spe). ")
+        return(NULL)
+    }
     if (is.character(feature)) {
         assert_that(all(feature %in% rownames(spe)), msg="Feature not in spe.")
         fill <- assay(spe, assay.type)[feature, ]

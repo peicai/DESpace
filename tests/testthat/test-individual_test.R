@@ -1,27 +1,15 @@
 test_that("individual_test() works faultlessly.", {
-  # Connect to ExperimentHub
-  ehub <- ExperimentHub::ExperimentHub()
-  # Download the example spe data
-  spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-  spe_all
+  # load the input data:
+  data("LIBD_subset", package = "DESpace")
   
-  # Only use the sample 151507:
-  spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-  # Select small set of random genes for faster runtime in this example
-  set.seed(123)
-  sel_genes <- sample(dim(spe3)[1],500)
-  spe3 <- spe3[sel_genes,]
-  
-  # Fit the model via DESpace_test function.
-  set.seed(123)
-  results_DESpace <- DESpace_test(spe = spe3,
-                                      spatial_cluster = "layer_guess_reordered",
-                                      verbose = TRUE)
+  # load pre-computed results (obtained via `DESpace_test`)
+  data("results_DESpace_test", package = "DESpace")
+  edgeR_y = results_DESpace_test$estimated_y
   
   # Individual cluster test: identify SVGs for each individual cluster
   set.seed(123)
-  cluster_results <- individual_test(spe3,
-                                     edgeR_y = results_DESpace$estimated_y,
+  cluster_results <- individual_test(LIBD_subset,
+                                     edgeR_y = edgeR_y,
                                      spatial_cluster = "layer_guess_reordered")
   
   expect_is(cluster_results, "list")

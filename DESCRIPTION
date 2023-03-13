@@ -1,7 +1,7 @@
 Package: DESpace
 Type: Package
 Title: DESpace: a framework to discover spatially variable genes
-Version: 0.99.3
+Version: 0.99.4
 Description: Intuitive framework for identifying spatially variable genes (SVGs) via edgeR, 
   a popular method for performing differential expression analyses.
   Based on pre-annotated spatial clusters as summarized spatial information, 
@@ -15,7 +15,8 @@ Authors@R: c(
     person(given = "Peiying",
            family = "Cai",
            role = c("aut", "cre"),
-           email = "peiying.cai@uzh.ch"),
+           email = "peiying.cai@uzh.ch",
+           comment = c(ORCID = "0009-0001-9229-2244")),
     person(given = "Simone",
            family = "Tiberi",
            role = c("aut", "cte"),
@@ -24,9 +25,9 @@ Authors@R: c(
 biocViews: Spatial, SingleCell, RNASeq, Transcriptomics, GeneExpression, 
            Sequencing, DifferentialExpression,StatisticalMethod, Visualization
 License: GPL-3
-Depends: R (>= 4.3.0)
-Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, ggpubr, 
-        scales, SummarizedExperiment, S4Vectors, BiocGenerics, data.table, assertthat, 
+Depends: R (>= 4.2.0)
+Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, 
+        ggpubr, scales, SummarizedExperiment, S4Vectors, BiocGenerics, data.table, assertthat, 
         cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods
 Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, concaveman,
         spatialLIBD, purrr, scuttle, utils

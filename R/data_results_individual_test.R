@@ -9,30 +9,18 @@
 #' Below the code used to obtain 'results_individual_test'.
 #
 #' @examples
-#' # Connect to ExperimentHub
-#' # ehub <- ExperimentHub::ExperimentHub()
-#' # Download the example spe data
-#' # spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-#' # spe_all
-#' # 
-#' # Only use one sample:
-#' # spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-#' # Select small set of random genes for faster runtime in this example
-#' # set.seed(123)
-#' # sel_genes <- sample(dim(spe3)[1],500)
-#' # spe3 <- spe3[sel_genes,]
-#' # 
-#' # Fit the model via `DESpace_test` function. 
-#' # set.seed(123)
-#' # results_DESpace_test <- DESpace_test(spe = spe3,
-#' #                                          spatial_cluster = "layer_guess_reordered",
-#' #                                          verbose = TRUE)
-#' #
+#' # load the input data:
+#' # data("LIBD_subset", package = "DESpace")
+#' # LIBD_subset
+#' # load pre-computed results (obtained via `DESpace_test`)
+#' # data("results_DESpace_test", package = "DESpace")
+#' # results_DESpace_test
+#' 
 #' # Function `individual_test()` can be used to identify SVGs for each individual cluster.
 #' # Parameter `spatial_cluster` indicates the column names of `colData(spe)` 
 #' # containing spatial clusters.
 #' # set.seed(123)
-#' # results_individual_test <- individual_test(spe3,
+#' # results_individual_test <- individual_test(LIBD_subset,
 #' #                                            edgeR_y = results_DESpace_test$estimated_y,
 #' #                                            spatial_cluster = "layer_guess_reordered")
 #' # save(results_individual_test, file = "./DESpace/data/results_individual_test.RData")

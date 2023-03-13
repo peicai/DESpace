@@ -24,25 +24,16 @@
 #' @param BPPARAM An optional parameter passed internally to bplapply.
 #' We suggest using as many cores as the number of spatial clusters.
 #' If unspecified, the script does not run in parallel.
-#' Note that parallelizing the script will increase the memory requirement;
+#' Note that parallel coding performs better only when 
+#' dispersion estimations are not provided beforehand.
+#' Moreover, parallelizing the script will increase the memory requirement;
 #' if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
 #' @return List of results (gene_results, estimated_y, glmLrt and glmFit): 
 #'   edgeR test results, estimated dispersion, full statistics from 'edgeR::glmFit' and 'edgeR::glmLRT'.
 #' @examples
-#' # Connect to ExperimentHub
-#' ehub <- ExperimentHub::ExperimentHub()
-#' # Download the example spe data
-#' spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-#' spe_all
-#' 
-#' # Only use one sample:
-#' library(SpatialExperiment)
-#' spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-#' rm(spe_all)
-#' # Select small set of random genes for faster runtime in this example
-#' set.seed(123)
-#' sel_genes <- sample(dim(spe3)[1],500)
-#' spe3 <- spe3[sel_genes,]
+#' # load the input data:
+#' data("LIBD_subset", package = "DESpace")
+#' LIBD_subset
 #' 
 #' # load pre-computed results (obtaines via `DESpace_test`)
 #' data("results_DESpace_test", package = "DESpace")
@@ -59,12 +50,10 @@
 #' # set parallel computing; we suggest using as many cores as the number of spatial clusters.
 #' # Note that parallelizing the script will increase the memory requirement;
 #' # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
-#' BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 100)
 #' set.seed(123)
-#' results_individual_test <- individual_test(spe3, 
+#' results_individual_test <- individual_test(LIBD_subset, 
 #'                                            edgeR_y = results_DESpace_test$estimated_y, 
-#'                                            spatial_cluster = "layer_guess_reordered",
-#'                                            BPPARAM = BPPARAM)
+#'                                            spatial_cluster = "layer_guess_reordered")
 #'                                            
 #' # We visualize results for the cluster 'WM'
 #' results_WM <- results_individual_test[[7]]

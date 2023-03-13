@@ -67,29 +67,13 @@ If 'sample_col' is provided and 'replicates == TRUE',
 \code{\link{DESpace_test}} performs a joint multi-sample test.
 }
 \examples{
-# load the package
-# Connect to ExperimentHub
-ehub <- ExperimentHub::ExperimentHub()
-# Download the example spe data
-spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-spe_all
-
-# Only use one sample:
-library(SpatialExperiment)
-spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-rm(spe_all)
-# Select small set of random genes for faster runtime in this example
-set.seed(123)
-sel_genes <- sample(dim(spe3)[1],500)
-spe3 <- spe3[sel_genes,]
-# Discard lowly abundant genes
-qc_low_gene <- rowSums(assays(spe3)$counts > 0) >=10
-# Remove lowly abundant genes
-spe3 = spe3[qc_low_gene,]
+# load the input data:
+data("LIBD_subset", package = "DESpace")
+LIBD_subset
 
 # Fit the model via \code{\link{DESpace_test}} function.
 set.seed(123)
-results_DESpace <- DESpace_test(spe = spe3,
+results_DESpace <- DESpace_test(spe = LIBD_subset,
                            spatial_cluster = "layer_guess_reordered",
                            verbose = FALSE)
 

@@ -88,20 +88,9 @@ This function is a modified version of the \code{\link{FeaturePlot}} function fr
 In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously and drawing an outline around a specified cluster.
 }
 \examples{
-# Connect to ExperimentHub
-ehub <- ExperimentHub::ExperimentHub()
-# Download the example spe data
-spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
-spe_all
-
-# Only use one sample:
-library(SpatialExperiment)
-spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
-rm(spe_all)
-# Select small set of random genes for faster runtime in this example
-set.seed(123)
-sel_genes <- sample(dim(spe3)[1],500)
-spe3 <- spe3[sel_genes,]
+# load the input data:
+data("LIBD_subset", package = "DESpace")
+LIBD_subset
 
 # load pre-computed results (obtained via `DESpace_test`)
 data("results_DESpace_test", package = "DESpace")
@@ -117,7 +106,9 @@ head(results_DESpace_test$gene_results, 3)
 # Visualize the gene expression of the top three genes
 feature = results_DESpace_test$gene_results$gene_id[seq_len(3)]
 feature
-FeaturePlot(spe3, feature, ncol = 3, title = TRUE)
+library(SpatialExperiment)
+FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
+            ncol = 3, title = TRUE)
 
 }
 \seealso{

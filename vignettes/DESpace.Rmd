@@ -290,15 +290,10 @@ Albeit this is an approximation, in our benchmarks, it leads to comparable perfo
 If you want to use pre-computed gene-level dispersion estimates, set `edgeR_y` to `estimated_y`.
 Alternatively, if you want to re-compute dispersion estimates (significantly slower, but marginally more accurate option), leave `edgeR_y` empty.
 
-You can also use parallel computing; we suggest using as many cores as the number of spatial clusters.
-Note that parallelizing the script will increase the memory requirement: if memory is an issue, leave `BPPARAM` unspecified and, hence, avoid parallelization.
-
 ```{r individual cluster test}
-BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 123)
 set.seed(123)
 cluster_results <- individual_test(spe3, edgeR_y = results$estimated_y,
-                                    spatial_cluster = spatial_cluster,
-                                    BPPARAM = BPPARAM)
+                                    spatial_cluster = spatial_cluster)
 ```
 
 `individual_test()` returns a list containing the results of the individual cluster tests.
@@ -474,12 +469,9 @@ Similarly to what shown in Section 3 *Individual sample*, our framework can disc
 For a multi-sample testing, set `replicates = TRUE` in `individual_test()`.
 
 ```{r individual cluster test [multiple-sample]}
-# we can use the BPPARAM object computed before:
-# BPPARAM = BiocParallel::SnowParam(workers = 2, RNGseed = 100)
 set.seed(123)
 cluster_results <- individual_test(spe.combined, edgeR_y = multi_results$estimated_y,
-                                replicates = TRUE, spatial_cluster = spatial_cluster,
-                                BPPARAM = BPPARAM)
+                                replicates = TRUE, spatial_cluster = spatial_cluster)
 ```
 
 `individual_test()` returns a list containing the results of individual clusters, specified in `cluster` parameter.

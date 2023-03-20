@@ -12,7 +12,7 @@
 # @param label TRUE of FALSE. Adding a label and an arrow pointing to a group.
 # @param title TRUE or FALSE. If true, the title name of each (subplot) is the gene name.
 #
-# @return Returns a list containing a (list of) ggplot object and a vertices (table of (x.pos, y.pos, spot, fill, Layer)).
+# @return Returns a list containing a (list of) ggplot object and a vertices (table of (x.pos, y.pos, spot, fill, Cluster)).
 #
 # keywords internal
 .geneExprsPlot <- function( x, y, spe,
@@ -21,10 +21,10 @@
                             color,
                             platform, is.enhanced=FALSE,
                             spatial_cluster, cluster, 
-                            label, title,title_size=5,linewidth,
+                            label, title,title_size=10,linewidth,
                             ...){
-    fill = as.vector(x)
-    fill.name = y
+    fill <- as.vector(x)
+    fill.name <- y
     ## fill.name -> expression legend name
     ## title.name -> subtitle name
     ## if fill.name == 'Expression', don't provide title (title <- FALSE)
@@ -44,24 +44,24 @@
     if (diverging) {
         low <- ifelse(is.null(low), "#F0F0F0", low)
         mid <- NULL
-        high <- ifelse(is.null(high), muted("red"), high)
+        high <- ifelse(is.null(high), "#832424", high)
     } else {
-        low <- ifelse(is.null(low), muted("blue"), low)
+        low <- ifelse(is.null(low), "#3A3A98", low)
         mid <- ifelse(is.null(mid), "#F0F0F0", mid)
-        high <- ifelse(is.null(high), muted("red"), high)
+        high <- ifelse(is.null(high), "#832424", high)
     }
     ## if 'spatial_cluster' and 'cluster' are specified, draw the shape of the outline of the group
     if(!is.null(spatial_cluster) && !is.null(cluster)){
         cdata <- data.frame(colData(spe))
-        Layer <- as.character(cdata[[spatial_cluster]])
+        Cluster <- as.character(cdata[[spatial_cluster]])
     if(cluster %notin% c("all", "ALL")){
-        Layer[Layer %notin% (cluster)] <- 'Others'}
-    Layer = as.factor(Layer)
-    vertices <- cbind(vertices, Layer)
-    vertices <- vertices %>% filter(!is.na(Layer))
+        Cluster[Cluster %notin% (cluster)] <- 'Others'}
+    Cluster <- as.factor(Cluster)
+    vertices <- cbind(vertices, Cluster)
+    vertices <- vertices %>% filter(!is.na(Cluster))
     ## annotate clusters
     if(label){
-        label <- Layer
+        label <- Cluster
     }else{
         label <- NULL
     }
@@ -73,9 +73,9 @@
             labs(fill=fill.name) + coord_equal() +
             theme_void() + scale_fill_gradient2(low=low, mid=mid, high=high)+ 
             new_scale_fill() + new_scale_color()  + 
-            suppressWarnings(ggforce::geom_mark_hull( aes(x=x.vertex, y=y.vertex, 
-                                color = Layer, fill=Layer,linewidth = I(linewidth),
-                                label = label, filter = Layer %in% (cluster)),
+            suppressWarnings(geom_mark_hull( aes(x=x.vertex, y=y.vertex, 
+                                color = Cluster, fill=Cluster,linewidth = I(linewidth),
+                                label = label, filter = Cluster %in% (cluster)),
                                 alpha=0, expand = unit(0.1, "mm"), 
                                 radius = unit(0.4, "mm"),
                                 show.legend = FALSE) )
@@ -86,8 +86,8 @@
             labs(fill=fill.name) + coord_equal() +
             theme_void() + scale_fill_gradient2(low=low, mid=mid, high=high)+ 
             new_scale_fill() + new_scale_color()  + 
-            suppressWarnings(ggforce::geom_mark_hull( aes(x=x.vertex, y=y.vertex, 
-                                    color = Layer, fill=Layer,linewidth = I(linewidth),
+            suppressWarnings(geom_mark_hull( aes(x=x.vertex, y=y.vertex, 
+                                    color = Cluster, fill=Cluster,linewidth = I(linewidth),
                                     label = label),
                                     alpha=0, expand = unit(0.1, "mm"), 
                                     radius = unit(0.2, "mm"),
@@ -100,9 +100,6 @@
                 legend.key.size = unit(0.5, 'cm'))
     
     }else{
-        # if (color == F) {
-        #   color <- ifelse(is.enhanced, NA, "#d8dcd6")
-        # }
         splot <-  vertices %>% 
         ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
         geom_polygon(aes(group=spot, fill=fill), color=color) +
@@ -113,7 +110,7 @@
             legend.key.size = unit(2, 'cm'))
         }
     if(is.na(legend_exprs)){
-        legend_exprs = FALSE
+        legend_exprs <-  FALSE
     }
     if(legend_exprs == FALSE){
         splot <- splot + theme(legend.position = "none")
@@ -305,18 +302,4 @@
     spot_vertices <- .make_spot_vertices(spot_positions, vertex_offsets)
     spot_vertices$y.vertex <- -spot_vertices$y.vertex
     spot_vertices
-}
-.bsData <- function(spe, name, default=NULL, warn=FALSE) {
-    if (!exists("BayesSpace.data", metadata(spe)))
-        stop("BayesSpace metadata not present in this object.")
-    bsData <- metadata(spe)[["BayesSpace.data"]]
-        if (exists(name, bsData)) {
-            bsData[[name]]
-        } else {
-    if (warn) {
-        default.name <- ifelse(is.null(default), "NULL", default)
-        warning(name, " not found in BayesSpace metadata. Using default: ", default.name)
-    }
-    default
-    }
 }

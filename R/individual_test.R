@@ -28,8 +28,8 @@
 #' dispersion estimations are not provided beforehand.
 #' Moreover, parallelizing the script will increase the memory requirement;
 #' if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
-#' @return List of results (gene_results, estimated_y, glmLrt and glmFit): 
-#'   edgeR test results, estimated dispersion, full statistics from 'edgeR::glmFit' and 'edgeR::glmLRT'.
+#' @return A list of results, with one result per spatial cluster in each element.
+#' Specifically, each item in the list is a "gene_results" dataframe which contains main edgeR test results.
 #' @examples
 #' # load the input data:
 #' data("LIBD_subset", package = "DESpace")
@@ -85,35 +85,26 @@ individual_test <- function(spe,
     if(filter_gene == TRUE){
         message("Filter low quality genes: \n")
         message("min_counts = ", min_counts, "; min_non_zero_spots = ", min_non_zero_spots, ".\n")
-    # if(replicates == FALSE && is.null(num_sample)){
-    #   sel_1 <- rowSums(counts(spe)) >= min_counts
-    #   sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots
-    #   spe = spe[sel_1 & sel_2, ]
-    #   cat("The number of genes that pass filtering is", 
-    #       dim(spe)[1], ".\n")
-    # }
-    # 
-    # if(!is.null(num_sample)){
     # for the multi-sample case:
     # sample ids:
-    sample_names = levels(factor(colData(spe)[[sample_col]]))
-    sel_matrix = vapply(sample_names, function(id){
-        spe = subset(spe,,get(sample_col) == id)
+    sample_names <- levels(factor(colData(spe)[[sample_col]]))
+    sel_matrix <- vapply(sample_names, function(id){
+        spe <- subset(spe,,get(sample_col) == id)
         sel_1 <- rowSums(counts(spe)) >= min_counts
         sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots 
         sel_1 & sel_2
     }, FUN.VALUE = logical(nrow(spe)))
     # sel_matrix: column names are sample names; row names are genes
     # only keep genes that pass all filters across samples
-    sel = rowMeans(sel_matrix) == 1
-    spe = spe[sel, ]
+    sel <- rowMeans(sel_matrix) == 1
+    spe <- spe[sel, ]
     message("The number of genes that pass filtering is", 
         dim(spe)[1], ".\n")
     # } # end for !is.null(num_sample)
     }# end for filter_gene == TRUE
-    layer = factor(colData(spe)[[spatial_cluster]])
+    layer <- factor(colData(spe)[[spatial_cluster]])
     layer  <- droplevels(layer)
-    spe = spe[, !is.na(layer)]
+    spe <- spe[, !is.na(layer)]
     if(!is.null(edgeR_y) && !identical(dim(spe), dim(edgeR_y))){
         message("The input SpatialExperiment and pre-computed estimation do not have same dimension !")
         stop("In order to use gene-level dispersion estimates, 
@@ -122,7 +113,7 @@ individual_test <- function(spe,
     # Re-label the cluster (e.g., cluster 1 vs. rest)
     message("Pre-processing")
     layer_list <- lapply(seq_len(nlevels(as.factor(layer))), function(x){
-        cluster = levels(as.factor(layer))[x]
+        cluster <- levels(as.factor(layer))[x]
         .cluster_label(spe, cluster_list = cluster, spatial_cluster = spatial_cluster)
     })
     message("Start modeling")
@@ -133,7 +124,7 @@ individual_test <- function(spe,
                 sprintf("'sample_col' %s  not in colData(spe)", sample_col)
                 return(NULL)
             }
-        sample_id = factor(colData(spe)[[sample_col]])
+        sample_id <-  factor(colData(spe)[[sample_col]])
         if(is.null(BPPARAM)){
             result_list <- lapply(layer_list, .layer_test1_multi,
                                     y = edgeR_y, sample_id = sample_id)
@@ -141,14 +132,12 @@ individual_test <- function(spe,
             result_list <- bplapply(layer_list, .layer_test1_multi,
                                     y = edgeR_y, sample_id = sample_id, BPPARAM = BPPARAM)
         }
-        #single_cluster_results = lapply(result_list, `[[`, 1)
     }else{
         if(is.null(BPPARAM)){
             result_list <- lapply(layer_list, .layer_test1, y = edgeR_y)
         }else{
             result_list <- bplapply(layer_list, .layer_test1, y = edgeR_y, BPPARAM = BPPARAM)
             }
-        #single_cluster_results = lapply(result_list, `[[`, 1)
         }
     }else if(is.null(edgeR_y)){
     # if edgeR_y == NULL -> dispersion computed each time
@@ -159,7 +148,7 @@ individual_test <- function(spe,
     edgeR_y$samples$lib.size <- colSums(edgeR_y$counts)
     edgeR_y <- calcNormFactors(edgeR_y)
     if(replicates == TRUE){
-        sample_id = factor(colData(spe)[[sample_col]])
+        sample_id  <-  factor(colData(spe)[[sample_col]])
         if(is.null(BPPARAM)){
             result_list <- lapply(layer_list, .layer_test2_multi,
                                     y = edgeR_y, sample_id = sample_id)
@@ -167,14 +156,12 @@ individual_test <- function(spe,
             result_list <- bplapply(layer_list, .layer_test2_multi,
                                     y = edgeR_y, sample_id = sample_id, BPPARAM = BPPARAM)
             }
-        #single_cluster_results = lapply(result_list, `[[`, 1)
     }else{
         if(is.null(BPPARAM)){
             result_list <- lapply(layer_list, .layer_test2, y = edgeR_y)
         }else{
             result_list <- bplapply(layer_list, .layer_test2, y = edgeR_y, BPPARAM = BPPARAM)
             }
-            #single_cluster_results = lapply(result_list, `[[`, 1)
         }
     }
     names(result_list) <- levels(as.factor(layer))

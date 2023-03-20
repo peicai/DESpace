@@ -18,6 +18,23 @@
 #' If "low" or "LOW", we only return SVGs with average abundace in "cluster" lower than in the rest of the tissue (i.e., logFC < 0).
 #' If "both" or "BOTH", then both "high" and "low" results are returned, but in two separate data.frames.
 #' @return A \code{\linkS4class{data.frame}} object or a list of \code{\linkS4class{data.frame}} with results.
+#' 
+#' @return A \code{\linkS4class{data.frame}} object or a list of \code{\linkS4class{data.frame}} with results.
+#' 
+#' - When only “cluster_results” is provided, results are reported as a \code{\linkS4class{data.frame}} with columns for
+#'  gene names (gene_id), spatial clusters affected by SV (Cluster), cluster-specific likelihood ratio test statistics (LR),
+#'  cluster-specific average (across spots) log-2 counts per million (logCPM), cluster-specific log2-fold changes (logFC),
+#'  cluster-specific raw p-values (PValue), and Benjamini-Hochberg adjusted p-values (FDR) for each spatial cluster.
+#'
+#' - When “gene_results” and “cluster_results” are given, results are reported as a \code{\linkS4class{data.frame}} that merges gene-
+#'  and cluster-level results.
+#'
+#' - If “cluster” is specified, the function returns a subset \code{\linkS4class{data.frame}} for the given cluster, which contains cluster name,
+#'  gene name, LR, logCPM, logFC, PValue and FDR, ordered by FDR for the specified cluster.
+#'
+#' - If “high_low” is set, the function returns a list of \code{\linkS4class{data.frame}} that contains subsets of results for genes with
+#'  higher and/or lower expression in the given cluster compared to the rest of the tissue.
+
 #' @examples
 #' # load pre-computed results (obtained via `DESpace_test`)
 #' data("results_DESpace_test", package = "DESpace")
@@ -56,15 +73,13 @@
 #' @seealso \code{\link{DESpace_test}}, \code{\link{individual_test}}, \code{\link{FeaturePlot}}
 #' 
 #' @export
-top_results = function(gene_results = NULL,
+top_results <-  function(gene_results = NULL,
                         cluster_results,
                         cluster = NULL,
                         select = "both",
                         high_low = NULL){
     stopifnot(
-        is.list(cluster_results),
-        #is.numeric(cluster_order), length(cluster_order) == 1L,
-        is.character(select), length(select) == 1L
+        is.list(cluster_results), is.character(select), length(select) == 1L
     )
     cluster_results <- lapply(cluster_results, as.data.frame)
     # If there is gene level results (stored in gene_results), return merged results (merge gene and cluster level results)
@@ -77,53 +92,48 @@ top_results = function(gene_results = NULL,
     if(!is.null(high_low)){
         stopifnot(is.character(high_low), length(high_low) == 1L)
         if( !(high_low %in% c("both", "BOTH", "high", "HIGH", "low", "LOW")) ){
-            message("'high_low' should be one of: 'both', 'BOTH', 'high', 'HIGH', 'low', 'LOW'")
+            message("'high_low' should be one of: 'both', 'BOTH', 'high', 'HIGH', 'low', 'LOW'.")
+            return(NULL)
+        }
+        if( is.null(cluster) ){
+            message("The spatial cluster is missing in `cluster` argument.")
             return(NULL)
         }
     }
     if(!is.null(cluster)){
         stopifnot(is.character(cluster), length(cluster) == 1L)
     }
-    #if( !(select %in% c("p_adj", "FDR", "p_val", "logFC")) ){
-    #  message("'select' should be one of: 'p_adj', 'FDR', 'p_val', 'logFC'")
-    #  return(NULL)
-    #}
-    #if(select == 'p_adj'){select = "FDR"}
-    #if(select == 'p_val'){select = "PValue"}
     # Extract and combine results of the selected column ('select') from each sample
     com_results <- .getValueRes(cluster_results = cluster_results, select = 'FDR')
     # Top genes -> for each gene/row, min p-values/FDR; for each gene, return a vector of layer names
-    #rank_results_list <- apply(com_results,1,function(x) which(x == min(x)))
-    #rank_results <- as.data.frame(paste(lapply(rank_results_list,names),sep = ","))
     sel_layer_min <- apply(com_results,1,which.min)
     rank_results<-as.data.frame(colnames(com_results)[sel_layer_min])
-    colnames(rank_results) <- "Layer"
+    colnames(rank_results) <- "Cluster"
     # For each gene, extract LR, PValue and FDR based on the layer name (i.e., the layer has min FDR)
     rank_results <- cbind(rank_results,
-                        lapply(seq_len(nrow(com_results)), function(x) cluster_results[[sel_layer_min[x]]][x,]) %>%
-                        dplyr::bind_rows())
+                        lapply(seq_len(nrow(com_results)), function(x) {
+                            cluster_results[[sel_layer_min[x]]] %>% 
+                            filter(gene_id==rownames(com_results)[x]) }) %>%
+                        bind_rows())
     # Rename columns; 3:7 -> "LR", "logCPM", "logFC", "PValue", "FDR"
-    colnames(rank_results)[seq(3,7)] <- paste0("Layer_", colnames(rank_results)[seq(3,7)])
+    colnames(rank_results)[seq(3,7)] <- paste0("Cluster_", colnames(rank_results)[seq(3,7)])
     colnames(com_results) <- paste0(names(cluster_results), "_FDR")
     # Add the "gene id" column
     com_results['gene_id'] <- rownames(com_results)
-    rank_results['gene_id'] <- rownames(com_results)
     rownames(rank_results) <- rank_results$gene_id
     # Add the results of identified layers (i.e., rank_results) into com_results
     com_results <- merge(rank_results, com_results, by = "gene_id")
     # Check genes: p-values/FDR for all layers are same
-    # gene_all_layer <- as.data.frame(com_results==apply(com_results,1, min))
-    # gene_all_layer <- rownames(gene_all_layer %>% filter(rowSums(gene_all_layer) != 1))
     rownames(com_results) <- com_results$gene_id
     # Sort results based on FDR
-    com_results <- as.data.frame(com_results) %>% arrange(Layer_FDR)
+    com_results <- as.data.frame(com_results) %>% arrange(Cluster_FDR)
     # Sort results based on the specific cluster i; return top genes for cluster i
     if(!is.null(cluster)){
         gene_id <- com_results[order(com_results[, paste0((cluster), "_FDR")], decreasing = FALSE), 'gene_id']
         # Reorder rows of rank_results based on FDR of the specific cluster i
         top_results_cluster <- rank_results[match(gene_id, rank_results$gene_id),]
-        # Subset Layer == cluster i
-        top_genes_cluster <- subset(top_results_cluster, Layer == (cluster))
+        # Subset Cluster == cluster i
+        top_genes_cluster <- subset(top_results_cluster, Cluster == (cluster))
     }
     # Sort results based on the specific cluster i; return top genes for cluster i
     if(!is.null(cluster) & !is.null(high_low)){
@@ -152,8 +162,7 @@ top_results = function(gene_results = NULL,
             return(top_genes = top_genes_cluster)
         }
     }else{
-        return(list(#res = com_results,
-        #top_genes = top_genes_cluster,
+        return(list(
         high_genes = high_genes,
         low_genes = low_genes
         ))

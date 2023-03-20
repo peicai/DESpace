@@ -23,6 +23,7 @@ Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD
 # sel_genes <- sample(dim(LIBD_subset)[1],500)
 # LIBD_subset <- LIBD_subset[sel_genes,]
 # keep_col <- c("array_row","array_col","layer_guess_reordered")
+# library(SingleCellExperiment)
 # LIBD_subset <- SpatialExperiment(assay = list(counts = assay(LIBD_subset),
 #                                               logcounts = logcounts(LIBD_subset)), 
 #                                  colData = colData(LIBD_subset)[keep_col])

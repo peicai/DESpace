@@ -45,8 +45,8 @@ Moreover, parallelizing the script will increase the memory requirement;
 if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.}
 }
 \value{
-List of results (gene_results, estimated_y, glmLrt and glmFit): 
-  edgeR test results, estimated dispersion, full statistics from 'edgeR::glmFit' and 'edgeR::glmLRT'.
+A list of results, with one result per spatial cluster in each element.
+Specifically, each item in the list is a "gene_results" dataframe which contains main edgeR test results.
 }
 \description{
 DESpace can also be used to reveal the specific areas of the tissue affected by SVGs; i.e., spatial clusters that are particularly over/under abundant compared to the average signal.

@@ -18,13 +18,13 @@ FeaturePlot(
   platform = "Visium",
   spatial_cluster = NULL,
   cluster = NULL,
-  legend_layer = FALSE,
+  legend_cluster = FALSE,
   label = FALSE,
   ncol = 3,
   title = FALSE,
   linewidth = 0.4,
   legend_exprs = FALSE,
-  title_size = 5
+  title_size = 10
 )
 }
 \arguments{
@@ -62,7 +62,7 @@ created by \code{BayesSpace::patialCluster()} or \code{BayesSpace::spatialEnhanc
 around a group of points that belong to the specify cluster.
 It can be NULL, "all"/"ALL", or a vector of cluster names.}
 
-\item{legend_layer}{A logical. TRUE of FALSE, indicating whether to plot the legend for the shaped layers (TRUE), or not (FALSE).
+\item{legend_cluster}{A logical. TRUE of FALSE, indicating whether to plot the legend for the shaped clusters (TRUE), or not (FALSE).
 Only used when 'spatial_cluster' and 'cluster' are specified.}
 
 \item{label}{A logical. TRUE of FALSE. Adding a label and an arrow pointing to a group.}
@@ -90,23 +90,12 @@ In comparison to the original BayesSpace function, this function allows plotting
 \examples{
 # load the input data:
 data("LIBD_subset", package = "DESpace")
-LIBD_subset
 
 # load pre-computed results (obtained via `DESpace_test`)
 data("results_DESpace_test", package = "DESpace")
 
-# DESpace_test returns of a list of 2 objects:
-# "gene_results": a dataframe contains main edgeR test results;
-# "estimated_y": a DGEList object contains the estimated common dispersion, 
-#  which can later be used to speed-up calculation when testing individual clusters.
-
-# We visualize differential results:
-head(results_DESpace_test$gene_results, 3)
-
 # Visualize the gene expression of the top three genes
 feature = results_DESpace_test$gene_results$gene_id[seq_len(3)]
-feature
-library(SpatialExperiment)
 FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
             ncol = 3, title = TRUE)
 

@@ -5,13 +5,13 @@ test_that("top_results() works faultlessly.", {
   data("results_individual_test", package = "DESpace")
   
   # Combine gene-and cluster-level results
-  merge_res = top_results(results_DESpace_test$gene_results, results_individual_test)
+  merge_res <- top_results(results_DESpace_test$gene_results, results_individual_test)
   expect_is(merge_res, "data.frame")
   
-  merge_res = top_results(results_DESpace_test$gene_results, results_individual_test, select = "FDR")
+  merge_res <- top_results(results_DESpace_test$gene_results, results_individual_test, select = "FDR")
   expect_is(merge_res, "data.frame")
   
-  results_WM_both = top_results(cluster_results = results_individual_test, cluster = "WM", high_low = "both")
+  results_WM_both <- top_results(cluster_results = results_individual_test, cluster = "WM", high_low = "both")
   expect_is(results_WM_both, "list")
   expect_true( length(results_WM_both) == 2 ) 
 })

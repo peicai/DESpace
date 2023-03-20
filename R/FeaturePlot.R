@@ -22,7 +22,7 @@
 #' @param Annotated_cluster A logical. TRUE or FALSE, indicating whether to plot the annotated spatial clusters next to expression plots.
 #' @param linewidth The width of the boundary line around the cluster.
 #' The default ('0.4') size of the boundary line is one.
-#' @param legend_layer A logical. TRUE of FALSE, indicating whether to plot the legend for the shaped layers (TRUE), or not (FALSE).
+#' @param legend_cluster A logical. TRUE of FALSE, indicating whether to plot the legend for the shaped clusters (TRUE), or not (FALSE).
 #' Only used when 'spatial_cluster' and 'cluster' are specified.
 #' @param legend_exprs A logical. TRUE of FALSE, indicating whether to plot the legend for the expression level (TRUE), or not (FALSE).
 #' @param label A logical. TRUE of FALSE. Adding a label and an arrow pointing to a group.
@@ -40,23 +40,12 @@
 #' @examples
 #' # load the input data:
 #' data("LIBD_subset", package = "DESpace")
-#' LIBD_subset
 #' 
 #' # load pre-computed results (obtained via `DESpace_test`)
 #' data("results_DESpace_test", package = "DESpace")
 #' 
-#' # DESpace_test returns of a list of 2 objects:
-#' # "gene_results": a dataframe contains main edgeR test results;
-#' # "estimated_y": a DGEList object contains the estimated common dispersion, 
-#' #  which can later be used to speed-up calculation when testing individual clusters.
-#' 
-#' # We visualize differential results:
-#' head(results_DESpace_test$gene_results, 3)
-#' 
 #' # Visualize the gene expression of the top three genes
 #' feature = results_DESpace_test$gene_results$gene_id[seq_len(3)]
-#' feature
-#' library(SpatialExperiment)
 #' FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
 #'             ncol = 3, title = TRUE)
 #' 
@@ -75,9 +64,9 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
                         low=NULL, high=NULL, mid=NULL,
                         color=NULL,
                         platform= "Visium", #is.enhanced=FALSE,
-                        spatial_cluster = NULL, cluster = NULL,legend_layer = FALSE,
+                        spatial_cluster = NULL, cluster = NULL,legend_cluster = FALSE,
                         label = FALSE, ncol = 3, title = FALSE,linewidth = 0.4,
-                        legend_exprs = FALSE,title_size = 5) {
+                        legend_exprs = FALSE,title_size = 10) {
     if (!is(spe, "SpatialExperiment") & !is(spe, "SingleCellExperiment")){
         message("'spe' must be a 'SpatialExperiment' object or a 'SingleCellExperiment' object")
     return(NULL)
@@ -94,13 +83,6 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         colData(spe) <- cbind(colData(spe), coordinates_col)
         }
     }
-    #if (is.null(platform))
-    #platform <- .bsData(spe, "platform", "Visium")
-    #if (is.null(is.enhanced))
-    #is.enhanced <- .bsData(spe, "is.enhanced", FALSE)
-    ## extract expression from logcounts if a gene name is passed.
-    ## otherwise, assume a vector of counts was passed and let
-    ## .make_vertices helpers check validity
     if (assay.type %notin%  assayNames(spe)){
         message("assay.type is missing in assayNames(spe). ")
         return(NULL)
@@ -120,7 +102,7 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
     if (is.null(color)) {
         color <- NA ##"#d8dcd6"
     }
-    MoreArgs = list(spe, diverging, low, high, mid, legend_exprs, color,
+    MoreArgs <- list(spe, diverging, low, high, mid, legend_exprs, color,
                     platform, is.enhanced = FALSE, spatial_cluster, cluster,
                     label, title, title_size, linewidth)
     ## if feature is a vector of gene names
@@ -137,52 +119,43 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
                                 title_size, linewidth)
         expression.plots <- list(plot.list$plot)
         vertices <- plot.list$vertices
-        ncol=1
-        widths <- c(5, 1)
+        ncol <- 1; widths <- c(5, 1)
     }
-    ## if 'spatial_cluster' and 'cluster' are specified, and legend_layer == TRUE,  draw the shape of the outline of the group and add the legend of layers
-    if(!is.null(spatial_cluster) && !is.null(cluster) && legend_layer){
-        ## create the legend of layer
+    ## if 'spatial_cluster' and 'cluster' are specified, and legend_cluster == TRUE,  
+    ## draw the shape of the outline of the group and add the legend of clusters
+    if(!is.null(spatial_cluster) && !is.null(cluster) && legend_cluster){
+        ## create the legend of cluster
         if(cluster %notin% c("all", "ALL")){
-            filter <- vertices$Layer %in% (cluster)
+            filter <- vertices$Cluster %in% (cluster)
         }else{
             filter <- NULL
             }
         my_hist <- vertices %>% 
         ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
-        ggforce::geom_mark_hull(aes(x=x.vertex, y=y.vertex, 
-                                color = Layer, fill=Layer, filter = filter))  +
+        geom_mark_hull(aes(x=x.vertex, y=y.vertex, 
+                                color = Cluster, fill=Cluster, filter = filter))  +
         theme(legend.position = "right")
-        legend <- cowplot::get_legend(my_hist)
-        plots <- append(expression.plots, list(ggpubr::as_ggplot(legend)) )
-        plots <- patchwork::wrap_plots(plots, ncol=min(length(expression.plots),ncol)+1,widths = widths) #& 
-        #theme(legend.position = "bottom") 
+        legend <- get_legend(my_hist)
+        plots <- append(expression.plots, list(as_ggplot(legend)) )
+        plots <- wrap_plots(plots, ncol=min(length(expression.plots),ncol)+1,widths = widths)
         }else{
-            plots <- patchwork::wrap_plots(expression.plots, ncol=min(length(expression.plots),ncol))
+            plots <- wrap_plots(expression.plots, ncol=min(length(expression.plots),ncol))
         }
     ## if 'Annotated_cluster' is specified as TRUE, plot the original spatial clusters next to expression plots
     if(Annotated_cluster){
         if (is.null(spatial_cluster))
-            stop("Column names of spatial clusters not specified.")
-        # Manual annotation
-        # p1 <- ggplot(as.data.frame(colData(spe)), aes(x=col, y=row, color=factor(get(spatial_cluster)))) + 
-        #   geom_point() + theme_void() + scale_y_reverse() + coord_equal() +
-        #   scale_x_reverse() + 
-        #   theme(legend.position="none") + labs(color = "", title = "")
-        df1 = data.frame(spatial_cluster = colData(spe)[[spatial_cluster]],
+            stop("Column names of spatial clusters are not specified.")
+        df1 <- data.frame(spatial_cluster = colData(spe)[[spatial_cluster]],
                         spot = rownames(colData(spe)))
-        df1 = merge(df1, vertices, by = "spot", all.x = TRUE)
+        df1 <- merge(df1, vertices, by = "spot", all.x = TRUE)
         p1 <- df1 %>% 
             ggplot(mapping = aes(x=x.vertex, y=y.vertex,
                     color=factor(spatial_cluster))) +
-            #ggplot(as.data.frame(colData(spe)), aes(x=col, y=row, color=factor(get(spatial_cluster)))) + 
             geom_point() + theme_void() +  coord_equal() +
-            #scale_x_reverse() + scale_y_reverse() +
             theme(legend.position="none") + labs(color = "", title = "")
         plots <- append(list(p1), list(plots))
-        plots <- patchwork::wrap_plots(plots, ncol=2, 
-                                        widths = c(1,min(length(expression.plots),ncol))
-                                        )
+        plots <- wrap_plots(plots, ncol=2, 
+                                        widths = c(1,min(length(expression.plots),ncol)))
         }
     plots
 }

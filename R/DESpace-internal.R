@@ -2,20 +2,20 @@
     function(spe, 
             cluster_list, 
             spatial_cluster = "layer_guess_reordered"){
-    #print(cluster)
-    metadata = as.data.frame(colData(spe))
-    layer_rename = c()
-    layer_rename = as.character(metadata[[spatial_cluster]])
+    metadata <- as.data.frame(colData(spe))
+    layer_rename <- c()
+    layer_rename <- as.character(metadata[[spatial_cluster]])
     layer_rename[layer_rename != cluster_list] <- 'Other'
-    layer_rename = as.factor(layer_rename)
-    one_layer = layer_rename
+    layer_rename <- as.factor(layer_rename)
+    one_layer <- layer_rename
     return(one_layer)
-}
+    }
+
 .getValueRes <-
     function(cluster_results = single_cluster_results, select = "FDR"){
     ll <- lapply(seq_len(length(cluster_results)), function(i){
             data.frame(gene_id = cluster_results[[i]]$gene_id, 
-            value  = get(select, cluster_results[[i]]))})
+            value = get(select, cluster_results[[i]]))})
     names(ll) <- names(cluster_results)
     
     ll2 <- lapply(ll, function(LL) lapply(LL, `[`, order(LL$gene_id)) )
@@ -32,40 +32,39 @@
     function(layers, 
             sample_id, 
             y){
-    one_layer = layers
-    design_model = model.matrix(~one_layer+sample_id)
+    one_layer <- layers
+    design_model <- model.matrix(~one_layer+sample_id)
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results = data.table::as.data.table(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
 }
 .layer_test1 <-
     function(layers, 
             y){
-    one_layer = layers
-    design_model = model.matrix(~one_layer)
+    one_layer <- layers
+    design_model <- model.matrix(~one_layer)
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results = data.table::as.data.table(results[[1]][c("genes","LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes","LR", "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
 }
 .layer_test2 <-
     function(layers, 
             y){
-    # layers = factor(one_layer, levels  = c('Other', 'Layer3'))
-    one_layer = layers #== layer
-    design_model = model.matrix(~one_layer)
-    limma::is.fullrank(design_model)
+    one_layer <- layers
+    design_model <- model.matrix(~one_layer)
+    is.fullrank(design_model)
     rownames(design_model) <- colnames(y)
     y <- estimateDisp(y, robust=TRUE, design = design_model)
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results = data.table::as.data.table(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
 }
@@ -73,19 +72,18 @@
     function(layers, 
             sample_id, 
             y){
-    # layers = factor(one_layer, levels  = c('Other', 'Layer3'))
-    one_layer = layers #== layer
-    design_model = model.matrix(~one_layer)
-    limma::is.fullrank(design_model)
+    one_layer <- layers
+    design_model <- model.matrix(~one_layer)
+    is.fullrank(design_model)
     rownames(design_model) <- colnames(y)
     y <- estimateDisp(y, robust=TRUE, design = design_model)
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results = data.table::as.data.table(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
-}
+    }
 .merge_results <-
     function(gene_results,
             cluster_results, 
@@ -99,9 +97,6 @@
         message("'select' should be one of: 'p_adj', 'FDR', 'logFC','both'")
         return(NULL)
     }
-    #if(dim(gene_results)[2] == 5){
-    #   colnames(gene_results) <- c("gene_id", "gene_id", "gene_LR","gene_Pvalue","gene_FDR")
-    #}else(colnames(gene_results) <- c("gene_id", "gene_LR","gene_Pvalue","gene_FDR"))
     colnames(gene_results) <- c("gene_id", "gene_LR", "gene_logCPM", "gene_Pvalue","gene_FDR")
     if(select != 'both'){
         com_results <- .getValueRes(cluster_results = cluster_results, select = select)
@@ -128,10 +123,10 @@
             sample_col, 
             # num_core,
             verbose = TRUE){
-    layer = as.factor(colData(spe)[[spatial_cluster]] )
+    layer <- as.factor(colData(spe)[[spatial_cluster]] )
     layer  <- droplevels(layer)
-    spe = spe[, !is.na(layer)]
-    design = data.frame(condition = factor(colData(spe)[[spatial_cluster]]),
+    spe <- spe[, !is.na(layer)]
+    design <-  data.frame(condition = factor(colData(spe)[[spatial_cluster]]),
                         sample_id = factor(colData(spe)[[sample_col]]))
     design$condition <- droplevels(design$condition)
     y <- DGEList(counts=assays(spe)$counts, 
@@ -140,13 +135,12 @@
     y <- calcNormFactors(y)
     design_model <- model.matrix(~design$condition + design$sample_id)
     rownames(design_model) <- colnames(y)
-    # BPPARAM = MulticoreParam(num_core)
     y <- estimateDisp(y, design_model, robust=TRUE)
     fit <- glmFit(y, design_model)
-    q = nlevels(factor(colData(spe)[[spatial_cluster]]))
+    q <- nlevels(factor(colData(spe)[[spatial_cluster]]))
     lrt <- glmLRT(fit, coef = seq(2,q))
-    res_edgeR = topTags(lrt, n = Inf)
-    results = data.table::as.data.table(res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")])
+    res_edgeR <- topTags(lrt, n = Inf)
+    results <- as.data.frame(res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     if(verbose){
         return(list(gene_results = results,
@@ -164,17 +158,16 @@
             sample_names,
             sample_col,
             spatial_cluster,
-            #num_core = 4,
             verbose = TRUE){
-    spe = subset(spe,,sample_id == sample_names[i])
+    spe <- subset(spe,,sample_id == sample_names[i])
     if(verbose){
-        list[gene_results, estimated_y, lrt, fit] = .single_edgeR_test(spe, spatial_cluster, verbose)
+        list[gene_results, estimated_y, lrt, fit]  <-  .single_edgeR_test(spe, spatial_cluster, verbose)
     }else{
-        list[gene_results, estimated_y] = .single_edgeR_test(spe, spatial_cluster, verbose)
+        list[gene_results, estimated_y]  <-  .single_edgeR_test(spe, spatial_cluster, verbose)
     }
-    DT_results1 = data.table::as.data.table(gene_results)
-    DT_results1[, sample := sample_names[i]]
-    data.table::setorder(DT_results1, FDR, PValue)
+    DT_results1 <- as.data.frame(gene_results)
+    DT_results1$sample <- sample_names[i]
+    setorder(DT_results1, FDR, PValue)
     if(verbose){
         return(list(DT_results1 = DT_results1,
                     estimated_y = estimated_y,
@@ -188,11 +181,10 @@
 .single_edgeR_test <-
     function(spe, 
             spatial_cluster, 
-            # num_core,
             verbose = TRUE){
-    layer = as.factor(colData(spe)[[spatial_cluster]] )
-    spe = spe[, !is.na(layer)]
-    design = data.frame(condition = layer)
+    layer <- as.factor(colData(spe)[[spatial_cluster]] )
+    spe <- spe[, !is.na(layer)]
+    design <- data.frame(condition = layer)
     design$condition <- droplevels(design$condition)
     y <- DGEList(counts=assays(spe)$counts, 
                 genes=rownames(assays(spe)$counts))
@@ -200,13 +192,12 @@
     y <- calcNormFactors(y)
     design_model <- model.matrix(~design$condition)
     rownames(design_model) <- colnames(y)
-    # BPPARAM = MulticoreParam(num_core)
     y <- estimateDisp(y, design_model, robust=TRUE)
     fit <- glmFit(y, design_model)
-    q = nlevels(factor(colData(spe)[[spatial_cluster]]))
+    q <- nlevels(factor(colData(spe)[[spatial_cluster]]))
     lrt <- glmLRT(fit, coef = seq(2,q))
-    res_edgeR = topTags(lrt, n = Inf)
-    results = data.table::as.data.table(res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")])
+    res_edgeR <- topTags(lrt, n = Inf)
+    results <- as.data.frame(res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     if(verbose){
         return(list(gene_results = results,

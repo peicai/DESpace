@@ -1,0 +1,583 @@
+---
+title: "A framework to discover Spatially Variable genes via spatial clusters"
+author:
+- name: Peiying Cai
+  affiliation:
+  - &IMLS Institute for Molecular Life Sciences, University of Zurich, Switzerland
+  - &SIB SIB Swiss Institute of Bioinformatics, University of Zurich, Switzerland
+  email: peiying.cai@uzh.ch
+- name: Simone Tiberi
+  affiliation:
+  - &Stats Departiment of Statistical Sciences, University of Bologna, Italy
+  email: simone.tiberi@unibo.it
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+bibliography: References.bib
+vignette: >
+  %\VignetteIndexEntry{A framework to discover spatially variable genes}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+output: 
+  BiocStyle::html_document
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: sentence
+---
+
+------------------------------------------------------------------------
+
+```{r setup, echo=FALSE, results="hide"}
+knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
+                        dev="png",
+                        message=TRUE, error=FALSE, warning=TRUE)
+library(utils)
+```
+
+# Introduction
+
+*DESpace* is an intuitive framework for identifying spatially variable (SV) genes (SVGs) via *edgeR* [@edgeR], one of the most common methods for performing differential expression analyses.
+
+Based on pre-annotated spatial clusters as summarized spatial information, *DESpace* models gene expression using a negative binomial (NB), via *edgeR* [@edgeR], with spatial clusters as covariates.
+SV genes (SVGs) are then identified by testing the significance of spatial clusters.
+
+Our approach assumes that the spatial structure can be summarized by spatial clusters, which should reproduce the key features of the tissue (e.g., white matter and layers in brain cortex).
+A significant test of these covariates indicates that space influences gene expression, hence identifying spatially variable genes.
+
+Our model is flexible and robust, and is significantly faster than the most SV methods.
+Furthermore, to the best of our knowledge, it is the only SV approach that allows:
+- performing a SV test on each individual spatial cluster, hence identifying the key regions affected by spatial variability;
+- jointly fitting multiple samples, targeting genes with consistent spatial patterns across biological replicates.
+
+Below, we illustrate en example usage of the package.
+
+# Basics
+
+`DESpace` is implemented as a R package within Bioconductor, which is the main venue for omics analyses, and we use various other Bioconductor packages (e.g., SpatialLIBD, and edgeR).
+
+`DESpace` package is available on Bioconductor and can be installed with the following command:
+
+```{r, eval=FALSE}
+if (!requireNamespace("BiocManager", quietly = TRUE)) {
+    install.packages("BiocManager")
+}
+
+BiocManager::install("DESpace")
+
+## Check that you have a valid Bioconductor installation
+BiocManager::valid()
+```
+
+The development version of `DESpace`can also be installed from the Bioconductor-devel branch or from GitHub.
+
+To access the R code used in the vignettes, type:
+
+```{r vignettes, eval=FALSE}
+browseVignettes("DESpace")
+```
+
+Questions relative to *DESpace* should be reported as a new issue at [*BugReports*](https://github.com/peicai/DESpace/issues).
+
+To cite *DESpace*, type:
+
+```{r citation, eval=FALSE}
+citation("DESpace")
+```
+
+Load R packages:
+```{r package}
+suppressMessages({
+library(DESpace)
+library(ggplot2)
+library(SpatialExperiment)
+})
+```
+
+# Data
+
+As an example dataset, we consider a human dorsolateral pre-frontal cortex (DLPFC) spatial transcriptomics dataset from the 10x Genomics Visium platform, including three neurotypical adult donors (i.e., biological replicates), with four images per subject [@LIBD].
+The full dataset consists of 12 samples, which can be accessed via [*spatialLIBD*](https://bioconductor.org/packages/release/data/experiment/vignettes/spatialLIBD/inst/doc/spatialLIBD.html) Bioconductor package.
+
+## Input data
+
+Here, we consider a subset of the original data, consisting of three biological replicates: 1 image for each of the three brain subjects.
+Initially, in Section 3 *individual sample* , we fit our approach on a single sample, whose data is stored in `spe3` whereas all 3 samples will later be jointly used in Section 4 *Multiple samples*.
+
+```{r load-example-data, message = FALSE}
+# Connect to ExperimentHub
+ehub <- ExperimentHub::ExperimentHub()
+# Download the full real data (about 2.1 GB in RAM) use:
+spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
+
+# Create three spe objects, one per sample:
+spe1 <- spe_all[, colData(spe_all)$sample_id == '151507']
+spe2 <- spe_all[, colData(spe_all)$sample_id == '151669']
+spe3 <- spe_all[, colData(spe_all)$sample_id == '151673']
+rm(spe_all)
+# Select small set of random genes for faster runtime in this example
+set.seed(123)
+sel_genes <- sample(dim(spe1)[1],2000)
+spe1 <- spe1[sel_genes,]
+spe2 <- spe2[sel_genes,]
+spe3 <- spe3[sel_genes,]
+# For covenience, we use “gene names” instead of “gene ids”:
+rownames(spe1) <- rowData(spe1)$gene_name
+rownames(spe2) <- rowData(spe2)$gene_name
+rownames(spe3) <- rowData(spe3)$gene_name
+# Specify column names of spatial coordinates in colData(spe) 
+coordinates <- c("array_row", "array_col")
+# Specify column names of spatial clusters in colData(spe) 
+spatial_cluster <- 'layer_guess_reordered'
+```
+
+The spatial tissues of each sample were manually annotated in the original manuscript [@LIBD], and spots were labeled into one of the following categories: white matter (WM) and layers 1 to 6.
+The manual annotations are stored in column `layer_guess_reordered` of the `colData`, while columns `array_col` and `array_row` provide the spatial coordinates of spots.
+
+```{r visualize colData}
+# We select a subset of columns
+keep_col <- c(coordinates,spatial_cluster,"expr_chrM_ratio","cell_count")
+head(colData(spe3)[keep_col])
+```
+
+## Quality control/filtering
+
+Quality control (QC) procedures at the spot and gene level aim to remove both low-quality spots, and lowly abundant genes.
+For QC, we adhere to the instructions from "Orchestrating Spatially Resolved Transcriptomics Analysis with Bioconductor" ([*OSTA*](https://lmweber.org/OSTA-book/quality-control.html)).
+The library size, UMI counts, ratio of mitochondrial chromosome (chM) expression, and number of cells per spot are used to identify low-quality spots.
+
+```{r QC spots}
+# Sample 1:
+# Calculate per-spot QC metrics and store in colData
+spe1 <- scuttle::addPerCellQC(spe1,)
+# Remove combined set of low-quality spots
+spe1 <- spe1[, !(colData(spe1)$sum < 10 |                     # library size
+                colData(spe1)$detected < 10 |         # number of expressed genes
+                colData(spe1)$expr_chrM_ratio > 0.30|  # mitochondrial expression ratio
+                colData(spe1)$cell_count > 10)]        # number of cells per spot
+# Sample 2:
+# Calculate per-spot QC metrics and store in colData
+spe2 <- scuttle::addPerCellQC(spe2,)
+# Remove combined set of low-quality spots
+spe2 <- spe2[, !(colData(spe2)$sum < 20 |
+                colData(spe2)$detected < 15 |
+                colData(spe2)$expr_chrM_ratio > 0.35|
+                colData(spe2)$cell_count > 8)]
+# Sample 3:
+spe3 <- scuttle::addPerCellQC(spe3,)
+# Remove combined set of low-quality spots
+spe3 <- spe3[, !(colData(spe3)$sum < 25 |
+                colData(spe3)$detected < 25 |
+                colData(spe3)$expr_chrM_ratio > 0.3|
+                colData(spe3)$cell_count > 15)]
+```
+
+Then, we discard lowly abundant genes, which were detected in less than 20 spots.
+
+```{r QC genes}
+# For each sample i:
+for(i in seq_len(3)){
+    spe_i <- eval(parse(text = paste0("spe", i)))
+    # Select QC threshold for lowly expressed genes: at least 20 non-zero spots:
+    qc_low_gene <- rowSums(assays(spe_i)$counts > 0) >= 20
+    # Remove lowly abundant genes
+    spe_i <- spe_i[qc_low_gene,]
+    assign(paste0("spe", i), spe_i)
+    message(paste0("Dimension of spe", i, ": ", dim(spe_i)))
+}
+```
+
+# Individual sample
+
+We fit our approach to discover SVGs in an individual sample.
+In Section 4 *Multiple samples*, we will show how to jointly embed multiple replicates.
+
+## Clustering
+
+This framework relies on spatial clusters being accessible and successfully summarizing the primary spatial characteristics of the data.
+In most datasets, these spatial features are either accessible or can be easily generated with spatial clustering algorithms.
+
+### Manual annotation
+
+If manual annotations are provided (e.g., annotated by a pathologist), we can directly use those.
+With the `spe` or `spe` object that contains coordinates of the spot-level data, we can visualize spatial clusters.
+
+```{r view LIBD layers, fig.width=5,fig.height=6}
+# View LIBD layers for one sample
+CD <- as.data.frame(colData(spe3))
+(p1 <- ggplot(CD, aes(x=array_col, y=array_row, color=factor(layer_guess_reordered)), size = 0.1) +
+    geom_point() + scale_y_reverse() + theme(legend.position="bottom") + 
+    labs(color = "", title = paste0("Manually annotated spatial clusters")))
+```
+
+```{r free memory, include=FALSE}
+# To reduce memory usage, we can remove the ehub object, which typically requires a large amount of memory. If needed, the spe_i object can be removed as well, as neither is needed for SV testing.
+rm(ehub)
+rm(spe_i)
+gc()
+```
+
+### Spatially resolved clustering
+
+If manual annotations are not available, we can use spatially resolved clustering tools.
+These methods, by jointly employing spatial coordinates and gene expression data, enable obtaining spatial clusters.
+Although, in this vignette we use pre-computed manually annotated clusters, below we provide links to two popular spatially resolved clustering tools: BayesSpace [@BayesSpace] and StLearn [@stLearn].
+
+#### BayesSpace
+
+BayesSpace is a Bioconductor package that provides a Bayesian statistical approach for spatial transcriptomics data clustering ([*BayesSpace*](https://edward130603.github.io/BayesSpace/index.html)).
+There is a specific vignette for using BayesSpace on this dataset (human DLPFC) [*here*](https://edward130603.github.io/BayesSpace/articles/maynard_DLPFC.html).
+
+After using BayesSpace, the spatial cluster assignments (`spatial.cluster`) are available in the `colData(spe)`.
+
+#### StLearn
+
+StLearn, a python-based package, is designed for spatial transciptomics data.
+It allows spatially-resolved clustering based on Louvain or k-means ([*stLearn*](https://stlearn.readthedocs.io/en/latest/index.html)).
+There is a tutorial for using StLearn on this dataset (human DLPFC) [*here*](https://stlearn.readthedocs.io/en/latest/tutorials/stSME_clustering.html#Human-Brain-dorsolateral-prefrontal-cortex-(DLPFC)).
+
+After running stLearn, we can store results as a `csv` file.
+
+```{python stLearn[py multi-sample], eval = FALSE}
+# Save spatial results
+obsm.to_csv("stLearn_clusters.csv") 
+```
+
+Then, we can load these results in R and store spatial clusters in the `spe` object.
+
+```{r stLearn[r multi-sample], eval = FALSE}
+stLearn_results <- read.csv("stLearn_clusters.csv", sep = ',', header = TRUE)
+# Match colData(spe) and stLearn results
+stLearn_results <- stLearn_results[match(rownames(colData(spe3)), rownames(stLearn_results)), ]
+colData(spe3)$stLearn_clusters <- stLearn_results$stLearn_pca_kmeans
+```
+
+## SV testing
+
+Once we have spatial clusters, we can search for SVGs.
+
+### Gene-level test
+
+Fit the model via `DESpace_test` function.
+Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `spatial_cluster` defines the column names of `colData(spe)` containing spatial clusters. To obtain all statistics, set `verbose` to `TRUE` (default value).
+
+```{r DESpace}
+set.seed(123)
+results <- DESpace_test(spe = spe3,
+                        spatial_cluster = spatial_cluster, 
+                        verbose = TRUE)
+```
+
+A list of results is returned.
+The main results of interest are stored in the `gene_results`: a `data.fame`, where columns contain gene names (`gene_id`), likelihood ratio test statistics (`LR`), average (across spots) log-2 counts per million (`logCPM`), raw p-values (`PValue`) and Benjamini-Hochberg adjusted p-values (`FDR`).
+
+```{r}
+head(results$gene_results, 3)
+```
+
+The second element of the results (a `DGEList` object `estimated_y`) contains the estimated common dispersion, which can later be used to speed-up calculation when testing individual clusters.
+
+The third and forth element of the results (`DGEGLM` and `DGELRT` objects) contain full statistics from `edgeR::glmFit` and `edgeR::glmLRT`.
+
+```{r}
+class(results$estimated_y); class(results$glmLrt); class(results$glmFit)
+```
+
+
+Visualize the gene expression of the three most significant genes in `FeaturePlot()`.
+Note that the gene names in vector `feature`, should also appear in the count matrix’s row names. Specifying the column names of spatial coordinates of spots is only necessary when they are not named `row` and `col`.
+
+```{r top SVGs expression plot}
+(feature <- results$gene_results$gene_id[seq_len(3)])
+FeaturePlot(spe3, feature, coordinates = coordinates, 
+            ncol = 3, title = TRUE)
+```
+
+Additionally, function `FeaturePlot()` can draw an outline around each cluster.
+
+```{r expression plots all cluster}
+FeaturePlot(spe3, feature, coordinates = coordinates, Annotated_cluster = TRUE,
+            spatial_cluster = spatial_cluster, cluster = 'all', legend_cluster = TRUE, title = TRUE)
+```
+
+### Individual cluster test
+
+*DESpace* can also be used to reveal the specific areas of the tissue affected by spatial variability; i.e., spatial clusters that are particularly over/under abundant compared to the average.
+Function `individual_test()` can be used to identify SVGs for each individual cluster.
+Parameter `spatial_cluster` indicates the column names of `colData(spe)` containing spatial clusters.
+
+For every spatial cluster we test, `edgeR` would normally re-compute the dispersion estimates based on the specific design of the test.
+However, this calculation represents the majority of the overall computing time.
+Therefore, to speed-up calculations, we propose to use the dispersion estimates which were previously computed for the gene-level tests.
+Albeit this is an approximation, in our benchmarks, it leads to comparable performance in terms of sensitivity and specificity.
+If you want to use pre-computed gene-level dispersion estimates, set `edgeR_y` to `estimated_y`.
+Alternatively, if you want to re-compute dispersion estimates (significantly slower, but marginally more accurate option), leave `edgeR_y` empty.
+
+```{r individual cluster test}
+set.seed(123)
+cluster_results <- individual_test(spe3, edgeR_y = results$estimated_y,
+                                    spatial_cluster = spatial_cluster)
+```
+
+`individual_test()` returns a list containing the results of the individual cluster tests.
+Similarly to above, for each cluster, results are reported as a `data.fame`, where columns contain gene names (`gene_id`), likelihood ratio test statistics (`LR`), log2-fold changes (`logFC`), raw p-values (`PValue`) and Benjamini-Hochberg adjusted p-values (`FDR`).
+NB: that the `logFC` compares each cluster to the rest of the tissue; e.g., a logFC of 2 for WM test indicates that the average gene expression in WM is (4 times) higher than the average gene expression in non-WM tissue.
+
+Visualize results for WM.
+
+```{r visualize results WM}
+class(cluster_results)
+names(cluster_results)
+```
+
+`top_results` function can be used to combine gene-and cluster-level results.
+By default, results from `top_results()` report both adjusted p-values and log2-FC; however, users can also choose to only report either, by specifying `select = "FDR"` or `select = "logFC"`.
+Below, `gene_PValue` and `gene_FDR` columns refer to the gene-level testing, while the subsequent columns indicate the cluster-specific results.
+
+```{r top results all}
+merge_res <- top_results(results$gene_results, cluster_results)
+head(merge_res,3)
+merge_res <- top_results(results$gene_results, cluster_results, select = "FDR")
+head(merge_res,3)
+```
+
+We can further specify a cluster and check top genes detected by *DESpace*.
+
+```{r top results WM}
+# Check top genes for WM
+results_WM <- top_results(cluster_results = cluster_results, cluster = "WM")
+head(results_WM, 3)
+```
+
+With `high_low` parameter, we can further filter genes to visualize those with higher (`high_low = "high"`) or lower (`high_low = "low"`) average abundance in the specified cluster, compared to the average abundance in the rest of the tissue.
+By default, `high_low = “both”` and all results are provided.
+
+```{r top results high_low}
+results_WM_both <- top_results(cluster_results = cluster_results, cluster = "WM", high_low = "both")
+```
+
+Here we present the highly abundant cluster SVGs; i.e., SVGs with higher expression in WM compared to the rest of the area.
+
+```{r show top results high}
+head(results_WM_both$high_genes, 3)
+```
+
+We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower expression in WM compared to the rest of the area.
+
+```{r show top results low}
+head(results_WM_both$low_genes, 3)
+```
+
+Visualize the gene expression of the top genes for layer WM.
+A cluster outline can be drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `spatial_cluster` and `cluster`.
+
+```{r expression plots high_low}
+# SVGs with higher than average abundance in WM
+feature <- rownames(results_WM_both$high_genes)[seq_len(3)]
+FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
+            coordinates = coordinates, cluster = 'WM', 
+            legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
+
+# SVGs with lower than average abundance in WM
+feature <- rownames(results_WM_both$low_genes)[seq_len(3)]
+FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
+            coordinates = coordinates, cluster = 'WM', 
+            legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
+```
+
+# Multiple samples
+
+If biological replicates are available, our framework allows jointly modeling them to target SVGs with coherent spatial patterns across samples.
+This approach may be particularly beneficial when data are characterized by a large degree of (biological and technical) variability, such as in cancer.
+Importantly, only genes detected (above filtering thresholds) in all samples will be analyzed.
+
+## Clustering
+
+Similar to gene-level testing, the multi-sample extension requires pre-annotated spatial clusters.
+
+### Manual annotation
+
+If the manual annotation for each sample is available, we can combine all samples and use manual annotations directly.
+Note that cluster labels must be consistent across samples (i.e., WM in sample 1 should represent the same tissue as WM in sample 2).
+With the `spe.combined` object that contains coordinates of the spot-level data, we can visualize spatial clusters.
+
+```{r view LIBD layers [multi]}
+set.seed(123)
+# Use common genes
+a <- rownames(counts(spe1)); b <- rownames(counts(spe2)); c <- rownames(counts(spe3))
+# find vector of common genes across all samples:
+CommonGene <- Reduce(intersect, list(a,b,c))
+spe1 <- spe1[CommonGene,]
+spe2 <- spe2[CommonGene,]
+spe3 <- spe3[CommonGene,]
+
+# Combine three samples
+spe.combined <- cbind(spe1, spe2, spe3, deparse.level = 1)
+ggplot(as.data.frame(colData(spe.combined)), aes(x=array_col, y=array_row,
+    color=factor(layer_guess_reordered))) +
+    geom_point() + 
+    facet_wrap(~sample_id) +
+    theme_void() +
+    scale_y_reverse() +
+    theme(legend.position="bottom") + 
+    labs(color = "", title = "Manually annotated spatial clusters")
+```
+
+### Spatially resolved (multi-sample) clustering
+
+Similarly to above, if manual annotations are not available, we can use spatially resolved clustering tools.
+Both BayesSpace [@BayesSpace] and StLearn [@stLearn] allow jointly clustering multiple samples.
+In particular each tool has a specific vignettes for multi-testing clustering: [*BayesSpace vignettes*](https://edward130603.github.io/BayesSpace/articles/joint_clustering.html), and [*stLearn vignettes*](https://stlearn.readthedocs.io/en/latest/tutorials/Integration_multiple_datasets.html).
+
+#### Single sample clustering
+
+In our benchmarks, we have noticed that, with both *BayesSpace* and *StLearn*, joint spatial clustering of multiple samples is more prone to failure and inaccurate results than spatial clustering of individual samples.
+Therefore, if multi-sample clustering fails, we suggest trying to cluster individual samples (as in Section 3 *Individual sample*) and manually match cluster ids across samples, to ensure that "cluster 1" always refers to the same spatial region in all samples.
+
+## SV testing
+
+Once we have spatial clusters for multiple samples, we add them to `colData(spe.combined)` as the column `layer_guess_reordered` and fit the model with spatial clusters as covariates.
+
+### Gene-level test
+
+Fit the model via `DESpace_test()`.
+Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `spatial_cluster` and `sample_col` define the column names of `colData(spe)` containing spatial clusters and sample ids.
+With `replicates = TRUE`, we fit the multi-sample model.
+
+The second element of the result (a `DGEList` object `estimated_y_multi`) contains the estimated common dispersion for the multi-sample case.
+
+```{r DESpace [multi]}
+set.seed(123)
+multi_results <- DESpace_test(spe = spe.combined,
+                                spatial_cluster = spatial_cluster,
+                                sample_col = 'sample_id',
+                                replicates = TRUE)
+```
+
+A list of results are returned.
+The main results of interest are stored in the `gene_results`.
+
+```{r}
+head(multi_results$gene_results,3)
+```
+
+The second element of the results (a `DGEList` object `estimated_y`) contains the estimated common dispersion, which can later be used to speed-up calculation when testing individual clusters.
+
+```{r}
+class(multi_results$estimated_y)
+```
+
+For each sample, we can visualize the gene expression of the most significant SVGs.
+Note that column names of spatial coordinates of spots should be `row` and `col`.
+
+```{r top SVGs expression plot [multi]}
+## Top three spatially variable genes
+feature <- multi_results$gene_results$gene_id[seq_len(3)]; feature
+## Sample names
+samples <- unique(colData(spe.combined)$sample_id); samples
+## Use purrr::map to combine multiple figures
+spot_plots <- purrr::map(seq_along(samples), function(j) {
+    ## Subset spe for each sample j
+    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
+    ## Store three gene expression plots with gene names in `feature` for spe_j
+    spot_plots <- FeaturePlot(spe_j, feature, coordinates = coordinates,
+                            spatial_cluster = spatial_cluster,
+                            title = TRUE, Annotated_cluster = TRUE,
+                            legend_cluster = TRUE)
+    return(spot_plots)
+})
+patchwork::wrap_plots(spot_plots, ncol=1)
+```
+
+### Individual cluster test
+
+Similarly to what shown in Section 3 *Individual sample*, our framework can discover the key SV spatial clusters also when jointly fitting multiple samples.
+For a multi-sample testing, set `replicates = TRUE` in `individual_test()`.
+
+```{r individual cluster test [multiple-sample]}
+set.seed(123)
+cluster_results <- individual_test(spe.combined, edgeR_y = multi_results$estimated_y,
+                                replicates = TRUE, spatial_cluster = spatial_cluster)
+```
+
+`individual_test()` returns a list containing the results of individual clusters, specified in `cluster` parameter.
+In this case, logFC refers to the log2-FC between the average abundance, across all samples, of a spatial cluster and the average abundance of all remaining clusters (e.g., WM vs. non-WM tissue).
+
+Visualize results for WM.
+
+```{r}
+class(cluster_results)
+names(cluster_results)
+```
+
+As above, `top_results` function can be used to combine gene-level and cluster-level results.
+
+```{r}
+merge_res <- top_results(multi_results$gene_results, cluster_results, select = "FDR")
+head(merge_res,3)
+```
+
+We can further select a cluster of interest, and check the top genes detected in that cluster.
+
+```{r}
+# Check top genes for WM
+results_WM <- top_results(cluster_results = cluster_results, cluster = "WM")
+# For each gene, adjusted p-values for each cluster
+head(results_WM,3)
+```
+
+With `high_low = "both"`, we can further filter genes to visualize highly and lowly abundant SVGs.
+
+```{r}
+results_WM_both <- top_results(cluster_results = cluster_results, cluster = "WM", high_low = "both")
+```
+
+Here we present the highly abundant cluster SVGs; i.e., SVGs with higher expression in WM compared to the rest of the tissue.
+
+```{r}
+head(results_WM_both$high_genes,3)
+```
+
+We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower expression in WM compared to the rest of the tissue.
+
+```{r}
+head(results_WM_both$low_genes,3)
+```
+
+Visualize the gene expression of top three genes for layer WM.
+
+```{r, fig.width=10, fig.height=15}
+# SVGs with higher abundance in WM, than in non-WM tissue
+feature_high <- rownames(results_WM_both$high_genes)[seq_len(3)]
+# SVGs with lower abundance in WM, than in non-WM tissue
+feature_low <- rownames(results_WM_both$low_genes)[seq_len(3)]
+plot_list_high <- list(); plot_list_low <- list()
+## Sample names
+samples <- unique(colData(spe.combined)$sample_id)
+for(j in seq_along(samples)){
+    ## Subset spe for each sample j
+    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
+    ## Store gene expression plots with top three highly abundant cluster SVGs for spe_j
+    plot_list_high[[j]] <- FeaturePlot(spe_j, feature_high, 
+                                coordinates = coordinates,
+                                spatial_cluster = spatial_cluster, 
+                                cluster = 'WM', Annotated_cluster = TRUE,
+                                legend_cluster = TRUE, title = TRUE)
+    ## Store gene expression plots with top three lowly abundant cluster SVGs for spe_j
+    plot_list_low[[j]] <- FeaturePlot(spe_j, feature_low, 
+                                coordinates = coordinates,
+                                spatial_cluster = spatial_cluster, 
+                                cluster = 'WM', Annotated_cluster = TRUE,
+                                legend_cluster = TRUE, title = TRUE)
+}
+# Expression plots for SVGs with higher abundance in WM, than in non-WM tissue
+patchwork::wrap_plots(plot_list_high, ncol=1)
+# Expression plots for SVGs with lower abundance in WM, than in non-WM tissue
+patchwork::wrap_plots(plot_list_low, ncol=1)
+```
+
+# Session info
+
+```{r, sessionInfo}
+sessionInfo()
+```
+
+# References

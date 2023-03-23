@@ -81,7 +81,7 @@
                                 radius = unit(0.4, "mm"),
                                 show.legend = FALSE) )
     }else{
-        (splot <- vertices %>% 
+        splot <- vertices %>% 
             ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
             geom_polygon(aes(group=spot, fill=fill), color=color) +
             labs(fill=fill.name) + coord_equal() +
@@ -90,9 +90,9 @@
             suppressWarnings(geom_mark_hull( aes(x=x.vertex, y=y.vertex,
                                     color = Cluster, fill=Cluster,linewidth = I(linewidth),
                                     label = label),
-                                    alpha=0, expand = unit(0.05, "mm"),
+                                    alpha=0, expand = unit(0.1, "mm"),
                                     radius = unit(0.2, "mm"),
-                                    show.legend = FALSE) ))
+                                    show.legend = FALSE) )
         
     }
     splot <- splot + scale_alpha(guide="none") + theme_void() + 

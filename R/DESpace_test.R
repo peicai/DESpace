@@ -97,7 +97,7 @@ DESpace_test <-  function(spe,
         sel_1 <- rowSums(counts(spe)) >= min_counts
         sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots
         spe <- spe[sel_1 & sel_2, ]
-        message("The number of genes that pass filtering is", 
+        message("The number of genes that pass filtering is ", 
                 dim(spe)[1], ".\n")
     }else{
         # for the multi-sample case:
@@ -113,7 +113,7 @@ DESpace_test <-  function(spe,
         # only keep genes that pass all filters across samples
         sel <- rowMeans(sel_matrix) == 1
         spe <- spe[sel, ]
-        message("The number of genes that pass filtering is", dim(spe)[1], ".\n")
+        message("The number of genes that pass filtering is ", dim(spe)[1], ".\n")
         } # end for !is.null(num_sample)
     }# end for filter_gene == TRUE
     if(replicates == TRUE){

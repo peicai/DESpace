@@ -181,7 +181,7 @@ for(i in seq_len(3)){
     # Remove lowly abundant genes
     spe_i <- spe_i[qc_low_gene,]
     assign(paste0("spe", i), spe_i)
-    message(paste0("Dimension of spe", i, ": ", dim(spe_i)))
+    message("Dimension of spe", i, ": ", dim(spe_i)[1], ", ", dim(spe_i)[2])
 }
 ```
 
@@ -373,13 +373,13 @@ A cluster outline can be drawn by specifying the column names of clusters stored
 # SVGs with higher than average abundance in WM
 feature <- rownames(results_WM_both$high_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
-            coordinates = coordinates, cluster = 'WM', 
+            coordinates = coordinates, cluster = 'WM', linewidth = 0.6,
             legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
 
 # SVGs with lower than average abundance in WM
 feature <- rownames(results_WM_both$low_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
-            coordinates = coordinates, cluster = 'WM', 
+            coordinates = coordinates, cluster = 'WM', linewidth = 0.6,
             legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
 ```
 
@@ -415,8 +415,7 @@ ggplot(as.data.frame(colData(spe.combined)), aes(x=array_col, y=array_row,
     color=factor(layer_guess_reordered))) +
     geom_point() + 
     facet_wrap(~sample_id) +
-    theme_void() +
-    scale_y_reverse() +
+    theme_void() + scale_y_reverse() +
     theme(legend.position="bottom") + 
     labs(color = "", title = "Manually annotated spatial clusters")
 ```
@@ -479,9 +478,8 @@ spot_plots <- purrr::map(seq_along(samples), function(j) {
     spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
     ## Store three gene expression plots with gene names in `feature` for spe_j
     spot_plots <- FeaturePlot(spe_j, feature, coordinates = coordinates,
-                            spatial_cluster = spatial_cluster,
-                            title = TRUE, Annotated_cluster = TRUE,
-                            legend_cluster = TRUE)
+                            spatial_cluster = spatial_cluster, title = TRUE,
+                            Annotated_cluster = TRUE, legend_cluster = TRUE)
     return(spot_plots)
 })
 patchwork::wrap_plots(spot_plots, ncol=1)
@@ -558,13 +556,13 @@ for(j in seq_along(samples)){
     ## Store gene expression plots with top three highly abundant cluster SVGs for spe_j
     plot_list_high[[j]] <- FeaturePlot(spe_j, feature_high, 
                                 coordinates = coordinates,
-                                spatial_cluster = spatial_cluster, 
+                                spatial_cluster = spatial_cluster, linewidth = 0.6,
                                 cluster = 'WM', Annotated_cluster = TRUE,
                                 legend_cluster = TRUE, title = TRUE)
     ## Store gene expression plots with top three lowly abundant cluster SVGs for spe_j
     plot_list_low[[j]] <- FeaturePlot(spe_j, feature_low, 
                                 coordinates = coordinates,
-                                spatial_cluster = spatial_cluster, 
+                                spatial_cluster = spatial_cluster, linewidth = 0.6,
                                 cluster = 'WM', Annotated_cluster = TRUE,
                                 legend_cluster = TRUE, title = TRUE)
 }

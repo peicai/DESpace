@@ -149,10 +149,10 @@ The library size, UMI counts, ratio of mitochondrial chromosome (chM) expression
 # Calculate per-spot QC metrics and store in colData
 spe1 <- scuttle::addPerCellQC(spe1,)
 # Remove combined set of low-quality spots
-spe1 <- spe1[, !(colData(spe1)$sum < 10 |                     # library size
+spe1 <- spe1[, !(colData(spe1)$sum < 10 |             # library size
                 colData(spe1)$detected < 10 |         # number of expressed genes
-                colData(spe1)$expr_chrM_ratio > 0.30|  # mitochondrial expression ratio
-                colData(spe1)$cell_count > 10)]        # number of cells per spot
+                colData(spe1)$expr_chrM_ratio > 0.30| # mitochondrial expression ratio
+                colData(spe1)$cell_count > 10)]       # number of cells per spot
 # Sample 2:
 # Calculate per-spot QC metrics and store in colData
 spe2 <- scuttle::addPerCellQC(spe2,)
@@ -203,9 +203,13 @@ With the `spe` or `spe` object that contains coordinates of the spot-level data,
 ```{r view LIBD layers, fig.width=5,fig.height=6}
 # View LIBD layers for one sample
 CD <- as.data.frame(colData(spe3))
-(p1 <- ggplot(CD, aes(x=array_col, y=array_row, color=factor(layer_guess_reordered)), size = 0.1) +
-    geom_point() + scale_y_reverse() + theme(legend.position="bottom") + 
-    labs(color = "", title = paste0("Manually annotated spatial clusters")))
+ggplot(CD, 
+    aes(x=array_col,y=array_row, 
+    color=factor(layer_guess_reordered))) +
+    geom_point() + 
+    theme_void() + scale_y_reverse() + 
+    theme(legend.position="bottom") + 
+    labs(color = "", title = paste0("Manually annotated spatial clusters"))
 ```
 
 ```{r free memory, include=FALSE}
@@ -244,9 +248,11 @@ obsm.to_csv("stLearn_clusters.csv")
 Then, we can load these results in R and store spatial clusters in the `spe` object.
 
 ```{r stLearn[r multi-sample], eval = FALSE}
-stLearn_results <- read.csv("stLearn_clusters.csv", sep = ',', header = TRUE)
+stLearn_results <- read.csv("stLearn_clusters.csv", sep = ',', 
+                            header = TRUE)
 # Match colData(spe) and stLearn results
-stLearn_results <- stLearn_results[match(rownames(colData(spe3)), rownames(stLearn_results)), ]
+stLearn_results <- stLearn_results[match(rownames(colData(spe3)), 
+                                    rownames(stLearn_results)), ]
 colData(spe3)$stLearn_clusters <- stLearn_results$stLearn_pca_kmeans
 ```
 
@@ -287,15 +293,20 @@ Note that the gene names in vector `feature`, should also appear in the count ma
 
 ```{r top SVGs expression plot}
 (feature <- results$gene_results$gene_id[seq_len(3)])
-FeaturePlot(spe3, feature, coordinates = coordinates, 
+FeaturePlot(spe3, feature, 
+            coordinates = coordinates, 
             ncol = 3, title = TRUE)
 ```
 
 Additionally, function `FeaturePlot()` can draw an outline around each cluster.
 
 ```{r expression plots all cluster}
-FeaturePlot(spe3, feature, coordinates = coordinates, Annotated_cluster = TRUE,
-            spatial_cluster = spatial_cluster, cluster = 'all', legend_cluster = TRUE, title = TRUE)
+FeaturePlot(spe3, feature, 
+            coordinates = coordinates, 
+            Annotated_cluster = TRUE,
+            spatial_cluster = spatial_cluster, 
+            cluster = 'all', 
+            legend_cluster = TRUE, title = TRUE)
 ```
 
 ### Individual cluster test
@@ -313,7 +324,8 @@ Alternatively, if you want to re-compute dispersion estimates (significantly slo
 
 ```{r individual cluster test}
 set.seed(123)
-cluster_results <- individual_test(spe3, edgeR_y = results$estimated_y,
+cluster_results <- individual_test(spe3, 
+                                    edgeR_y = results$estimated_y,
                                     spatial_cluster = spatial_cluster)
 ```
 
@@ -335,7 +347,8 @@ Below, `gene_PValue` and `gene_FDR` columns refer to the gene-level testing, whi
 ```{r top results all}
 merge_res <- top_results(results$gene_results, cluster_results)
 head(merge_res,3)
-merge_res <- top_results(results$gene_results, cluster_results, select = "FDR")
+merge_res <- top_results(results$gene_results, cluster_results, 
+                        select = "FDR")
 head(merge_res,3)
 ```
 
@@ -343,7 +356,8 @@ We can further specify a cluster and check top genes detected by *DESpace*.
 
 ```{r top results WM}
 # Check top genes for WM
-results_WM <- top_results(cluster_results = cluster_results, cluster = "WM")
+results_WM <- top_results(cluster_results = cluster_results, 
+                        cluster = "WM")
 head(results_WM, 3)
 ```
 
@@ -351,7 +365,9 @@ With `high_low` parameter, we can further filter genes to visualize those with h
 By default, `high_low = “both”` and all results are provided.
 
 ```{r top results high_low}
-results_WM_both <- top_results(cluster_results = cluster_results, cluster = "WM", high_low = "both")
+results_WM_both <- top_results(cluster_results = cluster_results, 
+                                cluster = "WM", 
+                                high_low = "both")
 ```
 
 Here we present the highly abundant cluster SVGs; i.e., SVGs with higher expression in WM compared to the rest of the area.
@@ -373,14 +389,16 @@ A cluster outline can be drawn by specifying the column names of clusters stored
 # SVGs with higher than average abundance in WM
 feature <- rownames(results_WM_both$high_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
-            coordinates = coordinates, cluster = 'WM', linewidth = 0.6,
-            legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
+            coordinates = coordinates, cluster = 'WM', 
+            legend_cluster = TRUE, Annotated_cluster = TRUE, 
+            linewidth = 0.6, title = TRUE)
 
 # SVGs with lower than average abundance in WM
 feature <- rownames(results_WM_both$low_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, spatial_cluster = spatial_cluster, 
-            coordinates = coordinates, cluster = 'WM', linewidth = 0.6,
-            legend_cluster = TRUE, Annotated_cluster = TRUE, title = TRUE)
+            coordinates = coordinates, cluster = 'WM', 
+            legend_cluster = TRUE, Annotated_cluster = TRUE, 
+            linewidth = 0.6,title = TRUE)
 ```
 
 # Multiple samples
@@ -402,7 +420,9 @@ With the `spe.combined` object that contains coordinates of the spot-level data,
 ```{r view LIBD layers [multi]}
 set.seed(123)
 # Use common genes
-a <- rownames(counts(spe1)); b <- rownames(counts(spe2)); c <- rownames(counts(spe3))
+a <- rownames(counts(spe1)); 
+b <- rownames(counts(spe2)); 
+c <- rownames(counts(spe3))
 # find vector of common genes across all samples:
 CommonGene <- Reduce(intersect, list(a,b,c))
 spe1 <- spe1[CommonGene,]
@@ -411,7 +431,8 @@ spe3 <- spe3[CommonGene,]
 
 # Combine three samples
 spe.combined <- cbind(spe1, spe2, spe3, deparse.level = 1)
-ggplot(as.data.frame(colData(spe.combined)), aes(x=array_col, y=array_row,
+ggplot(as.data.frame(colData(spe.combined)), 
+    aes(x=array_col, y=array_row,
     color=factor(layer_guess_reordered))) +
     geom_point() + 
     facet_wrap(~sample_id) +
@@ -477,7 +498,8 @@ spot_plots <- purrr::map(seq_along(samples), function(j) {
     ## Subset spe for each sample j
     spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
     ## Store three gene expression plots with gene names in `feature` for spe_j
-    spot_plots <- FeaturePlot(spe_j, feature, coordinates = coordinates,
+    spot_plots <- FeaturePlot(spe_j, feature, 
+                            coordinates = coordinates,
                             spatial_cluster = spatial_cluster, title = TRUE,
                             Annotated_cluster = TRUE, legend_cluster = TRUE)
     return(spot_plots)
@@ -492,8 +514,10 @@ For a multi-sample testing, set `replicates = TRUE` in `individual_test()`.
 
 ```{r individual cluster test [multiple-sample]}
 set.seed(123)
-cluster_results <- individual_test(spe.combined, edgeR_y = multi_results$estimated_y,
-                                replicates = TRUE, spatial_cluster = spatial_cluster)
+cluster_results <- individual_test(spe.combined, 
+                                edgeR_y = multi_results$estimated_y,
+                                replicates = TRUE, 
+                                spatial_cluster = spatial_cluster)
 ```
 
 `individual_test()` returns a list containing the results of individual clusters, specified in `cluster` parameter.
@@ -509,7 +533,8 @@ names(cluster_results)
 As above, `top_results` function can be used to combine gene-level and cluster-level results.
 
 ```{r}
-merge_res <- top_results(multi_results$gene_results, cluster_results, select = "FDR")
+merge_res <- top_results(multi_results$gene_results, cluster_results, 
+                        select = "FDR")
 head(merge_res,3)
 ```
 
@@ -517,7 +542,8 @@ We can further select a cluster of interest, and check the top genes detected in
 
 ```{r}
 # Check top genes for WM
-results_WM <- top_results(cluster_results = cluster_results, cluster = "WM")
+results_WM <- top_results(cluster_results = cluster_results, 
+                        cluster = "WM")
 # For each gene, adjusted p-values for each cluster
 head(results_WM,3)
 ```
@@ -525,7 +551,8 @@ head(results_WM,3)
 With `high_low = "both"`, we can further filter genes to visualize highly and lowly abundant SVGs.
 
 ```{r}
-results_WM_both <- top_results(cluster_results = cluster_results, cluster = "WM", high_low = "both")
+results_WM_both <- top_results(cluster_results = cluster_results, 
+                            cluster = "WM", high_low = "both")
 ```
 
 Here we present the highly abundant cluster SVGs; i.e., SVGs with higher expression in WM compared to the rest of the tissue.
@@ -552,17 +579,19 @@ plot_list_high <- list(); plot_list_low <- list()
 samples <- unique(colData(spe.combined)$sample_id)
 for(j in seq_along(samples)){
     ## Subset spe for each sample j
-    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j] ]
-    ## Store gene expression plots with top three highly abundant cluster SVGs for spe_j
+    spe_j <- spe.combined[, colData(spe.combined)$sample_id == samples[j]]
+    ## Gene expression plots with top highly abundant cluster SVGs for spe_j
     plot_list_high[[j]] <- FeaturePlot(spe_j, feature_high, 
                                 coordinates = coordinates,
-                                spatial_cluster = spatial_cluster, linewidth = 0.6,
+                                spatial_cluster = spatial_cluster, 
+                                linewidth = 0.6,
                                 cluster = 'WM', Annotated_cluster = TRUE,
                                 legend_cluster = TRUE, title = TRUE)
-    ## Store gene expression plots with top three lowly abundant cluster SVGs for spe_j
+    ## Gene expression plots with top lowly abundant cluster SVGs for spe_j
     plot_list_low[[j]] <- FeaturePlot(spe_j, feature_low, 
                                 coordinates = coordinates,
-                                spatial_cluster = spatial_cluster, linewidth = 0.6,
+                                spatial_cluster = spatial_cluster, 
+                                linewidth = 0.6,
                                 cluster = 'WM', Annotated_cluster = TRUE,
                                 legend_cluster = TRUE, title = TRUE)
 }

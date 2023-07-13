@@ -240,7 +240,7 @@ There is a tutorial for using StLearn on this dataset (human DLPFC) [*here*](htt
 
 After running stLearn, we can store results as a `csv` file.
 
-```{python stLearn[py multi-sample], eval = FALSE}
+```{python.reticulate = FALSE stLearn[py multi-sample], eval = FALSE}
 # Save spatial results
 obsm.to_csv("stLearn_clusters.csv") 
 ```

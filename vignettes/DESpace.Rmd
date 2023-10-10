@@ -601,6 +601,28 @@ patchwork::wrap_plots(plot_list_high, ncol=1)
 patchwork::wrap_plots(plot_list_low, ncol=1)
 ```
 
+### Sample-specific covariates (e.g., batch effects)
+If sample-specific covariates, such as batch effects, are available, we can account for them in *DESpace*.
+The adjustment works as in the *edgeR* original framework: the mean of the negative binomial model is expressed as a function of spatial clusters, and additional nuisance covariates; differential testing is then performed on spatial clusters only, to identify SVGs.
+Note that sample-specific covariates can be used instead of samples, but a joint modelling of both samples and (sample-specific) covariates is not possible because the two variables are nested. 
+
+To show an example application, we artificially separate samples in 2 batches:
+```{r DESpace [add batch]}
+spe.combined$batch_id = ifelse(spe.combined$sample_id == "151507", "batch_1", "batch_2")
+
+table(spe.combined$batch_id, spe.combined$sample_id)
+```
+
+Analyses are performed, as explained above, in Section 5; yet, when running `DESpace_test`, we set the `sample_col` to `batch_id`:
+```{r DESpace [batch test], eval = FALSE}
+set.seed(123)
+batch_results <- DESpace_test(spe = spe.combined,
+                                spatial_cluster = spatial_cluster,
+                                sample_col = 'batch_id',
+                                replicates = TRUE)
+```
+
+
 # Session info
 
 ```{r, sessionInfo}

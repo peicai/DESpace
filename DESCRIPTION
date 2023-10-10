@@ -19,7 +19,7 @@ Authors@R: c(
            comment = c(ORCID = "0009-0001-9229-2244")),
     person(given = "Simone",
            family = "Tiberi",
-           role = c("aut"),
+           role = c("aut", "cre"),
            email = "simone.tiberi@unibo.it",
            comment = c(ORCID = "0000-0002-3054-9964")))
 biocViews: Spatial, SingleCell, RNASeq, Transcriptomics, GeneExpression, 

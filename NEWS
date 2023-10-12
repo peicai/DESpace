@@ -1,5 +1,9 @@
+<<<<<<< HEAD
 Changes in version 1.0.1:
 + sample-specific covariates allowed
+=======
+Changes in version 1.1.1:
+>>>>>>> upstream/devel
 + bug fixed in vignettes (giving error: "there is no package called 'reticulate'")
 
 Changes in version 1.0.0:

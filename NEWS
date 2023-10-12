@@ -1,5 +1,7 @@
-Changes in version 1.0.1:
+Changes in version 1.0.2:
 + sample-specific covariates allowed
+
+Changes in version 1.0.1:
 + bug fixed in vignettes (giving error: "there is no package called 'reticulate'")
 
 Changes in version 1.0.0:

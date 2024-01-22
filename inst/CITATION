@@ -1,0 +1,17 @@
+citHeader("To cite DESpace in publications use:")
+
+citEntry(entry 	= "Article",
+         title        	= "DESpace: spatially variable gene detection via differential expression testing of spatial clusters",
+         author       	= personList(as.person("Peiying Cai"),
+                                    as.person("Mark D. Robinson"),
+                                    as.person("Simone Tiberi")),
+         eprint = "https://doi.org/10.1093/bioinformatics/btae027",
+         journal = "Bioinformatics",
+         year = "2024",
+         url  = "https://doi.org/10.1093/bioinformatics/btae027",
+         publisher = "Oxford University Press",
+         paste("Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024).",
+               "DESpace: spatially variable gene detection via differential expression testing of spatial clusters.",
+               "Bioinformatics.",
+               "URL https://doi.org/10.1093/bioinformatics/btae027")
+)

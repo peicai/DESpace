@@ -17,6 +17,7 @@
 #' @importFrom BiocGenerics do.call
 #' @importFrom BiocGenerics match
 #' @importFrom BiocGenerics mapply
+#' @importFrom BiocGenerics sapply
 #' @importFrom BiocGenerics counts
 #' @importFrom BiocGenerics get
 #' @importFrom data.table setorder
@@ -46,13 +47,16 @@
 #' @importFrom ggplot2 scale_fill_discrete
 #' @importFrom ggplot2 scale_color_discrete
 #' @importFrom ggplot2 unit
+#' @importFrom ggplot2 geom_sf
 #' @importFrom ggnewscale new_scale_fill
 #' @importFrom ggnewscale new_scale_color
 #' @importFrom patchwork wrap_plots 
 #' @importFrom assertthat assert_that
 #' @importFrom ggforce geom_mark_hull
-#' @importFrom cowplot get_legend
+#' @importFrom cowplot get_plot_component
 #' @importFrom ggpubr as_ggplot
 #' @importFrom BiocParallel bplapply
+#' @importFrom muscat aggregateData
+#' @importFrom sosta reconstructShapeDensityImage
 #' 
 NULL

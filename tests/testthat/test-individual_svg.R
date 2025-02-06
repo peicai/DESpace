@@ -8,9 +8,9 @@ test_that("individual_test() works faultlessly.", {
   
   # Individual cluster test: identify SVGs for each individual cluster
   set.seed(123)
-  cluster_results <- individual_test(LIBD_subset,
+  cluster_results <- individual_svg(LIBD_subset,
                                      edgeR_y = edgeR_y,
-                                     spatial_cluster = "layer_guess_reordered")
+                                     cluster_col = "layer_guess_reordered")
   
   expect_is(cluster_results, "list")
   expect_is(cluster_results[[1]], "data.frame")

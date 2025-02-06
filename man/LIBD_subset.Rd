@@ -31,7 +31,7 @@ Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD
 
 }
 \seealso{
-\code{\link{DESpace_test}}, \code{\link{individual_test}}
+\code{\link{svg_test}}, \code{\link{individual_svg}}
 }
 \author{
 Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}

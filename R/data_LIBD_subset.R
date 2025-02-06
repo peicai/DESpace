@@ -28,5 +28,5 @@
 #' 
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
-#' @seealso \code{\link{DESpace_test}}, \code{\link{individual_test}}
+#' @seealso \code{\link{svg_test}}, \code{\link{individual_svg}}
 NULL

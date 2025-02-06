@@ -2,8 +2,12 @@
 
 <img src="inst/extdata/DESpace.png" width="200" align="right"/>
 
-`DESpace` is an intuitive framework for identifying spatially variable genes (SVGs) via [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), one of the most common methods for performing differential expression analyses. Based on pre-annotated spatial clusters as summarized spatial information, `DESpace` models gene expression using a negative binomial (NB), via [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), with spatial clusters as covariates.
-SVGs are then identified by testing the significance of spatial clusters.
+`DESpace` is a framework for identifying spatially variable genes (SVGs), a common task in spatial transcriptomics analyses, and differential spatial variable pattern (DSP) genes, which identify differences in spatial gene expression patterns across experimental conditions.
+
+By leveraging pre-annotated spatial clusters as summarized spatial information, `DESpace` models gene expression with a negative binomial (NB), via [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), with spatial clusters as covariates. SV genes are then identified by testing the significance of spatial clusters. For detailed guidance on detecting SVGs with *DESpace*, refer to [*SVGs vignettes*](https://www.bioconductor.org/packages/release/bioc/vignettes/DESpace/inst/doc/DESpace.html).
+
+For multi-sample, multi-condition datasets, again we fit a NB model via [edgeR](https://bioconductor.org/packages/release/bioc/html/edgeR.html), but this time we use spatial clusters, conditions and their interactions as covariates.
+DSP genes are then identified by testing the interaction between spatial clusters and conditions.
 
 Check the vignettes for a description of the main conceptual and mathematical aspects, as well as usage guidelines.
 
@@ -33,3 +37,5 @@ or
 ``` r
 browseVignettes("DESpace")
 ```
+
+Additionally, you can visit the DESpace package overview and demonstration [here](https://peicai.github.io/DESpace/).

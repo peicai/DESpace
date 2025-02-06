@@ -1,0 +1,405 @@
+---
+title: "Differential Spatial Pattern between conditions"
+author:
+- name: Peiying Cai
+  affiliation:
+  - &IMLS Institute for Molecular Life Sciences, University of Zurich, Switzerland
+  - &SIB SIB Swiss Institute of Bioinformatics, University of Zurich, Switzerland
+  email: peiying.cai@uzh.ch
+- name: Simone Tiberi
+  affiliation:
+  - &Stats Departiment of Statistical Sciences, University of Bologna, Italy
+  email: simone.tiberi@unibo.it
+date: "`r format(Sys.Date(), '%m/%d/%Y')`"
+bibliography: References.bib
+vignette: >
+  %\VignetteIndexEntry{A framework to discover spatially variable genes}
+  %\VignetteEncoding{UTF-8}
+  %\VignetteEngine{knitr::rmarkdown}
+output: 
+  BiocStyle::html_document
+editor_options: 
+  chunk_output_type: console
+  markdown: 
+    wrap: sentence
+---
+
+------------------------------------------------------------------------
+
+```{r setup, echo=FALSE, results="hide"}
+knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
+                        dev="png",
+                        message=TRUE, error=FALSE, warning=TRUE)
+library(utils)
+```
+
+# Introduction
+
+*DESpace* is a framework for identifying spatially variable genes (SVGs), a common task in spatial transcriptomics analyses, and differential spatial variable pattern (DSP) genes, which identify differences in spatial gene expression patterns across experimental conditions.
+
+By leveraging pre-annotated spatial clusters as summarized spatial information, *DESpace* models gene expression with a negative binomial (NB), via *edgeR* [@edgeR], with spatial clusters as covariates. SV genes are then identified by testing the significance of spatial clusters. For detailed guidance on detecting SVGs with *DESpace*, refer to [*SVGs vignettes*](https://www.bioconductor.org/packages/release/bioc/vignettes/DESpace/inst/doc/DESpace.html).
+
+For multi-sample, multi-condition datasets, again we fit a NB model via *edgeR* [@edgeR], but this time we use spatial clusters, conditions and their interactions as covariates.
+DSP genes are then identified by testing the interaction between spatial clusters and conditions. Notably, this framework can identify differences also between more than 2 groups. This vignette will demonstrate how to perform DSP analyses.
+
+
+# Load packages
+
+```{r package, warning=FALSE}
+suppressMessages({
+    library(DESpace)
+    library(ggplot2)
+    library(SpatialExperiment)
+    library(ExperimentHub)
+    library(reshape2)
+    library(tidyverse)
+    library(patchwork)
+    library(splines)
+})
+```
+
+# Data
+
+As an example dataset, we consider a multi-sample, multi-group spatially resolved transcriptomics data - the Stereo-seq dataset of taxolotl telencephalon brain regeneration stages [@ARTISTA]. The dataset includes axolotl brain tissues collected at various days post-injury (DPI): 2 (3 sections), 5 (3 sections), 10 (3 sections), 15 (4 sections), 20 (3 sections), 30 (1 section) and 60 (1 section), after the removal of a reproducible portion of dorsal pallium in left telencephalic hemisphere of axolotl. The original dataset is available for download via [*ARTISTA*](https://db.cngb.org/stomics/artista/download/), and the processed dataset (including spatial clusters) can be accessed via [*muSpaData*](https://github.com/peicai/muSpaData) ExperimentHub package.
+
+## Input data
+
+Here, we use a subset of the original data, consisting of three distinct regeneration stages: 2, 10 and 20 DPI, with two sections for each stage.
+
+```{r load-example-data, message = FALSE}
+# Load the small example data
+# eh <- ExperimentHub()
+# spe_example <- eh[["EH9613"]]
+load("~/Desktop/DESpace_extention/muSpaData_Data/Wei22_example.rda")
+# The following columns from colData(spe) are specified:
+coordinates <- c("sdimx", "sdimy") # coordinates of cells
+spatial_cluster <- 'Banksy_smooth' # Banksy spatial clusters
+condition_col <- 'condition'       # regeneration time phases
+sample_col <- 'sample_id'          # tissue section id
+colData(spe_example) |> head()
+```
+
+The spatial tissues of each sample were annotated via Banksy [@Banksy], classifying cells into five domains. These domain annotations are stored in the `Banksy_smooth` column of colData. Additionally, the columns `sdimx` and `sdimy` contain the spatial coordinates of the cells, while the `condition` column specifies the group (i.e., stage) each cell belongs to.
+
+## Quality control/filtering
+
+Quality control (QC) procedures at the cell and gene level aim to remove both low-quality cells, and lowly abundant genes.
+For QC, we adhere to the instructions from "Orchestrating Spatially Resolved Transcriptomics Analysis with Bioconductor" ([*OSTA*](https://lmweber.org/OSTA-book/quality-control.html)).
+Library size and UMI counts are used to identify low-quality cells.
+Then, we discard lowly abundant genes that are detected in fewer than 20 cells.
+R scripts for performing quality control on this example dataset can be found in [*muSpaData R scripts*](https://github.com/peicai/muSpaData/blob/main/inst/scripts/make-data.R#L94-L130).
+
+## Clustering
+
+This framework relies on spatial clusters being accessible and successfully summarizing the primary spatial characteristics of the data.
+In most datasets, these spatial features are either accessible or can be generated with spatial clustering algorithms.
+
+### Manual annotation
+
+If the manual annotation (e.g., annotated by a pathologist) for each sample is available, we can combine all samples and use manual annotations directly.
+Note that cluster labels must be consistent across samples (i.e., cluster 1 in sample 1 should represent the same tissue as cluster 1 in sample 2).
+
+### Spatially resolved (multi-sample) clustering
+
+If manual annotations are not available, we can use spatially resolved clustering tools.
+These methods, by jointly employing spatial coordinates and gene expression data, enable obtaining spatial clusters.
+
+Among others, BayesSpace [@BayesSpace] and Banksy [@Banksy] allow jointly clustering multiple samples.
+In particular each tool has a specific vignettes for multi-sample clustering: [*BayesSpace vignettes*](https://edward130603.github.io/BayesSpace/articles/joint_clustering.html), and [*Banksy vignettes*](https://prabhakarlab.github.io/Banksy/articles/multi-sample.html).
+
+Details on applying Banksy joint clustering to this example dataset can also be found in [*muSpaData R scripts*](https://github.com/peicai/muSpaData/blob/main/inst/scripts/make-data.R#L131-L230).
+
+```{r view ARTISTA Banksy}
+# View Banksy clusters 
+# The spatial cluster assignments are available in the `colData(spe)`
+CD <- colData(spe_example) |> as.data.frame()
+ggplot(CD, aes(x = sdimx, y = sdimy, color = factor(Banksy_smooth))) +
+  geom_point(size = 0.25) +
+  facet_wrap(~sample_id, scales = 'free') +
+  theme_void() +
+  theme(legend.position = "bottom") +
+  guides(color = guide_legend(override.aes = list(size = 3))) +
+  labs(color = NULL, title = "Banksy Spatial Clusters")
+```
+
+#### Single sample clustering
+
+In our benchmarks, we have noticed that, with both *BayesSpace* and *Banksy*, joint spatial clustering of multiple samples does not always yield more accurate results than spatial clustering of individual samples.
+Therefore, if multi-sample clustering fails, we suggest clustering individual samples (as described in Section 3 *Individual sample* in the [*SVG Vignette*](https://www.bioconductor.org/packages/release/bioc/vignettes/DESpace/inst/doc/DESpace.html)) and manually matching cluster ids across samples, to ensure that "cluster 1" always refers to the same spatial region in all samples.
+
+# DSP testing
+
+Once we have spatial clusters, we can search for DSP between conditions. Importantly, only clusters identified in all samples will be analyzed.
+
+## Gene-level test
+
+Fit the model via `dsp_test` function.
+Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `cluster_col`, `sample_col` and `condition_col` define the column names in `colData(spe)` for spatial clusters, sample ids, and condition ids, respectively. Set `verbose` to `TRUE` (default value) to view detailed statistics.
+
+```{r DESpace}
+set.seed(123)
+results <- dsp_test(spe = spe_example,
+                    cluster_col = spatial_cluster,
+                    sample_col = sample_col,
+                    condition_col = condition_col,
+                    verbose = TRUE)
+```
+
+A list of results is returned, with the main results of interest stored in the `gene_results` data frame. This frame contains several columns, including gene names (`gene_id`), log2-fold changes between groups (e.g, `logFC.condition2DPI.cluster_id1`), average (across cells) log-2 counts per million (`logCPM`), likelihood ratio test statistics (`LR`), raw p-values (`PValue`) and Benjamini-Hochberg adjusted p-values (`FDR`).
+
+Specifically, the column `logFC.condition2DPI.cluster_id1` represents the difference in the log2-fold change of gene expression under **2 DPI** in **cluster 1** relative to the baseline condition (**10 DPI**) and baseline cluster (**cluster 0**).
+
+In other words, we are testing whether the spatial structure of gene expression (summarized by the domains) differs between 2 and 10 DPI.
+
+```{r}
+head(results$gene_results, 2)
+```
+
+The second element of the results (a `DGEList` object `estimated_y`) contains the estimated common dispersion.
+
+The third and fourth element of the results (`DGEGLM` and `DGELRT` objects) contain full statistics from `edgeR::glmFit` and `edgeR::glmLRT`.
+
+```{r}
+class(results$estimated_y); class(results$glmLrt); class(results$glmFit)
+```
+
+Visualize the gene expression of the most significant genes with `FeaturePlot()`.
+Note that the gene names in vector `feature`, should also appear in the count matrix’s row names. Specifying the column names of spatial coordinates of spots is only necessary when they are not named `row` and `col`.
+
+```{r}
+sample_ids <- levels(CD$sample_id)
+
+# Identify the top DSP
+(feature <- results$gene_results$gene_id[seq_len(1)])
+
+# Extract the gene_name by matching the gene_id
+(feature_name <- rowData(spe_example)$gene_id[
+  rowData(spe_example)$gene_name %in% feature
+])
+```
+
+```{r top DSPs expression plot}
+# generate a list of plots
+plots <- lapply(sample_ids, function(sample_id) {
+  
+  # Subset spe_example for each sample
+  spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+  
+  # Create FeaturePlot for the sample
+  plot <- FeaturePlot(spe_j, feature,
+                      coordinates = coordinates,
+                      platform = "Stereo-seq", ncol = 1,
+                      diverging = TRUE,
+                      point_size = 0.1, legend_exprs = TRUE) + 
+    theme(legend.position = "right",
+          legend.key.size = unit(0.5, 'cm')) +
+    labs(color = "") + ggtitle(sample_id) 
+  
+  return(plot)
+})
+```
+
+The spatial structure of gene expression changes across conditions, transitioning from more localized patterns at earlier stages (2 and 10 DPI) to a broader distribution at a later stage (20 DPI).
+
+```{r}
+combined_plot <- wrap_plots(plots, ncol = 3) + 
+    # common legend
+    plot_layout(guides = 'collect')  
+combined_plot
+```
+
+
+## Individual cluster test
+
+*DESpace* can also be used to reveal the specific areas of the tissue affected by spatial variability; i.e., spatial clusters that are particularly over/under abundant compared to the average across conditions.
+Function `individual_dsp()` can be used to identify DSP genes for each individual cluster.
+Parameters `cluster_col`, `sample_col` and `condition_col` indicate the column names in `colData(spe)` for spatial clusters, sample ids, and condition ids, respectively.
+
+```{r individual cluster test, results = 'hide', message=FALSE}
+set.seed(123)
+cluster_results <- individual_dsp(spe_example,
+                                  cluster_col = spatial_cluster,
+                                  sample_col = "sample_id",
+                                  condition_col = condition_col)
+```
+
+`individual_dsp()` returns a list containing the results of the individual cluster tests.
+Similarly to above, the results for each cluster are presented as a `data.fame`, where columns contain gene names (`gene_id`), likelihood ratio test statistics (`LR`), log2-fold changes (`logFC`), raw p-values (`PValue`) and Benjamini-Hochberg adjusted p-values (`FDR`).
+
+Here, we present the top results for cluster 2. 
+`logFC.condition20DPI.cluster_id2` represents the interaction between the 20 DPI condition and cluster 2. It compares the effect of 20 DPI in cluster 2 with its effect in all other domains (i.e., all tissue regions excluding cluster 2, which serves as the baseline).
+A positive log-fold change value suggests that, the increase in gene expression in **cluster 2** from 10 DPI (the baseline) to 20 DPI is **greater** than the increase in gene expression in **all other clusters** from 10 DPI to 20 DPI.
+
+```{r visualize results cluster4}
+class(cluster_results)
+names(cluster_results)
+cluster_results$`2` |> head(n = 4)
+```
+
+Visualize the gene expression of the top gene for cluster 2.
+
+```{r expression plots high_low}
+# one of top DSPs for cluster 2
+(feature <- rownames(cluster_results[["2"]])[4])
+
+# Extract the gene_name by matching the gene_id
+(feature_name <- rowData(spe_example)$gene_id[
+  rowData(spe_example)$gene_name == feature
+])
+```
+
+A cluster outline can be drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `cluster_col` and `cluster`.
+
+
+```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
+# generate a list of FeaturePlots
+plots <- lapply(sample_ids, function(sample_id) {
+    # Subset spe_example for each sample
+    spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+    # Create FeaturePlot for the sample
+    plot <- FeaturePlot(spe_j, feature, 
+                        cluster_col = spatial_cluster,
+                        coordinates = coordinates, cluster = '2',
+                        platform = "Stereo-seq",
+                        diverging = TRUE,
+                        linecolor = "lightgreen",
+                        point_size = 0.1,
+                        linewidth = 0.6) +
+        theme(legend.position = "right",
+              legend.key.size = unit(0.5, 'cm')) +
+        labs(color = "") + ggtitle(sample_id) 
+  
+    return(plot)
+})
+```
+
+Again, the spatial structure of gene expression varies across groups; in particular, at 2 and 10 DPI, abundance is higher in cluster 2 (outlined in the plot), compared to the rest of the tissue, while at 20 DPI abundance is more homogeneous.
+
+```{r}
+combined_plot <- wrap_plots(plots, ncol = 3) + 
+    # common legend
+    plot_layout(guides = 'collect')  
+combined_plot
+```
+
+
+## Smooth splines to model time
+
+*DESpace* offers a flexible framework that allows users to create a custom design matrix. The default design matrix is `model.matrix(~ condition * cluster)`. Below, we provide an example of how to create a design matrix using piecewise-cubic splines to account for the effect of time.
+
+First, we create metadata associated with the samples and clusters. For each cluster level, there are 3 time phases (i.e., `day`) and 2 replicates (i.e., `rep``) for each time point.
+
+```{r smooth spline}
+# all combinations of sample and cluster
+metadata <- expand.grid(sample_id = levels(spe_example$sample_id),
+                        cluster = levels(spe_example$Banksy_smooth)
+                        ) |>
+    # extract time point as 'day' from sample_id 
+    mutate(
+      day = as.numeric(sub("DPI.*", "", sample_id)),
+      rep = as.numeric(sub(".*_", "", sample_id)) 
+    )
+metadata |> head(n = 10)
+```
+
+Instead of treating time phases (e.g., 2 DPI, 10 DPI, 20 DPI) as a categorical variable, we can model the time trend using a smooth spline function. This can be achieved with the `ns(x, df)` function from the  [*splines*](https://stat.ethz.ch/R-manual/R-devel/library/splines/html/ns.html) package. Here, `x` represents the predictor variable—time phases (`day` in the `metadata`) in our case-and `df` specifies the degrees of freedom, which determine the total number of parameters in the `ns()` time model, including the intercept.
+
+```{r}
+design_model <- model.matrix(~ cluster * ns(day, df = 2), 
+                             data = metadata)
+rownames(design_model) <- paste0(metadata$sample_id, "_",
+                                 metadata$cluster)
+dim(design_model)
+design_model |> head(n = 3)
+```
+
+Fit the model via `dsp_test` function.
+
+```{r DESpace spline}
+set.seed(123)
+results <- dsp_test(spe_example,
+                    design = design_model,
+                    cluster_col = spatial_cluster,
+                    sample_col = sample_col,
+                    condition_col = condition_col,
+                    verbose = TRUE)
+```
+
+One significant gene:
+
+```{r}
+(gn <- results[["gene_results"]][["gene_id"]][9])
+w <- results[["estimated_y"]][["genes"]][["genes"]] == gn
+
+# Extract the gene_name by matching the gene_id
+(gn_name <- rowData(spe_example)$gene_id[
+  rowData(spe_example)$gene_name == gn
+])
+```
+
+To explore predicted counts based on estimated coefficients, we calculate and visualize the fitted values for `r gn_name`.
+
+```{r}
+fitted_values <- results[["glmFit"]][["fitted.values"]]
+m <- melt(fitted_values[w,]) |>
+  rownames_to_column("row_name_column") |>
+  setNames(c("sample_id", "fitted")) |>
+  mutate(
+      day = as.numeric(sub("DPI.*", "", sample_id)),
+      cluster = as.factor(sub(".*_", "", sample_id)) 
+    )
+m |> head(n = 3)
+```
+
+The expression levels of `r gn_name` in cluster 0 increase over time, while other clusters show relatively stable expression patterns across different days post-injury.
+
+```{r}
+p1 <- ggplot(m, aes(x=day, y=fitted, group=cluster, colour = cluster)) +
+  geom_jitter(size = 3, width = 0.2, height = 0) +
+  scale_y_sqrt() + 
+  labs(title = gn_name) +
+  scale_x_continuous(breaks = c(2, 10, 20)) + 
+  xlab("Days post injury")
+
+p1
+```
+
+
+Visualize the expression of the top gene, `r gn_name`, across samples.
+By using `annotation_cluster = TRUE`, cluster annotations are displayed on the expression plots.
+
+```{r}
+plots <- lapply(sample_ids, function(sample_id) {
+    # Subset spe_example for each sample
+    spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+    # Create FeaturePlot for the sample
+    plot <- FeaturePlot(spe_j, feature = gn, 
+                        cluster_col = spatial_cluster,
+                        coordinates = coordinates, 
+                        platform = "Stereo-seq",
+                        point_size = 0.01,
+                        diverging = TRUE,
+                        annotation_cluster = TRUE,
+                        annotation_title = sample_id)
+  
+    return(plot)
+})
+```
+
+The trend aligns with the model's prediction: gene abundance in cluster 0 increases at later stages (10 and 20 DPI) compared to the earlier stage (2 DPI) and other clusters.
+
+```{r}
+combined_plot <- wrap_plots(plots, ncol = 2) + 
+    # common legend
+    plot_layout(guides = 'collect')  
+combined_plot
+```
+
+
+# Session info
+
+```{r, sessionInfo}
+sessionInfo()
+```
+
+# References

@@ -1,0 +1,40 @@
+#' Results from \code{\link{dsp_test}} function
+#' 
+#' @rdname results_dsp_test
+#' @name results_dsp_test
+#' @aliases results_dsp_test
+#' 
+#' @param results_dsp_test contains a \code{\linkS4class{list}} object,
+#' with the results obtained applying \code{\link{dsp_test}} function to an external dataset from the spatialLIBD package.
+#' Below the code used to obtain 'results_dsp_test'.
+#
+#' @examples
+#' # load the input data:
+#' # data("LIBD_multi", package = "DESpace")
+#' # LIBD_multi
+#' # 
+#' # Fit the model via `dsp_test` function. 
+#' # Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, 
+#' # while `cluster_col` defines the column names of `colData(spe)` containing spatial clusters. 
+#' # To obtain all statistics, set `verbose` to `TRUE`.
+#' # dsp_test returns of a list of 4 objects:
+#' # "gene_results": a dataframe contains main edgeR test results;
+#' # "estimated_y": a DGEList object contains the estimated common dispersion, 
+#' #  which can later be used to speed-up calculation when testing individual clusters.
+#' # "glmFit": a DGEGLM object contains full statistics from "edgeR::glmFit"
+#' # "glmLRT" a DGELRT object contains full statistics from "edgeR::glmLRT"
+#' # 
+#' # library(edgeR)
+#' # set.seed(123)
+#' # results_dsp_test <- dsp_test(spe = LIBD_multi,
+#' #                                          cluster_col = "layer_guess_reordered",
+#' #                                          sample_col = "sample_id",
+#' #                                          condition_col = "condition",
+#' #                                          verbose = FALSE)
+#' # 
+#' # save(results_dsp_test, file = "./DESpace/data/results_dsp_test.RData")
+#' 
+#' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
+#' 
+#' @seealso \code{\link{dsp_test}}
+NULL

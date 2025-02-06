@@ -1,0 +1,17 @@
+Changes in version 2.0.0:
++ add detection of differential spatial patterns (DSP) between conditions
++ rename functions for consistency
++ enable FeaturePlot for non-Visium/ST data
+
+Changes in version 1.2.1:
++ Update to RELEASE_3_18
+
+Changes in version 1.0.2:
++ sample-specific covariates allowed
+
+Changes in version 1.0.1:
++ bug fixed in vignettes (giving error: "there is no package called 'reticulate'")
+
+Changes in version 1.0.0:
++ 1st version of the package
++ submitted to Bioconductor

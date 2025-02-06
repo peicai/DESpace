@@ -1,12 +1,13 @@
 #' DESpace: A package for identifying spatially variable genes
 #' 
-#' An intuitive framework for identifying spatially variable genes (SVGs) via edgeR, 
+#' An intuitive framework for identifying spatially variable genes (SVGs) and differential spatial pattern (DSP) genes via edgeR, 
 #' one of the most common methods for performing differential expression analyses.
 #'
 #' Based on pre-annotated spatial clusters as summarized spatial information,
 #' \code{DESpace} models gene expression using a negative binomial (NB), via \code{edgeR}, with spatial clusters as covariates.
-#' SVGs are then identified by testing the significance of spatial clusters.
-#'
+#' SVGs are then identified by testing the significance of spatial clusters,
+#' whereas DSP genes are identified by testing the significance of the interaction terms between spatial clusters and conditions (e.g., treatment conditions or time phases).
+#' 
 #' Our approach assumes that the spatial structure can be summarized by spatial clusters, 
 #' which should reproduce the key features of the tissue (e.g., white matter and layers in brain cortex).
 #' These spatial clusters are therefore taken as proxy for the actual spatial distribution; 
@@ -28,10 +29,9 @@
 #' @author 
 #' Peiying Cai \email{peiying.cai@uzh.ch}, 
 #' Simone Tiberi \email{simone.tiberi@unibo.it}
-#' @seealso \code{\link{DESpace_test}}, \code{\link{individual_test}}, \code{\link{top_results}}, \code{\link{FeaturePlot}}
+#' @seealso \code{\link{svg_test}}, \code{\link{individual_svg}}, \code{\link{top_results}}, \code{\link{FeaturePlot}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
 #' 
-#' @docType package
 #' @name DESpace
 #' 
 #' @keywords internal
-NULL
+"_PACKAGE"

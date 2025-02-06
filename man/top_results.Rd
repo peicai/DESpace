@@ -13,9 +13,9 @@ top_results(
 )
 }
 \arguments{
-\item{gene_results}{Results returned from \code{\link{DESpace_test}}.}
+\item{gene_results}{Results returned from \code{\link{svg_test}}.}
 
-\item{cluster_results}{Results returned from \code{\link{individual_test}}.}
+\item{cluster_results}{Results returned from \code{\link{individual_svg}}.}
 
 \item{cluster}{A character indicating the cluster(s) whose results have to be returned.
 Results from all clusters are returned by default ("NULL").}
@@ -52,45 +52,45 @@ A \code{\linkS4class{data.frame}} object or a list of \code{\linkS4class{data.fr
 }
 \description{
 Filter significant results.
-\code{\link{top_results}} returns the significant results obtained via \code{\link{DESpace_test}} and \code{\link{individual_test}}.
+\code{\link{top_results}} returns the significant results obtained via \code{\link{svg_test}} and \code{\link{individual_svg}}.
 It can also be used to merge gene- and cluster-level results into a single object.
 }
 \examples{
-# load pre-computed results (obtained via `DESpace_test`)
-data("results_DESpace_test", package = "DESpace")
+# load pre-computed results (obtained via `svg_test`)
+data("results_svg", package = "DESpace")
 
-# DESpace_test returns of a list of 2 objects:
+# svg_test returns of a list of 2 objects:
 # "gene_results": a dataframe contains main edgeR test results;
 # "estimated_y": a DGEList object contains the estimated common dispersion, 
 #  which can later be used to speed-up calculation when testing individual clusters.
 
 # We visualize differential results:
-head(results_DESpace_test$gene_results, 3)
+head(results_svg$gene_results, 3)
 
-# load pre-computed results (obtained via `individual_test`)
-data("results_individual_test", package = "DESpace")
-# Function `individual_test()` can be used to identify SVGs for each individual cluster.
-# `individual_test()` returns a list containing the results of individual clusters.
+# load pre-computed results (obtained via `individual_svg`)
+data("results_individual_svg", package = "DESpace")
+# Function `individual_svg()` can be used to identify SVGs for each individual cluster.
+# `individual_svg()` returns a list containing the results of individual clusters.
 # For each cluster, results are reported as a data.frame, 
 # where columns For each cluster, results are reported as a data.frame, 
 # where columns contain gene names (`genes`), likelihood ratio (`LR`), 
 # log2-fold changes (`logFC`) and adjusted p-value (`FDR`).
 # 
 # Combine gene-and cluster-level results
-merge_res = top_results(results_DESpace_test$gene_results, 
-                        results_individual_test)
+merge_res = top_results(results_svg$gene_results, 
+                        results_individual_svg)
 head(merge_res,3)
 # 'select = "FDR"' can be used to visualize adjusted p-values for each spatial cluster.
-merge_res = top_results(results_DESpace_test$gene_results, 
-                        results_individual_test, select = "FDR")
+merge_res = top_results(results_svg$gene_results, 
+                        results_individual_svg, select = "FDR")
 head(merge_res,3)
-# Specify the cluster of interest and check top genes detected by DESpace_test.
-results_WM_both = top_results(cluster_results = results_individual_test, 
+# Specify the cluster of interest and check top genes detected by svg_test.
+results_WM_both = top_results(cluster_results = results_individual_svg, 
                               cluster = "WM", high_low = "both")
 head(results_WM_both$high_genes, 3)
 head(results_WM_both$low_genes, 3)
 
 }
 \seealso{
-\code{\link{DESpace_test}}, \code{\link{individual_test}}, \code{\link{FeaturePlot}}
+\code{\link{svg_test}}, \code{\link{individual_svg}}, \code{\link{FeaturePlot}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
 }

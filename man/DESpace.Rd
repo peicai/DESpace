@@ -2,16 +2,18 @@
 % Please edit documentation in R/DESpace.R
 \docType{package}
 \name{DESpace}
+\alias{DESpace-package}
 \alias{DESpace}
 \title{DESpace: A package for identifying spatially variable genes}
 \description{
-An intuitive framework for identifying spatially variable genes (SVGs) via edgeR, 
+An intuitive framework for identifying spatially variable genes (SVGs) and differential spatial pattern (DSP) genes via edgeR, 
 one of the most common methods for performing differential expression analyses.
 }
 \details{
 Based on pre-annotated spatial clusters as summarized spatial information,
 \code{DESpace} models gene expression using a negative binomial (NB), via \code{edgeR}, with spatial clusters as covariates.
-SVGs are then identified by testing the significance of spatial clusters.
+SVGs are then identified by testing the significance of spatial clusters,
+whereas DSP genes are identified by testing the significance of the interaction terms between spatial clusters and conditions (e.g., treatment conditions or time phases).
 
 Our approach assumes that the spatial structure can be summarized by spatial clusters, 
 which should reproduce the key features of the tissue (e.g., white matter and layers in brain cortex).
@@ -32,7 +34,7 @@ vignette:
 \code{vignette("DESpace", package="DESpace")}
 }
 \seealso{
-\code{\link{DESpace_test}}, \code{\link{individual_test}}, \code{\link{top_results}}, \code{\link{FeaturePlot}}
+\code{\link{svg_test}}, \code{\link{individual_svg}}, \code{\link{top_results}}, \code{\link{FeaturePlot}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
 }
 \author{
 Peiying Cai \email{peiying.cai@uzh.ch}, 

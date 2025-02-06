@@ -1,12 +1,15 @@
 Package: DESpace
 Type: Package
-Title: DESpace: a framework to discover spatially variable genes
-Version: 1.1.2
-Description: Intuitive framework for identifying spatially variable genes (SVGs) via edgeR, 
+Title: DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions
+Version: 1.99.0
+Description: Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between groups via edgeR, 
   a popular method for performing differential expression analyses.
   Based on pre-annotated spatial clusters as summarized spatial information, 
   DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. 
-  SVGs are then identified by testing the significance of spatial clusters. 
+  SVGs are then identified by testing the significance of spatial clusters.
+  For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates.
+  DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions. 
+  Notably, this framework can identify differences also between more than 2 groups.
   The method is flexible and robust, and is faster than the most SV methods.
   Furthermore, to the best of our knowledge, it is the only SV approach that allows:
   - performing a SV test on each individual spatial cluster, hence identifying the key regions of the tissue affected by spatial variability;
@@ -25,14 +28,14 @@ Authors@R: c(
 biocViews: Spatial, SingleCell, RNASeq, Transcriptomics, GeneExpression, 
            Sequencing, DifferentialExpression,StatisticalMethod, Visualization
 License: GPL-3
-Depends: R (>= 4.3.0)
+Depends: R (>= 4.4.0)
 Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, 
         ggpubr, scales, SummarizedExperiment, S4Vectors, BiocGenerics, data.table, assertthat, 
-        cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods
+        cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods, sosta
 Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, concaveman,
         spatialLIBD, purrr, scuttle, utils
 VignetteBuilder: knitr
-RoxygenNote: 7.2.3
+RoxygenNote: 7.3.2
 ByteCompile: true
 Encoding: UTF-8
 URL: https://github.com/peicai/DESpace

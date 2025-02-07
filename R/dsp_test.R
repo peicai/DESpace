@@ -40,10 +40,10 @@
 #' # Fit the model via \code{\link{dsp_test}} function.
 #' set.seed(123)
 #' results_dsp <- dsp_test(spe = spe_example,
-#'                            cluster_col = "Banksy_smooth",
-#'                            sample_col = "sample_id",
-#'                            condition_col = "condition",
-#'                            verbose = FALSE)
+#'                         cluster_col = "Banksy_smooth",
+#'                         sample_col = "sample_id",
+#'                         condition_col = "condition",
+#'                         verbose = FALSE)
 #' 
 #' # dsp_test returns of an object:
 #' # "gene_results": a dataframe contains main edgeR test results.

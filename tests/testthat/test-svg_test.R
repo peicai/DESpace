@@ -1,4 +1,4 @@
-test_that("DESpace() works faultlessly.", {
+test_that("svg_test() works faultlessly.", {
   # load the input data:
   data("LIBD_subset", package = "DESpace")
   

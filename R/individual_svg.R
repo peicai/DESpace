@@ -52,8 +52,8 @@
 #' # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
 #' set.seed(123)
 #' results_individual_svg <- individual_svg(LIBD_subset, 
-#'                                            edgeR_y = results_svg_test$estimated_y, 
-#'                                            cluster_col = "layer_guess_reordered")
+#'                                          edgeR_y = results_svg_test$estimated_y, 
+#'                                          cluster_col = "layer_guess_reordered")
 #'                                            
 #' # We visualize results for the cluster 'WM'
 #' results_WM <- results_individual_svg[[7]]

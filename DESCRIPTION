@@ -29,7 +29,7 @@ Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2,
         data.table, assertthat, terra, sf, spatstat.explore, spatstat.geom,
         cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods, muscat
 Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, concaveman,
-        spatialLIBD, purrr, scuttle, utils, muSpaData, reshape2, tidyverse
+        spatialLIBD, purrr, scuttle, utils, reshape2, tidyverse
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 ByteCompile: true

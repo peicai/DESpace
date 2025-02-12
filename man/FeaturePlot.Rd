@@ -127,10 +127,10 @@ which cannot be used with `spatialCoords()`.
 data("LIBD_subset", package = "DESpace")
 
 # load pre-computed results (obtained via `svg_test`)
-data("results_svg", package = "DESpace")
+data("results_svg_test", package = "DESpace")
 
 # Visualize the gene expression of the top three genes
-feature = results_svg$gene_results$gene_id[seq_len(3)]
+feature = results_svg_test$gene_results$gene_id[seq_len(3)]
 FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
             ncol = 3, title = TRUE)
 

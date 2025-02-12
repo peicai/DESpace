@@ -28,7 +28,7 @@ editor_options:
 
 ```{r setup, echo=FALSE, results="hide"}
 knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
-                        dev="png",
+                        dev="png", python.reticulate = FALSE,
                         message=TRUE, error=FALSE, warning=TRUE)
 library(utils)
 ```
@@ -86,9 +86,9 @@ citation("DESpace")
 Load R packages:
 ```{r package}
 suppressMessages({
-library(DESpace)
-library(ggplot2)
-library(SpatialExperiment)
+    library(DESpace)
+    library(ggplot2)
+    library(SpatialExperiment)
 })
 ```
 

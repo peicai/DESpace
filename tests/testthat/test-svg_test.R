@@ -4,13 +4,13 @@ test_that("svg_test() works faultlessly.", {
   
   # Fit the model via svg_test function.
   set.seed(123)
-  results_DESpace <- svg_test(spe = LIBD_subset,
+  results_svg <- svg_test(spe = LIBD_subset,
                                     cluster_col = "layer_guess_reordered",
                                     verbose = TRUE)
   
-  expect_is(results_DESpace, "list")
-  expect_is(results_DESpace[[1]], "data.frame")
-  expect_is(results_DESpace[[2]], "list")
-  expect_is(results_DESpace[[3]], "list")
-  expect_is(results_DESpace[[4]], "list")
+  expect_is(results_svg, "list")
+  expect_is(results_svg[[1]], "data.frame")
+  expect_is(results_svg[[2]], "list")
+  expect_is(results_svg[[3]], "list")
+  expect_is(results_svg[[4]], "list")
 })

@@ -38,7 +38,8 @@
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results <- as.data.frame(results[[1]][c("genes", "LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes", "LR", 
+                "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
 }
@@ -50,7 +51,8 @@
     fit <- glmFit(y, design_model)
     lrt <- glmLRT(fit, coef = 2)
     results <- topTags(lrt, n = Inf)
-    results <- as.data.frame(results[[1]][c("genes","LR", "logCPM", "logFC", "PValue", "FDR")])
+    results <- as.data.frame(results[[1]][c("genes","LR", 
+                "logCPM", "logFC", "PValue", "FDR")])
     colnames(results)[1] <- "gene_id"
     return(results)
 }
@@ -226,12 +228,12 @@
   rows_with_na <- apply(as.data.frame(colData(updated_spe)), 1, anyNA)
   updated_spe <- updated_spe[ , !rows_with_na]
 
-  results <- lapply(columns_to_check, function(col) {
-    result <- .get_nlevels(updated_spe, col)  # Call .get_nlevels with the current spe
-    updated_spe <<- result$updated_spe  # Update updated_spe in the global environment
-    result$n_levels  # Return the number of levels
+  results_list <- lapply(columns_to_check, function(col) {
+    .get_nlevels(updated_spe, col)  # Call .get_nlevels with the current spe
   })
-  n_levels <- unlist(results)
+  # Extract updated_spe from the last iteration
+  updated_spe <- results_list[[length(results_list)]]$updated_spe
+  n_levels <- vapply(results_list, function(x) x$n_levels, numeric(1))
   # Get the number of levels for sample, condition, and cluster columns
   n_cluster <- n_levels[1]
   n_sample <- n_levels[2]
@@ -277,7 +279,7 @@
                                verbose){
   pb <- muscat::aggregateData(spe, assay = "counts", fun = "sum",
                       by = c(cluster_col, sample_col))
-  X = do.call(cbind, assays(pb))
+  X <- do.call(cbind, assays(pb))
   # Create a grid of all combinations
   combinations <- expand.grid(colnames(assays(pb)[[1]]), names(assays(pb)))
   pasted_combinations <- apply(combinations, 1, function(x) paste0(x[1], "_", x[2]))
@@ -285,10 +287,10 @@
   n_samples <- ncol(pb)
   n_clusters <- length(assays(pb))
   X_df <- as.data.frame(X)
-  cols_with_zeros <- sapply(X_df, function(col) all(col == 0))
+  cols_with_zeros <- vapply(X_df, function(col) all(col == 0), logical(1))
   X_df <- X_df[, !cols_with_zeros]
   if(is.null(design)){
-      design = data.frame(condition = rep(pb[[condition_col]], n_clusters),
+      design <- data.frame(condition = rep(pb[[condition_col]], n_clusters),
                           cluster_id = rep(names(assays(pb)), each = n_samples))
       design <- design[!cols_with_zeros,]
       # Relevel cluster_id to "Other" as baseline, if "Other" is present
@@ -299,18 +301,18 @@
       design_model <- model.matrix(~ condition * cluster_id, data = design)
       rownames(design_model) <- colnames(X_df)
       message("Design model: row names represent sample names, followed by underscores and cluster names.\n")
-      print(head(design_model, n = 2))
+      show(head(design_model, n = 2))
       col_with_colon <- grep("condition.*:*.cluster_id", colnames(design_model), value = TRUE)
   }else{
       design <- as.matrix(design)
-      design_model = design
+      design_model <- design
       # Provide information about the pseudo-bulk count matrix and design validation
       message(
         "Pseudo-bulk count matrix dimensions: ", paste(dim(X_df), collapse = " x "), ".\n",
         "Columns are combinations of sample names and cluster names, excluding clusters not present in a sample.\n",
         "Column names:\n"
       )
-      print(colnames(X_df))
+      show(colnames(X_df))
       # Check if the 'design' matrix matches the pseudo-bulk count matrix
       message(
         "Please ensure that the rows in the 'design' matrix match the columns of the pseudo-bulk count matrix, both in number and order of names.\n",
@@ -319,7 +321,7 @@
       # Validate dimensions
       if (dim(design)[1] != dim(X_df)[2]) {
         stop(
-          "Error: The 'design' matrix must have the same number of rows as 
+          "The 'design' matrix must have the same number of rows as 
           the pseudo-bulk count matrix has columns.\n"
         )
       }

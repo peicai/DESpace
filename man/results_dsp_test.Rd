@@ -8,6 +8,9 @@
 with the results obtained applying \code{\link{dsp_test}} function to an external dataset from the spatialLIBD package.
 Below the code used to obtain 'results_dsp_test'.}
 }
+\value{
+A dataframe
+}
 \description{
 Results from \code{\link{dsp_test}} function
 }
@@ -34,9 +37,6 @@ Results from \code{\link{dsp_test}} function
 #                                          sample_col = "sample_id",
 #                                          condition_col = "condition",
 #                                          verbose = FALSE)
-# 
-# save(results_dsp_test, file = "./DESpace/data/results_dsp_test.RData")
-
 }
 \seealso{
 \code{\link{dsp_test}}

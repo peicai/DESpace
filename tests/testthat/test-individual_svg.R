@@ -3,8 +3,8 @@ test_that("individual_svg() works faultlessly.", {
   data("LIBD_subset", package = "DESpace")
   
   # load pre-computed results (obtained via `DESpace_test`)
-  data("results_DESpace_test", package = "DESpace")
-  edgeR_y = results_DESpace_test$estimated_y
+  data("results_svg_test", package = "DESpace")
+  edgeR_y = results_svg_test$estimated_y
   
   # Individual cluster test: identify SVGs for each individual cluster
   set.seed(123)

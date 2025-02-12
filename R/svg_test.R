@@ -103,7 +103,7 @@ svg_test <-  function(spe,
       # sample ids:
       sample_names <- levels(factor(sample_id))
       sel_matrix <- vapply(sample_names, function(id){
-        select = sample_id == id
+        select <- sample_id == id
         spe <- spe[,select]
         sel_1 <- rowSums(counts(spe)) >= min_counts
         sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots 

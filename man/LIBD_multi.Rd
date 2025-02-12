@@ -2,14 +2,20 @@
 % Please edit documentation in R/data_LIBD_multi.R
 \name{LIBD_multi}
 \alias{LIBD_multi}
-\title{Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package}
+\title{Subset from the human DLPFC 10x Genomics Visium 
+dataset of the \code{spatialLIBD} package}
 \arguments{
 \item{LIBD_multicontains}{a \code{\linkS4class{SpatialExperiment}} object,
-representing a subset of the sample 151507, 151509, 151673, and 151675 from the full real data of the \code{spatialLIBD} package.
+representing a subset of the sample 151507, 151509, 151673, and 151675 
+from the full real data of the \code{spatialLIBD} package.
 Below the code used to subset the original dataset.}
 }
+\value{
+A spatial experiment object
+}
 \description{
-Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package
+Subset from the human DLPFC 10x Genomics Visium 
+dataset of the \code{spatialLIBD} package
 }
 \examples{
 # Connect to ExperimentHub
@@ -27,9 +33,9 @@ Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD
 # LIBD_multi <- SpatialExperiment(assay = list(counts = assay(LIBD_multi),
 #                                               logcounts = logcounts(LIBD_multi)), 
 #                                  colData = colData(LIBD_multi)[keep_col])
-# colData(LIBD_multi)[["condition"]] <- ifelse(colData(LIBD_multi)[["sample_id"]] \%in\% c("151507", "151509"), "1", "2")
+# colData(LIBD_multi)[["condition"]] <- ifelse(colData(LIBD_multi)[["sample_id"]] \%in\% 
+#                                  c("151507", "151509"), "1", "2")
 # save(LIBD_multi, file = "./DESpace/data/LIBD_multi.RData")
-
 }
 \seealso{
 \code{\link{dsp_test}}, \code{\link{individual_dsp}},

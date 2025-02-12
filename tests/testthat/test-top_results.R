@@ -1,8 +1,8 @@
 test_that("top_results() works faultlessly.", {
   # load pre-computed results (obtained via `DESpace_test`)
-  data("results_DESpace_test", package = "DESpace")
+  data("results_svg_test", package = "DESpace")
   # load pre-computed results (obtained via `individual_test`)
-  data("results_individual_test", package = "DESpace")
+  data("results_individual_svg", package = "DESpace")
   
   # Combine gene-and cluster-level results
   merge_res <- top_results(results_DESpace_test$gene_results, results_individual_test)

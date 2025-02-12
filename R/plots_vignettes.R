@@ -64,26 +64,26 @@
     # Create the plot based on the platform type
     # Define the base plot
     splot <- vertices %>%
-      ggplot(aes(x = x.vertex, y = y.vertex)) + 
-      coord_equal() + 
-      theme_void() + 
-      theme(legend.position = "bottom", 
-            legend.key.size = unit(2, 'cm'))
+        ggplot(aes(x = x.vertex, y = y.vertex)) + 
+        coord_equal() + 
+        theme_void() + 
+        theme(legend.position = "bottom", 
+              legend.key.size = unit(2, 'cm'))
     
     # Add the conditional layers based on `is_spot`
     if (is_spot) {
-      splot <- splot + 
-        geom_polygon(aes(group = .data[["spot"]], 
-                         fill = .data[["fill"]]), 
-                     color = color) +
-        scale_fill_gradient2(low = low, mid = mid, high = high) +
-        labs(fill = fill.name) 
+        splot <- splot + 
+            geom_polygon(aes(group = .data[["spot"]], 
+                             fill = .data[["fill"]]), 
+                         color = color) +
+            scale_fill_gradient2(low = low, mid = mid, high = high) +
+            labs(fill = fill.name) 
     } else {
-      threshold <- quantile(vertices[["fill"]], 0.9999)
-      splot <- splot + 
-        geom_point(size = point_size, aes(color = pmin(fill, threshold))) +
-        scale_colour_gradientn(colors = c(low, mid, high), breaks = c(0, threshold), labels = c("low", "high")) +
-        labs(color = fill.name)
+        threshold <- quantile(vertices[["fill"]], 0.9999)
+        splot <- splot + 
+            geom_point(size = point_size, aes(color = pmin(fill, threshold))) +
+            scale_colour_gradientn(colors = c(low, mid, high), breaks = c(0, threshold), labels = c("low", "high")) +
+            labs(color = fill.name)
     }
     
     ## if 'cluster_col' and 'cluster' are specified, draw the shape of the outline of the group
@@ -107,31 +107,27 @@
         }
     
         if(concave_hull){
-          ## Add filter
-          Cluster_use <- vertices[["Cluster"]]
-          splot <- splot +  
-            new_scale_fill() + new_scale_color()  + 
-            suppressWarnings(geom_mark_hull( aes(x=x.vertex, 
-                                                 y=y.vertex,
-                                                 color = Cluster_use, fill = Cluster_use, 
-                                                 linewidth = I(linewidth),
-                                                 label = label, filter = Cluster_use %in% (cluster_use)),
-                                             alpha=0, expand = unit(0.1, "mm"),
-                                             radius = unit(0.4, "mm"),
-                                             show.legend = FALSE) ) +
-            scale_color_manual(values = linecolor)
+            ## Add filter
+            Cluster_use <- vertices[["Cluster"]]
+            splot <- splot +  
+                new_scale_fill() + new_scale_color()  + 
+                suppressWarnings(geom_mark_hull( 
+                    aes(x=x.vertex,
+                        y=y.vertex,
+                        color = Cluster_use, fill = Cluster_use,
+                        linewidth = I(linewidth),
+                        label = label, filter = Cluster_use %in% (cluster_use)),
+                    alpha=0, expand = unit(0.1, "mm"),
+                    radius = unit(0.4, "mm"),
+                    show.legend = FALSE) ) +
+                    scale_color_manual(values = linecolor)
         }else{
-          # Add layers using lapply
-          geoms <- lapply(seq_along(cluster_use), function(clus) {
-            sf_poly <- reconstructShapeDensityImage(
-              spe,
-              marks = cluster_col,
-              mark_select = cluster_use[clus],
-              dim = sf_dim,
-              image_id = NULL,
-              image_col = NULL
-            )
-            
+        # Add layers using lapply
+        geoms <- lapply(seq_along(cluster_use), function(clus) {
+        sf_poly <- .constructOutline(spe,
+                                    marks = cluster_col,
+                                    mark_select = cluster_use[clus],
+                                    dim = sf_dim)
             geom_sf(
               data = sf_poly,
               fill = NA,
@@ -301,4 +297,124 @@
     }
     spot_positions$spot <- rownames(spot_positions)
     spot_positions
+}
+
+# This function is a modified version of the \code{\link{reconstructShapeDensityImage}} function from the `sosta` R package.
+# Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, which cannot
+# be used with `spatialCoords()`. Additionally, the 'image_col' and 'image_id' parameters, which are not used in
+# `FeaturePlot()`, have been removed.
+.constructOutline <- function(spe,
+                              marks,
+                              mark_select,
+                              dim = 500){
+  ppp <- as.ppp(
+    as.matrix(colData(spe)[c('row', 'col')]),
+    c(
+      min(colData(spe)[['row']]),
+      max(colData(spe)[['row']]),
+      min(colData(spe)[['col']]),
+      max(colData(spe)[['col']])
+    )
+  )
+  marks(ppp) <- colData(spe)[[marks]]
+  # Extract the cells in given clusters
+  pp_sel <- subset(ppp, marks %in% mark_select)
+  # define default of the sigma threshold
+  bndw <- bw.diggle(pp_sel)
+  # Get dimension of reconstruction
+  xratio <- abs(diff(pp_sel$window$xrange)) / abs(diff(pp_sel$window$yrange))
+  dimyx <- c(dim, round(xratio * dim))
+  # Estimate the intensity threshold for the reconstruction of spatial strucutres
+  thres <- .findIntensityThreshold(pp_sel, dim, bndw, dimyx)
+  # Create a binary image, and then converts it to a valid `sf` object (polygons).
+  struct <- .reconstructShapeDensity(pp_sel,
+                                     bndw = bndw,
+                                     thres = thres,
+                                     dimyx = dimyx
+  )
+  return(struct)
+}
+
+
+.findIntensityThreshold <- function(
+    ppp, dim, bndw, dimyx,
+    threshold = 250) {
+  
+  # create data frame
+  den_df <- as.data.frame(density(ppp,
+                                  sigma = bndw,
+                                  dimyx = dimyx,
+                                  positive = TRUE
+  ))
+  # take all densities greater than certain threshold due to numerical properties
+  # of the density estimation
+  new_den <- density(den_df$value[den_df$value > max(den_df$value) / threshold])
+  # define the peaks x values
+  peaks <- new_den$x[which(diff(sign(diff(new_den$y))) == -2)]
+  # define peak values
+  peak_vals <- new_den$y[which(diff(sign(diff(new_den$y))) == -2)]
+  # the threshold is the mean between the two main modes of the distribution
+  if (length(peaks) == 1) {
+    thres <- peaks
+  } else {
+    thres <- (peaks[order(peaks, decreasing = FALSE)[2]] -
+                peaks[order(peaks, decreasing = FALSE)[1]]) / 2 +
+      peaks[order(peaks, decreasing = FALSE)[1]]
+  }
+  return(thres)
+}
+
+.reconstructShapeDensity <- function(ppp, bndw, thres, dimyx) {
+  # estimate density
+  density_image <- density.ppp(ppp, bndw, dimyx = c(dimyx), positive = TRUE)
+  
+  # construct spatstat window from matrix with true false entries
+  mat <- ifelse(t(as.matrix(density_image)) > thres, TRUE, FALSE)
+  
+  # Check if we get empty or full polygon
+  stopifnot("Threshold too low" = (!all(mat == 1)))
+  stopifnot("Threshold too high" = (!all(mat == 0)))
+  
+  # using custom function
+  stCast <- st_cast(
+    st_make_valid(
+      .binaryImageToSF(
+        mat,
+        xmin = ppp$window$xrange[1], xmax = ppp$window$xrange[2],
+        ymin = ppp$window$yrange[1], ymax = ppp$window$yrange[2]
+      )
+    ),
+    "POLYGON"
+  ) # make valid is important!!
+  stCast <- stCast[!st_is_empty(stCast), drop = FALSE]
+  
+  # return sf object
+  return(st_sf(st_cast(stCast, "POLYGON")))
+}
+
+# Converts a binary matrix to an sf polygon
+.binaryImageToSF <- function(
+    binaryMatrix,
+    xmin, xmax,
+    ymin, ymax) {
+  # Input checking
+  stopifnot("'binaryMatrix' must be a matrix" = is.matrix(binaryMatrix))
+  stopifnot(
+    "'xmin', 'xmax', 'ymin', and 'ymax' must be numeric" =
+      is.numeric(c(xmin, xmax, ymin, ymax))
+  )
+  stopifnot("'xmin' must be less than 'xmax'" = xmin < xmax)
+  stopifnot("'ymin' must be less than 'ymax'" = ymin < ymax)
+  # turn 90 degrees anti clockwise for correspondance with spatstat
+  binaryMatrix <- apply(t(binaryMatrix), 2, rev)
+  # get raster
+  r <- rast(binaryMatrix)
+  # rescale to correct windwow
+  set.ext(r, c(xmin, xmax, ymin, ymax))
+  # convert to polygons
+  poly <- as.polygons(r)
+  # polygons is a SpatVector. Convert it to an sf object
+  polygonsSF <- st_as_sf(poly)
+  # Merge polygons to a single multipolygon
+  return(st_union(polygonsSF[polygonsSF$lyr.1 == 1, ]))
 }

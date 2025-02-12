@@ -21,7 +21,8 @@ dsp_test(
 \arguments{
 \item{spe}{SpatialExperiment or SingleCellExperiment.}
 
-\item{design}{Matrix or array. Numeric design matrix for a regression-like model created by `model.matrix` function.}
+\item{design}{Matrix or array. Numeric design matrix for a 
+regression-like model created by `model.matrix` function.}
 
 \item{cluster_col}{Character. Column name of spatial clusters in \code{colData(spe)}.}
 
@@ -30,24 +31,32 @@ Sample ids must be either a factor or character.}
 
 \item{condition_col}{Character. Column name of condition ids in \code{colData(spe)}.}
 
-\item{min_counts}{Numeric. Minimum number of counts per sample (across all spots) for a gene to be analyzed.}
+\item{min_counts}{Numeric. Minimum number of counts per sample 
+(across all spots) for a gene to be analyzed.}
 
-\item{min_non_zero_spots}{Numeric. Minimum number of non-zero spots per sample, for a gene to be analyzed.}
+\item{min_non_zero_spots}{Numeric. Minimum number of non-zero spots 
+per sample, for a gene to be analyzed.}
 
 \item{min_pct_cells}{Numeric. Minimum percentage of cells required for each cluster to be 
 included in the analysis across the specified conditions. 
 Default value is 0.5 (i.e., 0.5\% of total cells per cluster per condition).}
 
-\item{filter_gene}{Logical. If TRUE, \code{\link{dsp_test}} filters genes by requiring them to be expressed 
-in at least 'min_non_zero_spots' cells and have at least 'min_counts' counts per sample across all locations.}
+\item{filter_gene}{Logical. 
+If TRUE, \code{\link{dsp_test}} filters genes by requiring them to be expressed 
+in at least 'min_non_zero_spots' cells and have at least 'min_counts'
+ counts per sample across all locations.}
 
-\item{filter_cluster}{Logical. When set to TRUE, \code{\link{dsp_test}} excludes clusters that are 
-insufficiently represented in the dataset. Only clusters meeting the 'min_pct_cells' threshold 
-(i.e., containing at least the specified percentage of cells across all conditions) will be retained for analysis.}
+\item{filter_cluster}{Logical. When set to TRUE, 
+\code{\link{dsp_test}} excludes clusters that are 
+insufficiently represented in the dataset. 
+Only clusters meeting the 'min_pct_cells' threshold 
+(i.e., containing at least the specified percentage of cells 
+across all conditions) will be retained for analysis.}
 
 \item{verbose}{Logical.
 If TRUE, \code{\link{svg_test}} returns two more results: 
-'DGEGLM' and 'DGELRT' objects contain full statistics from 'edgeR::glmFit' and 'edgeR::glmLRT'.}
+'DGEGLM' and 'DGELRT' objects contain full statistics from 
+'edgeR::glmFit' and 'edgeR::glmLRT'.}
 }
 \value{
 A list of results:
@@ -62,7 +71,8 @@ which can later be used to speed-up calculation when testing individual clusters
 - "glmLRT" (only if \code{verbose = TRUE}): a DGELRT object contains full statistics from "edgeR::glmLRT".
 }
 \description{
-'dsp_test' identifies differential spatial pattern (DSP) genes between conditions from spatially-resolved transcriptomics data,
+'dsp_test' identifies differential spatial pattern (DSP) genes 
+between conditions from spatially-resolved transcriptomics data,
 provided spatial clusters are available.
 }
 \examples{
@@ -72,10 +82,10 @@ muSpaData::Wei22_example()
 # Fit the model via \code{\link{dsp_test}} function.
 set.seed(123)
 results_dsp <- dsp_test(spe = spe_example,
-                           cluster_col = "Banksy_smooth",
-                           sample_col = "sample_id",
-                           condition_col = "condition",
-                           verbose = FALSE)
+                        cluster_col = "Banksy_smooth",
+                        sample_col = "sample_id",
+                        condition_col = "condition",
+                        verbose = FALSE)
 
 # dsp_test returns of an object:
 # "gene_results": a dataframe contains main edgeR test results.

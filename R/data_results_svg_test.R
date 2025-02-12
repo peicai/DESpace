@@ -17,12 +17,6 @@
 #' # Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, 
 #' # while `cluster_col` defines the column names of `colData(spe)` containing spatial clusters. 
 #' # To obtain all statistics, set `verbose` to `TRUE`.
-#' # svg_test returns of a list of 4 objects:
-#' # "gene_results": a dataframe contains main edgeR test results;
-#' # "estimated_y": a DGEList object contains the estimated common dispersion, 
-#' #  which can later be used to speed-up calculation when testing individual clusters.
-#' # "glmFit": a DGEGLM object contains full statistics from "edgeR::glmFit"
-#' # "glmLRT" a DGELRT object contains full statistics from "edgeR::glmLRT"
 #' # 
 #' # set.seed(123)
 #' # results_svg_test <- svg_test(spe = LIBD_subset,
@@ -30,7 +24,9 @@
 #' #                                          verbose = FALSE)
 #' # 
 #' # save(results_svg_test, file = "./DESpace/data/results_svg_test.RData")
-#' 
+#' @return Large List of 2 elements:
+#' # "gene_results": a dataframe contains main edgeR test results;
+#' # "estimated_y": a DGEList object contains the estimated common dispersion, 
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{svg_test}}

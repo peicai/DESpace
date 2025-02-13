@@ -3,6 +3,6 @@ utils::globalVariables(c("x.vertex","y.vertex","spot","unit","element_text",
                         "estimated_y",":=","FDR","PValue","lrt","fit","colData<-","geom_point","scale_y_reverse",
                         "Cluster","i","logcounts<-","assay<-","gene_FDR","Cluster_FDR",
                         "top_genes_cluste",".data","density","ggtitle",
-                        "scale_colour_gradientn", "scale_fill_manual", "show",
-                        "spatialCoords","scale_color_manual","guides",
+                        "scale_colour_gradientn","scale_fill_manual","show",
+                        "spatialCoords","spatialCoords<-","scale_color_manual","guides",
                         "guide_legend"))

@@ -8,6 +8,9 @@
 with the results obtained applying \code{\link{individual_dsp}} function to an external dataset from the spatialLIBD package.
 Below the code used to obtain 'results_individual_dsp'.}
 }
+\value{
+A List of 7 elements - one element for each spatial cluster
+}
 \description{
 Results from \code{\link{individual_dsp}} function
 }
@@ -24,8 +27,6 @@ Results from \code{\link{individual_dsp}} function
 #                                           cluster_col = "layer_guess_reordered",
 #                                           sample_col = "sample_id",
 #                                           condition_col = "condition")
-# save(results_individual_dsp, file = "./DESpace/data/results_individual_dsp.RData")
-
 }
 \seealso{
 \code{\link{individual_dsp}}, \code{\link{dsp_test}}

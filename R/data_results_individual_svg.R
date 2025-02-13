@@ -24,7 +24,7 @@
 #' #                                            edgeR_y = results_DESpace_test$estimated_y,
 #' #                                            spatial_cluster = "layer_guess_reordered")
 #' # save(results_individual_svg, file = "./DESpace/data/results_individual_svg.RData")
-#' 
+#' @return A List of 7 elements - one element for each spatial cluster
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{svg_test}}, \code{\link{individual_svg}}

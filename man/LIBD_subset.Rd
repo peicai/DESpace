@@ -8,6 +8,9 @@
 representing a subset of the sample 151673 from the full real data of the \code{spatialLIBD} package.
 Below the code used to subset the original dataset.}
 }
+\value{
+A spatial experiment object
+}
 \description{
 Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package
 }
@@ -28,7 +31,6 @@ Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD
 #                                               logcounts = logcounts(LIBD_subset)), 
 #                                  colData = colData(LIBD_subset)[keep_col])
 # save(LIBD_subset, file = "./DESpace/data/LIBD_subset.RData")
-
 }
 \seealso{
 \code{\link{svg_test}}, \code{\link{individual_svg}}

@@ -1,11 +1,13 @@
-#' Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package
+#' Subset from the human DLPFC 10x Genomics Visium 
+#' dataset of the \code{spatialLIBD} package
 #' 
 #' @rdname LIBD_multi
 #' @name LIBD_multi
 #' @aliases LIBD_multi
 #' 
 #' @param LIBD_multicontains a \code{\linkS4class{SpatialExperiment}} object,
-#' representing a subset of the sample 151507, 151509, 151673, and 151675 from the full real data of the \code{spatialLIBD} package.
+#' representing a subset of the sample 151507, 151509, 151673, and 151675 
+#' from the full real data of the \code{spatialLIBD} package.
 #' Below the code used to subset the original dataset.
 #
 #' @examples
@@ -24,9 +26,10 @@
 #' # LIBD_multi <- SpatialExperiment(assay = list(counts = assay(LIBD_multi),
 #' #                                               logcounts = logcounts(LIBD_multi)), 
 #' #                                  colData = colData(LIBD_multi)[keep_col])
-#' # colData(LIBD_multi)[["condition"]] <- ifelse(colData(LIBD_multi)[["sample_id"]] %in% c("151507", "151509"), "1", "2")
+#' # colData(LIBD_multi)[["condition"]] <- ifelse(colData(LIBD_multi)[["sample_id"]] %in% 
+#' #                                  c("151507", "151509"), "1", "2")
 #' # save(LIBD_multi, file = "./DESpace/data/LIBD_multi.RData")
-#' 
+#' @return A spatial experiment object
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{dsp_test}}, \code{\link{individual_dsp}},

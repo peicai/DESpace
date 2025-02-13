@@ -31,9 +31,7 @@
 #' #                                          sample_col = "sample_id",
 #' #                                          condition_col = "condition",
 #' #                                          verbose = FALSE)
-#' # 
-#' # save(results_dsp_test, file = "./DESpace/data/results_dsp_test.RData")
-#' 
+#' @return A dataframe
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{dsp_test}}

@@ -44,9 +44,11 @@ If specified, these coordinates will be used. If not, the function defaults to u
 in \code{colData(spe)} if they exist. Otherwise, it will use \code{spatialCoords(spe)} if 'spe' is a 
 SpatialExperiment object and \code{spatialCoords(spe)} is not NULL.}
 
-\item{concave_hull}{A logical value (TRUE or FALSE). 
-If TRUE, uses `ggforce::geom_mark_hull` to outline cluster boundaries (recommended for non-discontinuous clusters). 
-If FALSE, uses `sosta::reconstructShapeDensityImage` for complex cluster shapes.
+\item{concave_hull}{A logical value (TRUE or FALSE).
+If TRUE, the function uses `ggforce::geom_mark_hull()` to outline cluster boundaries 
+(recommended for non-discontinuous clusters).
+If FALSE, the internal function `.constructOutline()`, 
+adapted from `sosta::reconstructShapeDensityImage()`, is used for complex cluster shapes.
 For Visium or ST platforms, `concave_hull` is automatically set to TRUE.}
 
 \item{sf_dim}{A numeric value for the x-dimension of the reconstruction (default is 200). 
@@ -114,22 +116,26 @@ Returns a ggplot object.
 \description{
 Plot spatial gene expression.
 This function is a modified version of the \code{\link{FeaturePlot}} function from BayesSpace R package.
-In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously and drawing an outline around a specified cluster.
+In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously 
+and drawing an outline around a specified cluster.
+To draw outlines, the \code{reconstructShapeDensityImage} function from the `sosta` R package has been adapted.
+Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, 
+which cannot be used with `spatialCoords()`.
 }
 \examples{
 # load the input data:
 data("LIBD_subset", package = "DESpace")
 
 # load pre-computed results (obtained via `svg_test`)
-data("results_svg", package = "DESpace")
+data("results_svg_test", package = "DESpace")
 
 # Visualize the gene expression of the top three genes
-feature = results_svg$gene_results$gene_id[seq_len(3)]
+feature = results_svg_test$gene_results$gene_id[seq_len(3)]
 FeaturePlot(LIBD_subset, feature, coordinates = c("array_row", "array_col"),
             ncol = 3, title = TRUE)
 
 }
 \seealso{
-\code{\link{svg_test}}, \code{\link{individual_test}}, \code{\link{top_results}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
+\code{\link{svg_test}}, \code{\link{individual_svg}}, \code{\link{top_results}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
 }
 \concept{spatial plotting functions}

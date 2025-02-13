@@ -10,8 +10,8 @@
 #
 #' @examples
 #' # load the input data:
-#' # data("LIBD_multi", package = "DESpace")
-#' # LIBD_multi
+#' # eh <- ExperimentHub()
+#' # spe_example <- eh[["EH9613"]]
 #' # 
 #' # Fit the model via `dsp_test` function. 
 #' # Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, 
@@ -26,8 +26,8 @@
 #' # 
 #' # library(edgeR)
 #' # set.seed(123)
-#' # results_dsp_test <- dsp_test(spe = LIBD_multi,
-#' #                                          cluster_col = "layer_guess_reordered",
+#' # results_dsp_test <- dsp_test(spe = spe_example,
+#' #                                          cluster_col = "Banksy_smooth",
 #' #                                          sample_col = "sample_id",
 #' #                                          condition_col = "condition",
 #' #                                          verbose = FALSE)

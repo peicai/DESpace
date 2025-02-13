@@ -10,18 +10,18 @@
 #
 #' @examples
 #' # load the input data:
-#' # data("LIBD_multi", package = "DESpace")
-#' # LIBD_multi
+#' # eh <- ExperimentHub()
+#' # spe_example <- eh[["EH9613"]]
 #' 
 #' # Function `individual_dsp()` can be used to identify SVGs for each individual cluster.
 #' # Parameter `spatial_cluster` indicates the column names of `colData(spe)` 
 #' # containing spatial clusters.
 #' # set.seed(123)
-#' # results_individual_dsp <- individual_dsp(LIBD_multi,
-#' #                                           cluster_col = "layer_guess_reordered",
+#' # results_individual_dsp <- individual_dsp(spe_example,
+#' #                                           cluster_col = "Banksy_smooth",
 #' #                                           sample_col = "sample_id",
 #' #                                           condition_col = "condition")
-#' @return A List of 7 elements - one element for each spatial cluster
+#' @return A List of 5 elements - one element for each spatial cluster
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{individual_dsp}}, \code{\link{dsp_test}}

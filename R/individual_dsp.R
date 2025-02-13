@@ -24,11 +24,8 @@
 #' Specifically, each item in the list is a "gene_results" dataframe which contains main edgeR test results.
 #' @examples
 #' # load the input data:
-#' muSpaData::Wei22_example()
-#' # Individual cluster test: identify SVGs for each individual cluster
-#' # set parallel computing; we suggest using as many cores as the number of spatial clusters.
-#' # Note that parallelizing the script will increase the memory requirement;
-#' # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
+#' eh <- ExperimentHub()
+#' spe_example <- eh[["EH9613"]]
 #' set.seed(123)
 #' results_individual_dsp <- individual_dsp(spe_example,
 #'                                           cluster_col = "Banksy_smooth",

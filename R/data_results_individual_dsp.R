@@ -21,8 +21,7 @@
 #' #                                           cluster_col = "layer_guess_reordered",
 #' #                                           sample_col = "sample_id",
 #' #                                           condition_col = "condition")
-#' # save(results_individual_dsp, file = "./DESpace/data/results_individual_dsp.RData")
-#' 
+#' @return A List of 7 elements - one element for each spatial cluster
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{individual_dsp}}, \code{\link{dsp_test}}

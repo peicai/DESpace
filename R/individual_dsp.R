@@ -51,56 +51,56 @@ individual_dsp <- function(spe,
                             min_pct_cells = 0.5,
                             filter_gene = TRUE,
                             filter_cluster = TRUE){
-  # check
-  uniqueness_check <- .check_columns(spe, cluster_col, sample_col, condition_col)
-  spe <- uniqueness_check[["updated_spe"]]
-  # if rownames(spe) is null, column 'genes' would missing from the edgeR results
-  # 'res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")]' would return an error
-  if(is.null(rownames(spe))){
-    message("Gene names are missing in rownames(spe)")
-    return(NULL)
-  }
-  # filtering
-  if(filter_gene == TRUE){
-    message("Filter low quality genes: \n")
-    message("min_counts = ", min_counts, "; min_non_zero_spots = ", min_non_zero_spots, ".\n")
-    # for the multi-sample case:
-    # sample ids:
-    sample_names <- levels(factor(colData(spe)[[sample_col]]))
-    sel_matrix <- vapply(sample_names, function(id){
-      spe <- subset(spe,,get(sample_col) == id)
-      sel_1 <- rowSums(counts(spe)) >= min_counts
-      sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots 
-      sel_1 & sel_2
-    }, FUN.VALUE = logical(nrow(spe)))
-    # sel_matrix: column names are sample names; row names are genes
-    # only keep genes that pass all filters across samples
-    sel <- rowMeans(sel_matrix) == 1
-    spe <- spe[sel, ]
-    message("The number of genes that pass filtering is ", 
-            dim(spe)[1], ".\n")
-    # } # end for !is.null(num_sample)
-  }# end for filter_gene == TRUE
-  # aggregate data to pseudobulk via muscat  
-  if (!"counts" %in% assayNames(spe)) {
-    stop("The 'counts' assay slot, required as input data, is missing.")
-  }
-  layer <- factor(colData(spe)[[cluster_col]])
-  # Re-label the cluster (e.g., cluster 1 vs. rest)
-  results_res <- lapply(levels(layer), function(each_layer) {
-    cat(sprintf("Conducting tests for layer '%s' against all other layers.\n", each_layer))
-    sce_one <- spe
-    layer <- .cluster_label(sce_one, cluster_list = each_layer, cluster_col = cluster_col)
-    sce_one[["individual_layer"]] <- layer
-    res_edgeR <- .muscat_layer_test(sce_one,
-                       design = NULL,
-                       cluster_col = "individual_layer",
-                       sample_col,
-                       condition_col,
-                       verbose = FALSE)
-    return(res_edgeR)
-  })
-  names(results_res) <- levels(layer)
-  message("Returning results")
-  return(cluster_results = results_res)
+    # check
+    uniqueness_check <- .check_columns(spe, cluster_col, sample_col, condition_col)
+    spe <- uniqueness_check[["updated_spe"]]
+    # if rownames(spe) is null, column 'genes' would missing from the edgeR results
+    # 'res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")]' would return an error
+    if(is.null(rownames(spe))){
+      message("Gene names are missing in rownames(spe)")
+      return(NULL)
+    }
+    # filtering
+    if(filter_gene == TRUE){
+      message("Filter low quality genes: \n")
+      message("min_counts = ", min_counts, "; min_non_zero_spots = ", min_non_zero_spots, ".\n")
+      # for the multi-sample case:
+      # sample ids:
+      sample_names <- levels(factor(colData(spe)[[sample_col]]))
+      sel_matrix <- vapply(sample_names, function(id){
+        spe <- subset(spe,,get(sample_col) == id)
+        sel_1 <- rowSums(counts(spe)) >= min_counts
+        sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots 
+        sel_1 & sel_2
+      }, FUN.VALUE = logical(nrow(spe)))
+      # sel_matrix: column names are sample names; row names are genes
+      # only keep genes that pass all filters across samples
+      sel <- rowMeans(sel_matrix) == 1
+      spe <- spe[sel, ]
+      message("The number of genes that pass filtering is ", 
+              dim(spe)[1], ".\n")
+      # } # end for !is.null(num_sample)
+    }# end for filter_gene == TRUE
+    # aggregate data to pseudobulk via muscat  
+    if (!"counts" %in% assayNames(spe)) {
+      stop("The 'counts' assay slot, required as input data, is missing.")
+    }
+    layer <- factor(colData(spe)[[cluster_col]])
+    # Re-label the cluster (e.g., cluster 1 vs. rest)
+    results_res <- lapply(levels(layer), function(each_layer) {
+      message(sprintf("Conducting tests for layer '%s' against all other layers.\n", each_layer))
+      sce_one <- spe
+      layer <- .cluster_label(sce_one, cluster_list = each_layer, cluster_col = cluster_col)
+      sce_one[["individual_layer"]] <- layer
+      res_edgeR <- .muscat_layer_test(sce_one,
+                         design = NULL,
+                         cluster_col = "individual_layer",
+                         sample_col,
+                         condition_col,
+                         verbose = FALSE)
+      return(res_edgeR)
+    })
+    names(results_res) <- levels(layer)
+    message("Returning results")
+    return(cluster_results = results_res)
 }

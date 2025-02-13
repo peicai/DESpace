@@ -8,6 +8,9 @@
 with the results obtained applying \code{\link{individual_svg}} function to an external dataset from the spatialLIBD package.
 Below the code used to obtain 'results_individual_svg'.}
 }
+\value{
+A List of 7 elements - one element for each spatial cluster
+}
 \description{
 Results from \code{\link{individual_svg}} function
 }
@@ -27,7 +30,6 @@ Results from \code{\link{individual_svg}} function
 #                                            edgeR_y = results_DESpace_test$estimated_y,
 #                                            spatial_cluster = "layer_guess_reordered")
 # save(results_individual_svg, file = "./DESpace/data/results_individual_svg.RData")
-
 }
 \seealso{
 \code{\link{svg_test}}, \code{\link{individual_svg}}

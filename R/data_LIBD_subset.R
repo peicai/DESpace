@@ -25,7 +25,7 @@
 #' #                                               logcounts = logcounts(LIBD_subset)), 
 #' #                                  colData = colData(LIBD_subset)[keep_col])
 #' # save(LIBD_subset, file = "./DESpace/data/LIBD_subset.RData")
-#' 
+#' @return A spatial experiment object
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{svg_test}}, \code{\link{individual_svg}}

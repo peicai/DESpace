@@ -23,7 +23,7 @@ Authors@R: c(
 biocViews: Spatial, SingleCell, RNASeq, Transcriptomics, GeneExpression, 
            Sequencing, DifferentialExpression,StatisticalMethod, Visualization
 License: GPL-3
-Depends: R (>= 4.4.0)
+Depends: R (>= 4.5.0)
 Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, 
         ggpubr, scales, SummarizedExperiment, S4Vectors, BiocGenerics, 
         data.table, assertthat, terra, sf, spatstat.explore, spatstat.geom,

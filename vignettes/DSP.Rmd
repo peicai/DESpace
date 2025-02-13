@@ -68,9 +68,8 @@ Here, we use a subset of the original data, consisting of three distinct regener
 
 ```{r load-example-data, message = FALSE}
 # Load the small example data
-# eh <- ExperimentHub()
-# spe_example <- eh[["EH9613"]]
-load("~/Desktop/DESpace_extention/muSpaData_Data/Wei22_example.rda")
+eh <- ExperimentHub()
+spe_example <- eh[["EH9613"]]
 # The following columns from colData(spe) are specified:
 coordinates <- c("sdimx", "sdimy") # coordinates of cells
 spatial_cluster <- 'Banksy_smooth' # Banksy spatial clusters

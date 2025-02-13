@@ -45,8 +45,8 @@
 #'
 #' @examples
 #' ## Load the example multi-sample multi-group spe object
-#' ## from the muSpaData package
-#' muSpaData::Wei22_example()
+#' eh <- ExperimentHub::ExperimentHub()
+#' spe <- eh[["EH9613"]]
 #' # Fit the model via \code{\link{dsp_test}} function.
 #' set.seed(123)
 #' results_dsp <- dsp_test(spe = spe_example,

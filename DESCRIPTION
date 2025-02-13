@@ -2,10 +2,8 @@ Package: DESpace
 Type: Package
 Title: DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions
 Version: 1.99.0
-Description: Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, 
-  a popular method for performing differential expression analyses.
-  Based on pre-annotated spatial clusters as summarized spatial information, 
-  DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. 
+Description: Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses.
+  Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. 
   SVGs are then identified by testing the significance of spatial clusters.
   For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates.
   DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions. 
@@ -26,8 +24,8 @@ License: GPL-3
 Depends: R (>= 4.5.0)
 Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, 
         ggpubr, scales, SummarizedExperiment, S4Vectors, BiocGenerics, 
-        data.table, assertthat, terra, sf, spatstat.explore, spatstat.geom,
-        cowplot, ggforce, ggnewscale, patchwork, BiocParallel, methods, muscat
+        data.table, assertthat, sosta, cowplot, ggforce, ggnewscale, 
+        patchwork, BiocParallel, methods, muscat
 Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, concaveman,
         spatialLIBD, purrr, scuttle, utils, reshape2, tidyverse
 VignetteBuilder: knitr

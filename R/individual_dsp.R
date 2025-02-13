@@ -31,7 +31,7 @@
 #' # Note that parallelizing the script will increase the memory requirement;
 #' # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
 #' set.seed(123)
-#' results_individual_dsp <- individual_dsp(spe_example,
+#' results_individual_dsp <- individual_dsp(spe,
 #'                                           cluster_col = "Banksy_smooth",
 #'                                           sample_col = "sample_id",
 #'                                           condition_col = "condition")

@@ -49,7 +49,7 @@
 #' spe <- eh[["EH9613"]]
 #' # Fit the model via \code{\link{dsp_test}} function.
 #' set.seed(123)
-#' results_dsp <- dsp_test(spe = spe_example,
+#' results_dsp <- dsp_test(spe = spe,
 #'                         cluster_col = "Banksy_smooth",
 #'                         sample_col = "sample_id",
 #'                         condition_col = "condition",

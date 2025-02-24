@@ -18,6 +18,7 @@ vignette: >
   %\VignetteEngine{knitr::rmarkdown}
 output: 
   BiocStyle::html_document
+code_folding: hide
 editor_options: 
   chunk_output_type: console
   markdown: 
@@ -28,7 +29,7 @@ editor_options:
 
 ```{r setup, echo=FALSE, results="hide"}
 knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
-                        dev="png",
+                        dev="png", 
                         message=TRUE, error=FALSE, warning=TRUE)
 library(utils)
 ```
@@ -55,12 +56,13 @@ suppressMessages({
     library(tidyverse)
     library(patchwork)
     library(splines)
+    library(edgeR)
 })
 ```
 
 # Data
 
-As an example dataset, we consider a multi-sample, multi-group spatially resolved transcriptomics data - the Stereo-seq dataset of taxolotl telencephalon brain regeneration stages [@ARTISTA]. The dataset includes axolotl brain tissues collected at various days post-injury (DPI): 2 (3 sections), 5 (3 sections), 10 (3 sections), 15 (4 sections), 20 (3 sections), 30 (1 section) and 60 (1 section), after the removal of a reproducible portion of dorsal pallium in left telencephalic hemisphere of axolotl. The original dataset is available for download via [*ARTISTA*](https://db.cngb.org/stomics/artista/download/), and the processed dataset (including spatial clusters) can be accessed via [*muSpaData*](https://github.com/peicai/muSpaData) ExperimentHub package.
+As an example dataset, we consider a multi-sample, multi-group spatially resolved transcriptomics data - the Stereo-seq dataset of taxolotl telencephalon brain regeneration stages [@ARTISTA]. The dataset includes axolotl brain tissues collected at various days post-injury (DPI): 2 (3 sections), 5 (3 sections), 10 (3 sections), 15 (4 sections), 20 (3 sections), 30 (1 section) and 60 (1 section), after the removal of a reproducible portion of dorsal pallium in left telencephalic hemisphere of axolotl. The original dataset is available for download via [ARTISTA] (https://db.cngb.org/stomics/artista/download/), and the processed dataset (including spatial clusters) can be accessed via [*muSpaData*](https://github.com/peicai/muSpaData) ExperimentHub package.
 
 ## Input data
 
@@ -68,8 +70,9 @@ Here, we use a subset of the original data, consisting of three distinct regener
 
 ```{r load-example-data, message = FALSE}
 # Load the small example data
-eh <- ExperimentHub()
-spe_example <- eh[["EH9613"]]
+# eh <- ExperimentHub()
+# spe_example <- eh[["EH9613"]]
+load("~/Desktop/DESpace_extention/muSpaData_Data/Wei22_example.rda")
 # The following columns from colData(spe) are specified:
 coordinates <- c("sdimx", "sdimy") # coordinates of cells
 spatial_cluster <- 'Banksy_smooth' # Banksy spatial clusters
@@ -247,7 +250,54 @@ Visualize the gene expression of the top gene for cluster 2.
 ])
 ```
 
+### Visualization  {.tabset}
+
+#### Abundance trend
+
+One way is to plot the overall abundance of `r feature_name` for each cluster-sample combination.
+Under the null hypothesis, gene expression changes across conditions are consistent across clusters. In other words, connecting the expression levels at each time point for the same cluster should result in nearly parallel lines. 
+
+The figure shows two lines representing the average CPM for cluster 2 and for all other clusters (excluding cluster 2). These lines deviate from parallelism: abundance is higher in cluster 2 at 2 DPI but decreases at 10 DPI, while the average abundance across other clusters remains relatively constant over time.
+
+```{r class.source = 'fold-hide'}
+# calcualte cpm
+cps <- cpm(results$estimated_y)
+cps_name <- colnames(cps)
+mdata <- data.frame(
+    cpm = cps[feature, ] ,
+    Banksy_smooth = factor(sub(".*_", "", cps_name)),
+    day = as.numeric(sub("([0-9]+)DPI.*", "\\1", cps_name)),
+    sample_id = sub("(_[0-9]+)$", "", cps_name)
+)
+# calculate average CPM for cluster 2 and all other domains, excluding cluster 2
+m_summary <- mdata |>
+    group_by(day, Banksy_smooth) |>
+    summarise(avg_cpm = mean(cpm), .groups = "drop") |>
+    mutate(cluster_type = ifelse(Banksy_smooth == "2", 
+                                 "Avg 2", "Avg (excl. 2)")) |>
+    group_by(day, cluster_type) |>
+    summarise(avg_cpm = mean(avg_cpm), .groups = "drop")  
+
+# plot
+ggplot(mdata, aes(x = day, y = cpm)) +
+    geom_jitter(aes(color = Banksy_smooth), size = 2, width = 0.2) +  
+    geom_line(data = m_summary, 
+              aes(y = avg_cpm, group = cluster_type, linetype = cluster_type)) +  
+    scale_x_continuous(breaks = c(2, 10, 20)) +  
+    labs(title = feature_name, x = "Days post injury", 
+         y = "Counts per million (CPM)", color = "Banksy domain") +
+    theme(legend.position = "right") +
+    guides(color = guide_legend(byrow = TRUE), 
+           linetype = guide_legend(title = NULL))
+```
+
+#### Spatial expression 
+
+Alternatively, we can visualize the gene expression at physical space. 
 A cluster outline can be drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `cluster_col` and `cluster`.
+
+Alternatively, gene expression can be visualized in physical space with `FeaturePlot()`. 
+A cluster outline drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `cluster_col` and `cluster`.
 
 
 ```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
@@ -261,7 +311,6 @@ plots <- lapply(sample_ids, function(sample_id) {
                         coordinates = coordinates, cluster = '2',
                         platform = "Stereo-seq",
                         diverging = TRUE,
-                        linecolor = "lightgreen",
                         point_size = 0.1,
                         linewidth = 0.6) +
         theme(legend.position = "right",
@@ -272,13 +321,14 @@ plots <- lapply(sample_ids, function(sample_id) {
 })
 ```
 
+
 Again, the spatial structure of gene expression varies across groups; in particular, at 2 and 10 DPI, abundance is higher in cluster 2 (outlined in the plot), compared to the rest of the tissue, while at 20 DPI abundance is more homogeneous.
 
 ```{r}
 combined_plot <- wrap_plots(plots, ncol = 3) + 
     # common legend
     plot_layout(guides = 'collect')  
-combined_plot
+combined_plot 
 ```
 
 
@@ -298,7 +348,7 @@ metadata <- expand.grid(sample_id = levels(spe_example$sample_id),
       day = as.numeric(sub("DPI.*", "", sample_id)),
       rep = as.numeric(sub(".*_", "", sample_id)) 
     )
-metadata |> head(n = 10)
+metadata |> head(n = 3)
 ```
 
 Instead of treating time phases (e.g., 2 DPI, 10 DPI, 20 DPI) as a categorical variable, we can model the time trend using a smooth spline function. This can be achieved with the `ns(x, df)` function from the  [*splines*](https://stat.ethz.ch/R-manual/R-devel/library/splines/html/ns.html) package. Here, `x` represents the predictor variable—time phases (`day` in the `metadata`) in our case-and `df` specifies the degrees of freedom, which determine the total number of parameters in the `ns()` time model, including the intercept.
@@ -336,7 +386,11 @@ w <- results[["estimated_y"]][["genes"]][["genes"]] == gn
 ])
 ```
 
-To explore predicted counts based on estimated coefficients, we calculate and visualize the fitted values for `r gn_name`.
+### Visualization  {.tabset}
+
+#### Abundance trend
+
+To explore predicted counts based on estimated coefficients, we calculate and visualize the CPM values for `r gn_name`. 
 
 ```{r}
 fitted_values <- results[["glmFit"]][["fitted.values"]]
@@ -350,19 +404,41 @@ m <- melt(fitted_values[w,]) |>
 m |> head(n = 3)
 ```
 
-The expression levels of `r gn_name` in cluster 0 increase over time, while other clusters show relatively stable expression patterns across different days post-injury.
+The lines represent the average CPM for domain 0 and domain 4. 
+The expression levels of `r gn_name` in cluster 0 first increase and then decrease, while in cluster 4, the trend is the opposite, with a decrease followed by an increase.
 
 ```{r}
-p1 <- ggplot(m, aes(x=day, y=fitted, group=cluster, colour = cluster)) +
-  geom_jitter(size = 3, width = 0.2, height = 0) +
-  scale_y_sqrt() + 
-  labs(title = gn_name) +
-  scale_x_continuous(breaks = c(2, 10, 20)) + 
-  xlab("Days post injury")
+# calcualte cpm
+mdata <- data.frame(
+    cpm = cps[gn, ] ,
+    Banksy_smooth = factor(sub(".*_", "", cps_name)),
+    day = as.numeric(sub("([0-9]+)DPI.*", "\\1", cps_name)),
+    sample_id = sub("(_[0-9]+)$", "", cps_name)
+)
+# calculate average CPM for cluster 2 and all other domains, excluding cluster 2
+m_summary <- mdata |>
+    filter(Banksy_smooth %in% c(0, 4)) |>
+    group_by(day, Banksy_smooth) |>
+    summarise(avg_cpm = mean(cpm), .groups = "drop") |>
+    mutate(cluster_type = ifelse(Banksy_smooth == "0", 
+                                 "Avg 0", "Avg 4")) |>
+    group_by(day, cluster_type) |>
+    summarise(avg_cpm = mean(avg_cpm), .groups = "drop")  
 
-p1
+# plot
+ggplot(mdata, aes(x = day, y = cpm)) +
+    geom_jitter(aes(color = Banksy_smooth), size = 2, width = 0.2) +  
+    geom_line(data = m_summary, 
+              aes(y = avg_cpm, group = cluster_type, linetype = cluster_type)) +  
+    scale_x_continuous(breaks = c(2, 10, 20)) +  
+    labs(title = gn_name, x = "Days post injury", 
+         y = "Counts per million (CPM)", color = "Banksy domain") +
+    theme(legend.position = "right") +
+    guides(color = guide_legend(byrow = TRUE), 
+           linetype = guide_legend(title = NULL))
 ```
 
+#### Spatial expression 
 
 Visualize the expression of the top gene, `r gn_name`, across samples.
 By using `annotation_cluster = TRUE`, cluster annotations are displayed on the expression plots.
@@ -385,7 +461,7 @@ plots <- lapply(sample_ids, function(sample_id) {
 })
 ```
 
-The trend aligns with the model's prediction: gene abundance in cluster 0 increases at later stages (10 and 20 DPI) compared to the earlier stage (2 DPI) and other clusters.
+The trend aligns with the model's prediction: gene abundance in cluster 0 increases at later stages (10 DPI) compared to the earlier stage (2 DPI) and other clusters.
 
 ```{r}
 combined_plot <- wrap_plots(plots, ncol = 2) + 

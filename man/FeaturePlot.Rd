@@ -47,8 +47,7 @@ SpatialExperiment object and \code{spatialCoords(spe)} is not NULL.}
 \item{concave_hull}{A logical value (TRUE or FALSE).
 If TRUE, the function uses `ggforce::geom_mark_hull()` to outline cluster boundaries 
 (recommended for non-discontinuous clusters).
-If FALSE, the internal function `.constructOutline()`, 
-adapted from `sosta::reconstructShapeDensityImage()`, is used for complex cluster shapes.
+If FALSE, `sosta::reconstructShapeDensityImage()` is used for complex cluster shapes.
 For Visium or ST platforms, `concave_hull` is automatically set to TRUE.}
 
 \item{sf_dim}{A numeric value for the x-dimension of the reconstruction (default is 200). 
@@ -118,9 +117,6 @@ Plot spatial gene expression.
 This function is a modified version of the \code{\link{FeaturePlot}} function from BayesSpace R package.
 In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously 
 and drawing an outline around a specified cluster.
-To draw outlines, the \code{reconstructShapeDensityImage} function from the `sosta` R package has been adapted.
-Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, 
-which cannot be used with `spatialCoords()`.
 }
 \examples{
 # load the input data:

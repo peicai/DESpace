@@ -53,13 +53,14 @@ This function can be used to identify SVGs among conditions for each individual 
 }
 \examples{
 # load the input data:
-muSpaData::Wei22_example()
+eh <- ExperimentHub::ExperimentHub()
+spe <- eh[["EH9613"]]
 # Individual cluster test: identify SVGs for each individual cluster
 # set parallel computing; we suggest using as many cores as the number of spatial clusters.
 # Note that parallelizing the script will increase the memory requirement;
 # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
 set.seed(123)
-results_individual_dsp <- individual_dsp(spe_example,
+results_individual_dsp <- individual_dsp(spe,
                                           cluster_col = "Banksy_smooth",
                                           sample_col = "sample_id",
                                           condition_col = "condition")

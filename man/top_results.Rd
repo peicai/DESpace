@@ -57,7 +57,7 @@ It can also be used to merge gene- and cluster-level results into a single objec
 }
 \examples{
 # load pre-computed results (obtained via `svg_test`)
-data("results_svg", package = "DESpace")
+data("results_svg_test", package = "DESpace")
 
 # svg_test returns of a list of 2 objects:
 # "gene_results": a dataframe contains main edgeR test results;
@@ -65,7 +65,7 @@ data("results_svg", package = "DESpace")
 #  which can later be used to speed-up calculation when testing individual clusters.
 
 # We visualize differential results:
-head(results_svg$gene_results, 3)
+head(results_svg_test$gene_results, 3)
 
 # load pre-computed results (obtained via `individual_svg`)
 data("results_individual_svg", package = "DESpace")
@@ -77,11 +77,11 @@ data("results_individual_svg", package = "DESpace")
 # log2-fold changes (`logFC`) and adjusted p-value (`FDR`).
 # 
 # Combine gene-and cluster-level results
-merge_res = top_results(results_svg$gene_results, 
+merge_res = top_results(results_svg_test$gene_results, 
                         results_individual_svg)
 head(merge_res,3)
 # 'select = "FDR"' can be used to visualize adjusted p-values for each spatial cluster.
-merge_res = top_results(results_svg$gene_results, 
+merge_res = top_results(results_svg_test$gene_results, 
                         results_individual_svg, select = "FDR")
 head(merge_res,3)
 # Specify the cluster of interest and check top genes detected by svg_test.

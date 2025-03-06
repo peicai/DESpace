@@ -24,10 +24,10 @@
 #' Specifically, each item in the list is a "gene_results" dataframe which contains main edgeR test results.
 #' @examples
 #' # load the input data:
-#' eh <- ExperimentHub()
-#' spe_example <- eh[["EH9613"]]
+#' eh <- ExperimentHub::ExperimentHub()
+#' spe <- eh[["EH9613"]]
 #' set.seed(123)
-#' results_individual_dsp <- individual_dsp(spe_example,
+#' results_individual_dsp <- individual_dsp(spe,
 #'                                           cluster_col = "Banksy_smooth",
 #'                                           sample_col = "sample_id",
 #'                                           condition_col = "condition")

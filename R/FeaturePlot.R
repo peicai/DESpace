@@ -4,9 +4,6 @@
 #' This function is a modified version of the \code{\link{FeaturePlot}} function from BayesSpace R package.
 #' In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously 
 #' and drawing an outline around a specified cluster.
-#' To draw outlines, the \code{reconstructShapeDensityImage} function from the `sosta` R package has been adapted.
-#' Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, 
-#' which cannot be used with `spatialCoords()`.
 #' 
 #' @param spe SpatialExperiment or SingleCellExperiment. If \code{feature} is specified and is a 
 #'   string, it must exist as a row in the specified assay of \code{spe}.
@@ -19,8 +16,7 @@
 #' @param concave_hull A logical value (TRUE or FALSE).
 #'    If TRUE, the function uses `ggforce::geom_mark_hull()` to outline cluster boundaries 
 #'    (recommended for non-discontinuous clusters).
-#'    If FALSE, the internal function `.constructOutline()`, 
-#'    adapted from `sosta::reconstructShapeDensityImage()`, is used for complex cluster shapes.
+#'    If FALSE, `sosta::reconstructShapeDensityImage()` is used for complex cluster shapes.
 #'    For Visium or ST platforms, `concave_hull` is automatically set to TRUE.
 #' @param sf_dim A numeric value for the x-dimension of the reconstruction (default is 200). 
 #'    A lower value speeds up computation but reduces accuracy. 
@@ -116,7 +112,7 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         coordinates_col <- colData(spe)[coordinates]
         colnames(coordinates_col) <- c('row', 'col')
         colData(spe) <- cbind(colData(spe), coordinates_col)
-        # spatialCoords(spe) <- as.matrix(coordinates_col)
+        spatialCoords(spe) <- as.matrix(coordinates_col)
     }else {
         coordinates_col <- spatialCoords(spe)
         colnames(coordinates_col) <- c('row', 'col')

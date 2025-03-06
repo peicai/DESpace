@@ -45,12 +45,11 @@
 #'
 #' @examples
 #' ## Load the example multi-sample multi-group spe object
-#' ## from the muSpaData package
-#' eh <- ExperimentHub()
-#' spe_example <- eh[["EH9613"]]
+#' eh <- ExperimentHub::ExperimentHub()
+#' spe <- eh[["EH9613"]]
 #' # Fit the model via \code{\link{dsp_test}} function.
 #' set.seed(123)
-#' results_dsp <- dsp_test(spe = spe_example,
+#' results_dsp <- dsp_test(spe = spe,
 #'                         cluster_col = "Banksy_smooth",
 #'                         sample_col = "sample_id",
 #'                         condition_col = "condition",

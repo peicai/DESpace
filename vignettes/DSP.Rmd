@@ -29,7 +29,7 @@ editor_options:
 
 ```{r setup, echo=FALSE, results="hide"}
 knitr::opts_chunk$set(tidy=FALSE, cache=TRUE,
-                        dev="png", collapse = TRUE,
+                        dev="png", 
                         message=TRUE, error=FALSE, warning=TRUE)
 library(utils)
 ```
@@ -266,6 +266,10 @@ TODO: CPM non-linear effect; logCPM; account for domain size
 
 ```{r class.source = 'fold-hide'}
 # calculate cpm
+=======
+```{r class.source = 'fold-hide'}
+# calcualte cpm
+>>>>>>> 90440f19c604228f7dc33362653371fd17bd2f1d
 cps <- cpm(results$estimated_y)
 cps_name <- colnames(cps)
 mdata <- data.frame(
@@ -295,6 +299,7 @@ ggplot(mdata, aes(x = day, y = cpm)) +
     guides(color = guide_legend(byrow = TRUE), 
            linetype = guide_legend(title = NULL))
 ```
+
 
 </details>
 
@@ -329,6 +334,7 @@ plots <- lapply(sample_ids, function(sample_id) {
     return(plot)
 })
 ```
+
 
 </details>
 

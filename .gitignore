@@ -16,13 +16,5 @@ inst/script/*
 vignettes/*
 !vignettes/DESpace.Rmd
 !vignettes/References.bib
-/doc/
-/Meta/
-docs
-.Rproj.user
-.Rhistory
-.Rdata
-.httr-oauth
-.DS_Store
-.quarto
+
 

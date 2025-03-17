@@ -57,7 +57,9 @@ suppressMessages({
     library(patchwork)
     library(splines)
     library(edgeR)
+    library(muscat)
 })
+set.seed(123)
 ```
 
 # Data
@@ -70,18 +72,17 @@ Here, we use a subset of the original data, consisting of three distinct regener
 
 ```{r load-example-data, message = FALSE}
 # Load the small example data
-# eh <- ExperimentHub()
-# spe_example <- eh[["EH9613"]]
-load("~/Desktop/DESpace_extention/muSpaData_Data/Wei22_example.rda")
+eh <- ExperimentHub()
+spe <- eh[["EH9613"]]; rm(eh)
 # The following columns from colData(spe) are specified:
 coordinates <- c("sdimx", "sdimy") # coordinates of cells
 spatial_cluster <- 'Banksy_smooth' # Banksy spatial clusters
 condition_col <- 'condition'       # regeneration time phases
 sample_col <- 'sample_id'          # tissue section id
-colData(spe_example) |> head()
+colData(spe) |> head()
 ```
 
-The spatial tissues of each sample were annotated via Banksy [@Banksy], classifying cells into five domains. These domain annotations are stored in the `Banksy_smooth` column of colData. Additionally, the columns `sdimx` and `sdimy` contain the spatial coordinates of the cells, while the `condition` column specifies the group (i.e., stage) each cell belongs to.
+The spatial tissues of each sample were annotated via Banksy [@Banksy], classifying cells into five clusters. These cluster annotations are stored in the `Banksy_smooth` column of colData. Additionally, the columns `sdimx` and `sdimy` contain the spatial coordinates of the cells, while the `condition` column specifies the group (i.e., stage) each cell belongs to.
 
 ## Quality control/filtering
 
@@ -114,14 +115,14 @@ Details on applying Banksy joint clustering to this example dataset can also be 
 ```{r view ARTISTA Banksy}
 # View Banksy clusters 
 # The spatial cluster assignments are available in the `colData(spe)`
-CD <- colData(spe_example) |> as.data.frame()
+CD <- colData(spe) |> as.data.frame()
 ggplot(CD, aes(x = sdimx, y = sdimy, color = factor(Banksy_smooth))) +
-  geom_point(size = 0.25) +
-  facet_wrap(~sample_id, scales = 'free') +
-  theme_void() +
-  theme(legend.position = "bottom") +
-  guides(color = guide_legend(override.aes = list(size = 3))) +
-  labs(color = NULL, title = "Banksy Spatial Clusters")
+    geom_point(size = 0.25) +
+    facet_wrap(~sample_id, scales = 'free') +
+    theme_void() +
+    theme(legend.position = "bottom") +
+    guides(color = guide_legend(override.aes = list(size = 3))) +
+    labs(color = NULL, title = "Banksy Spatial Clusters")
 ```
 
 #### Single sample clustering
@@ -139,8 +140,7 @@ Fit the model via `dsp_test` function.
 Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `cluster_col`, `sample_col` and `condition_col` define the column names in `colData(spe)` for spatial clusters, sample ids, and condition ids, respectively. Set `verbose` to `TRUE` (default value) to view detailed statistics.
 
 ```{r DESpace}
-set.seed(123)
-results <- dsp_test(spe = spe_example,
+results <- dsp_test(spe = spe,
                     cluster_col = spatial_cluster,
                     sample_col = sample_col,
                     condition_col = condition_col,
@@ -151,7 +151,7 @@ A list of results is returned, with the main results of interest stored in the `
 
 Specifically, the column `logFC.condition2DPI.cluster_id1` represents the difference in the log2-fold change of gene expression under **2 DPI** in **cluster 1** relative to the baseline condition (**10 DPI**) and baseline cluster (**cluster 0**).
 
-In other words, we are testing whether the spatial structure of gene expression (summarized by the domains) differs between 2 and 10 DPI.
+In other words, we are testing whether the spatial structure of gene expression (summarized by the clusters) differs between 2 and 10 DPI.
 
 ```{r}
 head(results$gene_results, 2)
@@ -172,11 +172,11 @@ Note that the gene names in vector `feature`, should also appear in the count ma
 sample_ids <- levels(CD$sample_id)
 
 # Identify the top DSP
-(feature <- results$gene_results$gene_id[seq_len(1)])
+(feature <- results$gene_results$gene_id[1])
 
 # Extract the gene_name by matching the gene_id
-(feature_name <- rowData(spe_example)$gene_id[
-  rowData(spe_example)$gene_name %in% feature
+(feature_name <- rowData(spe)$gene_id[
+  rowData(spe)$gene_name %in% feature
 ])
 ```
 
@@ -184,8 +184,8 @@ sample_ids <- levels(CD$sample_id)
 # generate a list of plots
 plots <- lapply(sample_ids, function(sample_id) {
   
-  # Subset spe_example for each sample
-  spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+  # Subset spe for each sample
+  spe_j <- spe[, colData(spe)$sample_id == sample_id]
   
   # Create FeaturePlot for the sample
   plot <- FeaturePlot(spe_j, feature,
@@ -218,10 +218,9 @@ Function `individual_dsp()` can be used to identify DSP genes for each individua
 Parameters `cluster_col`, `sample_col` and `condition_col` indicate the column names in `colData(spe)` for spatial clusters, sample ids, and condition ids, respectively.
 
 ```{r individual cluster test, results = 'hide', message=FALSE}
-set.seed(123)
-cluster_results <- individual_dsp(spe_example,
+cluster_results <- individual_dsp(spe,
                                   cluster_col = spatial_cluster,
-                                  sample_col = "sample_id",
+                                  sample_col = sample_col,
                                   condition_col = condition_col)
 ```
 
@@ -229,7 +228,7 @@ cluster_results <- individual_dsp(spe_example,
 Similarly to above, the results for each cluster are presented as a `data.fame`, where columns contain gene names (`gene_id`), likelihood ratio test statistics (`LR`), log2-fold changes (`logFC`), raw p-values (`PValue`) and Benjamini-Hochberg adjusted p-values (`FDR`).
 
 Here, we present the top results for cluster 2. 
-`logFC.condition20DPI.cluster_id2` represents the interaction between the 20 DPI condition and cluster 2. It compares the effect of 20 DPI in cluster 2 with its effect in all other domains (i.e., all tissue regions excluding cluster 2, which serves as the baseline).
+`logFC.condition20DPI.cluster_id2` represents the interaction between the 20 DPI condition and cluster 2. It compares the effect of 20 DPI in cluster 2 with its effect in all other clusters (i.e., all tissue regions excluding cluster 2, which serves as the baseline).
 A positive log-fold change value suggests that, the increase in gene expression in **cluster 2** from 10 DPI (the baseline) to 20 DPI is **greater** than the increase in gene expression in **all other clusters** from 10 DPI to 20 DPI.
 
 ```{r visualize results cluster4}
@@ -245,8 +244,8 @@ Visualize the gene expression of the top gene for cluster 2.
 (feature <- rownames(cluster_results[["2"]])[4])
 
 # Extract the gene_name by matching the gene_id
-(feature_name <- rowData(spe_example)$gene_id[
-  rowData(spe_example)$gene_name == feature
+(feature_name <- rowData(spe)$gene_id[
+  rowData(spe)$gene_name == feature
 ])
 ```
 
@@ -255,58 +254,44 @@ Visualize the gene expression of the top gene for cluster 2.
 #### Abundance trend
 
 One way is to plot the overall abundance of `r feature_name` for each cluster-sample combination.
-Under the null hypothesis, gene expression changes across conditions are consistent across clusters. In other words, connecting the expression levels at each time point for the same cluster should result in nearly parallel lines. 
+Under the null hypothesis, gene expression changes across conditions are consistent across clusters. 
 
-The figure shows two lines representing the average CPM for cluster 2 and for all other clusters (excluding cluster 2). These lines deviate from parallelism: abundance is higher in cluster 2 at 2 DPI but decreases at 10 DPI, while the average abundance across other clusters remains relatively constant over time.
-
-TODO: CPM non-linear effect; logCPM; account for domain size
+The boxplots below show the average log-CPM for cluster 2 and for all other clusters (excluding cluster 2) across different stages. In Cluster 2, the average abundance is highest at 2 DPI, then decreases at 10 DPI and continues to drop at 20 DPI. In contrast, although there is a slight decrease in abundance across other clusters, it remains relatively constant overall.
 
 <details>
 <summary>Code</summary>
 
-```{r class.source = 'fold-hide'}
-# calculate cpm
-=======
-```{r class.source = 'fold-hide'}
-# calcualte cpm
->>>>>>> 90440f19c604228f7dc33362653371fd17bd2f1d
-cps <- cpm(results$estimated_y)
+```{r}
+# calculate log cpm
+cps <- cpm(results$estimated_y, log = TRUE)
 cps_name <- colnames(cps)
 mdata <- data.frame(
-    cpm = cps[feature, ] ,
+    log_cpm = cps[feature, ] ,
     Banksy_smooth = factor(sub(".*_", "", cps_name)),
     day = as.numeric(sub("([0-9]+)DPI.*", "\\1", cps_name)),
     sample_id = sub("(_[0-9]+)$", "", cps_name)
 )
-# calculate average CPM for cluster 2 and all other domains, excluding cluster 2
-m_summary <- mdata |>
-    group_by(day, Banksy_smooth) |>
-    summarise(avg_cpm = mean(cpm), .groups = "drop") |>
-    mutate(cluster_type = ifelse(Banksy_smooth == "2", 
-                                 "Avg 2", "Avg (excl. 2)")) |>
-    group_by(day, cluster_type) |>
-    summarise(avg_cpm = mean(avg_cpm), .groups = "drop")  
-
-# plot
-ggplot(mdata, aes(x = day, y = cpm)) +
-    geom_jitter(aes(color = Banksy_smooth), size = 2, width = 0.2) +  
-    geom_line(data = m_summary, 
-              aes(y = avg_cpm, group = cluster_type, linetype = cluster_type)) +  
-    scale_x_continuous(breaks = c(2, 10, 20)) +  
+plt <- ggplot(mdata, aes(x = factor(day), y = log_cpm)) +
+    geom_jitter(aes(color = Banksy_smooth), size = 2, width = 0.1) + 
+    geom_boxplot(aes(fill = ifelse(Banksy_smooth == "2", 
+                                   "cluster 2", "non-cluster 2")), 
+                 position = position_dodge(width = 0.8), alpha = 0.5) +
+    scale_x_discrete(breaks = c(2, 10, 20)) +  
+    scale_fill_manual(values = c("#4DAF4A", "grey")) + 
     labs(title = feature_name, x = "Days post injury", 
-         y = "Counts per million (CPM)", color = "Banksy domain") +
-    theme(legend.position = "right") +
-    guides(color = guide_legend(byrow = TRUE), 
-           linetype = guide_legend(title = NULL))
+         y = "log-2 counts per million (logCPM)", fill = "",
+         color = "Banksy cluster") +
+     theme(legend.position = "right")
+```
+</details>
+
+```{r}
+# figure
+plt
 ```
 
 
-</details>
-
 #### Spatial expression 
-
-Alternatively, we can visualize the gene expression at physical space. 
-A cluster outline can be drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `cluster_col` and `cluster`.
 
 Alternatively, gene expression can be visualized in physical space with `FeaturePlot()`. 
 A cluster outline drawn by specifying the column names of clusters stored in `colData(spe)` and the vector of cluster names via `cluster_col` and `cluster`.
@@ -317,8 +302,8 @@ A cluster outline drawn by specifying the column names of clusters stored in `co
 ```{r, echo=TRUE, results='hide', message=FALSE, warning=FALSE}
 # generate a list of FeaturePlots
 plots <- lapply(sample_ids, function(sample_id) {
-    # Subset spe_example for each sample
-    spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+    # Subset spe for each sample
+    spe_j <- spe[, colData(spe)$sample_id == sample_id]
     # Create FeaturePlot for the sample
     plot <- FeaturePlot(spe_j, feature, 
                         cluster_col = spatial_cluster,
@@ -333,6 +318,9 @@ plots <- lapply(sample_ids, function(sample_id) {
   
     return(plot)
 })
+combined_plot <- wrap_plots(plots, ncol = 3) + 
+    # common legend
+    plot_layout(guides = 'collect')  
 ```
 
 
@@ -340,17 +328,11 @@ plots <- lapply(sample_ids, function(sample_id) {
 
 Again, the spatial structure of gene expression varies across groups; in particular, at 2 and 10 DPI, abundance is higher in cluster 2 (outlined in the plot), compared to the rest of the tissue, while at 20 DPI abundance is more homogeneous.
 
-<details>
-<summary>Code</summary>
-
 ```{r}
-combined_plot <- wrap_plots(plots, ncol = 3) + 
-    # common legend
-    plot_layout(guides = 'collect')  
+# figure
 combined_plot 
 ```
 
-</details>
 
 ## Smooth splines to model time
 
@@ -360,14 +342,14 @@ First, we create metadata associated with the samples and clusters. For each clu
 
 ```{r smooth spline}
 # all combinations of sample and cluster
-metadata <- expand.grid(sample_id = levels(spe_example$sample_id),
-                        cluster = levels(spe_example$Banksy_smooth)
+metadata <- expand.grid(sample_id = levels(spe$sample_id),
+                        cluster = levels(spe$Banksy_smooth)
                         ) |>
     # extract time point as 'day' from sample_id 
     mutate(
       day = as.numeric(sub("DPI.*", "", sample_id)),
       rep = as.numeric(sub(".*_", "", sample_id)) 
-    )
+      )
 metadata |> head(n = 3)
 ```
 
@@ -384,9 +366,8 @@ design_model |> head(n = 3)
 
 Fit the model via `dsp_test` function.
 
-```{r DESpace spline}
-set.seed(123)
-results <- dsp_test(spe_example,
+```{r DESpace spline global, message=FALSE, results='hide'}
+results <- dsp_test(spe,
                     design = design_model,
                     cluster_col = spatial_cluster,
                     sample_col = sample_col,
@@ -394,78 +375,112 @@ results <- dsp_test(spe_example,
                     verbose = TRUE)
 ```
 
-One significant gene:
+```{r res-global}
+# count significant DSP genes (at 5% FDR significance level)
+res_global <- results$gene_results
+table(res_global$FDR <= 0.05)
+```
+
+To identify key spatial clusters where expression changes across conditions, we apply the smooth spline with a single-cluster design. Specifically, we convert the original Banksy clusters into two groups: the target cluster and all other clusters. We then apply the same test as in the global test above.
+
+```{r DESpace spline individual}
+# example: testing for cluster 2
+# convert 5 Banksy clusters into 2 groups: cluster 2 vs. all other clusters
+new_cluster <- factor(ifelse(spe$Banksy_smooth %in% '2', '2', 'Other'))
+metadata2 <- expand.grid(sample_id = levels(spe$sample_id),
+                         cluster = levels(new_cluster)) |>
+    # extract time point as 'day' from sample_id 
+    mutate(
+        day = as.numeric(sub("DPI.*", "", sample_id)),
+        rep = as.numeric(sub(".*_", "", sample_id)) 
+      )
+```
+
+Create a single-cluster design.
 
 ```{r}
-(gn <- results[["gene_results"]][["gene_id"]][9])
-w <- results[["estimated_y"]][["genes"]][["genes"]] == gn
+# design model for testing the cluster 2
+design_model2 <- model.matrix(~ cluster * ns(day, df = 2),
+                              data = metadata2)
+rownames(design_model2) <- paste0(metadata2$sample_id, "_",
+                                  metadata2$cluster)
+design_model2 |> head(n = 3)
+```
 
-# Extract the gene_name by matching the gene_id
-(gn_name <- rowData(spe_example)$gene_id[
-  rowData(spe_example)$gene_name == gn
+Fit the single-cluster model via `dsp_test`.
+
+```{r, message=FALSE, results='hide'}
+spe$cluster2 <- new_cluster
+results2 <- dsp_test(spe,
+                    design = design_model2,
+                    cluster_col = "cluster2",
+                    sample_col = sample_col,
+                    condition_col = condition_col,
+                    verbose = TRUE)
+```
+
+```{r}
+# count significant DSP genes (at 5% FDR significance level)
+res_global2 <- results2$gene_results
+table(res_global2$FDR <= 0.05)
+```
+
+
+```{r}
+# identify the top DSP for cluster 2
+(feature <- results2$gene_results$gene_id[5])
+
+# extract the gene_name by matching the gene_id
+(feature_name <- rowData(spe)$gene_id[
+  rowData(spe)$gene_name %in% feature
 ])
 ```
 
 ### Visualization  {.tabset}
 
-#### Abundance trend
+#### Predicted trend
 
-To explore predicted counts based on estimated coefficients, we calculate and visualize the CPM values for `r gn_name`. 
+To explore predicted counts based on estimated coefficients, we calculate and visualize the fitted values for `r feature_name`.
+The expression of `r feature_name` in cluster 2 first increase and then decrease, while in the remaining regions, the expression slightly increase over time.
 
-```{r}
-fitted_values <- results[["glmFit"]][["fitted.values"]]
-m <- melt(fitted_values[w,]) |>
-  rownames_to_column("row_name_column") |>
-  setNames(c("sample_id", "fitted")) |>
-  mutate(
-      day = as.numeric(sub("DPI.*", "", sample_id)),
-      cluster = as.factor(sub(".*_", "", sample_id)) 
-    )
-m |> head(n = 3)
-```
-
-The lines represent the average CPM for domain 0 and domain 4. 
-The expression levels of `r gn_name` in cluster 0 first increase and then decrease, while in cluster 4, the trend is the opposite, with a decrease followed by an increase.
 
 <details>
 <summary>Code</summary>
 
 ```{r}
-# calcualte cpm
-mdata <- data.frame(
-    cpm = cps[gn, ] ,
-    Banksy_smooth = factor(sub(".*_", "", cps_name)),
-    day = as.numeric(sub("([0-9]+)DPI.*", "\\1", cps_name)),
-    sample_id = sub("(_[0-9]+)$", "", cps_name)
-)
-# calculate average CPM for cluster 2 and all other domains, excluding cluster 2
-m_summary <- mdata |>
-    filter(Banksy_smooth %in% c(0, 4)) |>
-    group_by(day, Banksy_smooth) |>
-    summarise(avg_cpm = mean(cpm), .groups = "drop") |>
-    mutate(cluster_type = ifelse(Banksy_smooth == "0", 
-                                 "Avg 0", "Avg 4")) |>
-    group_by(day, cluster_type) |>
-    summarise(avg_cpm = mean(avg_cpm), .groups = "drop")  
+fitted_values <- results2[["glmFit"]][["fitted.values"]]
+m <- melt(fitted_values[feature,]) |>
+    rownames_to_column("row_name_column") |>
+    setNames(c("sample_id", "fitted")) |>
+    mutate(
+        day = as.numeric(sub("DPI.*", "", sample_id)),
+        cluster = as.factor(sub(".*_", "", sample_id)) 
+      )
+m |> head(n = 3)
 
-# plot
-ggplot(mdata, aes(x = day, y = cpm)) +
-    geom_jitter(aes(color = Banksy_smooth), size = 2, width = 0.2) +  
-    geom_line(data = m_summary, 
-              aes(y = avg_cpm, group = cluster_type, linetype = cluster_type)) +  
-    scale_x_continuous(breaks = c(2, 10, 20)) +  
-    labs(title = gn_name, x = "Days post injury", 
-         y = "Counts per million (CPM)", color = "Banksy domain") +
-    theme(legend.position = "right") +
-    guides(color = guide_legend(byrow = TRUE), 
-           linetype = guide_legend(title = NULL))
+```
+
+
+```{r}
+plt <- ggplot(m, aes(x=day, y=fitted, group=cluster, colour = cluster)) +
+    geom_jitter(size = 3, width = 0.2, height = 0) +
+    scale_y_sqrt() + 
+    labs(title = feature_name) +
+    scale_x_continuous(breaks = c(2, 10, 20)) + 
+    xlab("Days post injury")
 ```
 
 </details>
 
+```{r}
+# figure
+plt
+```
+
+
 #### Spatial expression 
 
-Visualize the expression of the top gene, `r gn_name`, across samples.
+Visualize the expression of the top gene, `r feature_name`, across samples.
 By using `annotation_cluster = TRUE`, cluster annotations are displayed on the expression plots.
 
 <details>
@@ -473,37 +488,32 @@ By using `annotation_cluster = TRUE`, cluster annotations are displayed on the e
 
 ```{r}
 plots <- lapply(sample_ids, function(sample_id) {
-    # Subset spe_example for each sample
-    spe_j <- spe_example[, colData(spe_example)$sample_id == sample_id]
+    # Subset spe for each sample
+    spe_j <- spe[, colData(spe)$sample_id == sample_id]
     # Create FeaturePlot for the sample
-    plot <- FeaturePlot(spe_j, feature = gn, 
+    plot <- FeaturePlot(spe_j, feature = feature, 
                         cluster_col = spatial_cluster,
                         coordinates = coordinates, 
                         platform = "Stereo-seq",
-                        point_size = 0.01,
+                        point_size = 0.001,
                         diverging = TRUE,
                         annotation_cluster = TRUE,
                         annotation_title = sample_id)
   
     return(plot)
 })
-```
-
-</details>
-
-The trend aligns with the model's prediction: gene abundance in cluster 0 increases at later stages (10 DPI) compared to the earlier stage (2 DPI) and other clusters.
-
-<details>
-<summary>Code</summary>
-
-```{r}
 combined_plot <- wrap_plots(plots, ncol = 2) + 
     # common legend
     plot_layout(guides = 'collect')  
-combined_plot
 ```
 
 </details>
+
+The trend aligns with the model's prediction: gene abundance in cluster 2 peaks at 10 DPI compared to other clusters.
+
+```{r}
+combined_plot
+```
 
 # Session info
 

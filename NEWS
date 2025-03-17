@@ -1,4 +1,4 @@
-Changes in version 1.99.0:
+Changes in version 1.99.1:
 + add detection of differential spatial patterns (DSP) across conditions
 + rename functions for consistency
 + enable FeaturePlot for non-Visium/ST data

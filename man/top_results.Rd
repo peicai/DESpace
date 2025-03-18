@@ -34,8 +34,6 @@ If "both" or "BOTH", then both "high" and "low" results are returned, but in two
 \value{
 A \code{\linkS4class{data.frame}} object or a list of \code{\linkS4class{data.frame}} with results.
 
-A \code{\linkS4class{data.frame}} object or a list of \code{\linkS4class{data.frame}} with results.
-
 - When only “cluster_results” is provided, results are reported as a \code{\linkS4class{data.frame}} with columns for
  gene names (gene_id), spatial clusters affected by SV (Cluster), cluster-specific likelihood ratio test statistics (LR),
  cluster-specific average (across spots) log-2 counts per million (logCPM), cluster-specific log2-fold changes (logFC),

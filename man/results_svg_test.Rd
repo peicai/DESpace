@@ -10,8 +10,10 @@ Below the code used to obtain 'results_svg_test'.}
 }
 \value{
 Large List of 2 elements:
-# "gene_results": a dataframe contains main edgeR test results;
-# "estimated_y": a DGEList object contains the estimated common dispersion,
+
+- "gene_results": a dataframe contains main edgeR test results;
+
+- "estimated_y": a DGEList object contains the estimated common dispersion,
 }
 \description{
 Results from \code{\link{svg_test}} function

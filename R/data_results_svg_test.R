@@ -25,8 +25,10 @@
 #' # 
 #' # save(results_svg_test, file = "./DESpace/data/results_svg_test.RData")
 #' @return Large List of 2 elements:
-#' # "gene_results": a dataframe contains main edgeR test results;
-#' # "estimated_y": a DGEList object contains the estimated common dispersion, 
+#' 
+#' - "gene_results": a dataframe contains main edgeR test results;
+#' 
+#' - "estimated_y": a DGEList object contains the estimated common dispersion, 
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
 #' @seealso \code{\link{svg_test}}

@@ -4,9 +4,7 @@
 # @param y fill.name; expression legend name.
 # @param spe SpatialExperiment or SingleCellExperiment with row/col in colData.
 # @param platform "Visium" or "ST", used to determine spot layout.
-# @param is.enhanced If true, \code{spe} contains enhanced subspot data instead
-#   of spot-level expression. Used to determine spot layout.
-# @param spatial_cluster Column name of clusters in \code{colData(spe)}.
+# @param cluster_col Column name of clusters in \code{colData(spe)}.
 # @param cluster Cluster names used for drawing a boundary around a group of points (belong to the specify cluster) to drive attention.
 # Can be NULL, "all"/"ALL", and a vector of cluster names.
 # @param label TRUE of FALSE. Adding a label and an arrow pointing to a group.
@@ -15,13 +13,16 @@
 # @return Returns a list containing a (list of) ggplot object and a vertices (table of (x.pos, y.pos, spot, fill, Cluster)).
 #
 # keywords internal
-.geneExprsPlot <- function( x, y, spe,
+.geneExprsPlot <- function( x, y, spe, 
                             diverging,
-                            low, high, mid,legend_exprs,
+                            low, high, mid, legend_exprs,
                             color,
-                            platform, is.enhanced=FALSE,
-                            spatial_cluster, cluster, 
-                            label, title,title_size=10,linewidth,
+                            platform, 
+                            cluster_col, cluster, 
+                            label, title, title_size=10,
+                            linewidth = 0.75, linecolor = NULL,
+                            sf_dim = 200, concave_hull = TRUE,
+                            point_size = 0.5,
                             ...){
     fill <- as.vector(x)
     fill.name <- y
@@ -39,8 +40,18 @@
         fill.name <- NULL
     }else{
         title.name <- NULL
-        }
-    vertices <- .make_vertices(spe, fill, platform, is.enhanced)
+    }
+    is_spot <- platform %in% c("Visium", "ST")
+    if(is_spot){
+        vertices <- .make_vertices(spe, fill, platform)
+        vertices_spot <- vertices[["spot"]]
+        concave_hull <- TRUE
+    }else{
+        vertices <- colData(spe)[,c('row', 'col')] %>% data.frame()
+        colnames(vertices) <- c("x.vertex", "y.vertex")
+        vertices[["fill"]] <- fill
+        vertices_spot <- rownames(vertices)
+    }
     if (diverging) {
         low <- ifelse(is.null(low), "#F0F0F0", low)
         mid <- NULL
@@ -50,67 +61,92 @@
         mid <- ifelse(is.null(mid), "#F0F0F0", mid)
         high <- ifelse(is.null(high), "#832424", high)
     }
-    ## if 'spatial_cluster' and 'cluster' are specified, draw the shape of the outline of the group
-    if(!is.null(spatial_cluster) && !is.null(cluster)){
-        cdata <- data.frame(colData(spe))
-        Cluster <- as.character(cdata[[spatial_cluster]])
-    if(cluster %notin% c("all", "ALL")){
-        Cluster[Cluster %notin% (cluster)] <- 'Others'}
-    Cluster <- as.factor(Cluster)
-    vertices <- cbind(vertices, Cluster)
-    vertices <- vertices %>% filter(!is.na(Cluster))
-    ## annotate clusters
-    if(label){
-        label <- Cluster
-    }else{
-        label <- NULL
-    }
-
-    if(cluster %notin% c("all", "ALL")){
-        ## Add filter
-        splot <- vertices %>% 
-            ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
-            geom_polygon(aes(group=spot, fill=fill), color=color) +
-            labs(fill=fill.name) + coord_equal() +
-            theme_void() + scale_fill_gradient2(low=low, mid=mid, high=high)+ 
-            new_scale_fill() + new_scale_color()  + 
-            suppressWarnings(geom_mark_hull( aes(x=x.vertex, y=y.vertex, 
-                                color = Cluster, fill=Cluster,linewidth = I(linewidth),
-                                label = label, filter = Cluster %in% (cluster)),
-                                alpha=0, expand = unit(0.1, "mm"), 
-                                radius = unit(0.4, "mm"),
-                                show.legend = FALSE) )
-    }else{
-        splot <- vertices %>% 
-            ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
-            geom_polygon(aes(group=spot, fill=fill), color=color) +
-            labs(fill=fill.name) + coord_equal() +
-            theme_void() + scale_fill_gradient2(low=low, mid=mid, high=high)+ 
-            new_scale_fill() + new_scale_color()  + 
-            suppressWarnings(geom_mark_hull( aes(x=x.vertex, y=y.vertex,
-                                    color = Cluster, fill=Cluster,linewidth = I(linewidth),
-                                    label = label),
-                                    alpha=0, expand = unit(0.1, "mm"),
-                                    radius = unit(0.2, "mm"),
-                                    show.legend = FALSE) )
-        
-    }
-    splot <- splot + scale_alpha(guide="none") + theme_void() + 
-        scale_fill_discrete() +
-        scale_color_discrete() + 
-        theme(legend.position = "bottom",
-                legend.key.size = unit(0.5, 'cm'))
+    # Create the plot based on the platform type
+    # Define the base plot
+    splot <- vertices %>%
+        ggplot(aes(x = x.vertex, y = y.vertex)) + 
+        coord_equal() + 
+        theme_void() + 
+        theme(legend.position = "bottom", 
+              legend.key.size = unit(2, 'cm'))
     
-    }else{
-        splot <-  vertices %>% 
-        ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
-        geom_polygon(aes(group=spot, fill=fill), color=color) +
-        labs(fill=fill.name) +
-        coord_equal() +
-        theme_void() + scale_fill_gradient2(low=low, mid=mid, high=high) +
-        theme(legend.position = "bottom",
-            legend.key.size = unit(2, 'cm'))
+    # Add the conditional layers based on `is_spot`
+    if (is_spot) {
+        splot <- splot + 
+            geom_polygon(aes(group = .data[["spot"]], 
+                             fill = .data[["fill"]]), 
+                         color = color) +
+            scale_fill_gradient2(low = low, mid = mid, high = high) +
+            labs(fill = fill.name) 
+    } else {
+        threshold <- quantile(vertices[["fill"]], 0.9999)
+        splot <- splot + 
+            geom_point(size = point_size, aes(color = pmin(fill, threshold))) +
+            scale_colour_gradientn(colors = c(low, mid, high), breaks = c(0, threshold), labels = c("low", "high")) +
+            labs(color = fill.name)
+    }
+    
+    ## if 'cluster_col' and 'cluster' are specified, draw the shape of the outline of the group
+    if(!is.null(cluster_col) && !is.null(cluster)){
+        cdata <- data.frame(colData(spe))
+        Cluster <- as.character(cdata[[cluster_col]])
+        if(!any(cluster %in% c("all", "ALL"))){
+            Cluster[Cluster %notin% (cluster)] <- 'Others'
+            cluster_use <- cluster
+        }else{
+            cluster_use <- unique(Cluster)
         }
+        Cluster <- as.factor(Cluster)
+        vertices <- cbind(vertices, Cluster)
+        #vertices <- vertices %>% filter(!is.na(Cluster))
+        ## annotate clusters
+        if(label){
+            label <- Cluster
+        }else{
+            label <- NULL
+        }
+    
+        if(concave_hull){
+            ## Add filter
+            Cluster_use <- vertices[["Cluster"]]
+            splot <- splot +  
+                new_scale_fill() + new_scale_color()  + 
+                suppressWarnings(geom_mark_hull( 
+                    aes(x=x.vertex,
+                        y=y.vertex,
+                        color = Cluster_use, fill = Cluster_use,
+                        linewidth = I(linewidth),
+                        label = label, filter = Cluster_use %in% (cluster_use)),
+                    alpha=0, expand = unit(0.1, "mm"),
+                    radius = unit(0.4, "mm"),
+                    show.legend = FALSE) ) +
+                    scale_color_manual(values = linecolor)
+        }else{
+        # Add layers using lapply
+        geoms <- lapply(seq_along(cluster_use), function(clus) {
+        sf_poly <- reconstructShapeDensityImage(spe,
+                                    marks = cluster_col,
+                                    mark_select = cluster_use[clus],
+                                    image_col = NULL,
+                                    image_id = NULL,
+                                    dim = sf_dim)
+            geom_sf(
+              data = sf_poly,
+              fill = NA,
+              color = linecolor[clus],
+              inherit.aes = FALSE,
+              linewidth = linewidth
+            )
+          })
+          # Combine the layers
+          splot <- splot + geoms
+        }
+            
+    splot <- splot + scale_alpha(guide="none") + theme_void() + 
+      theme(legend.position = "bottom",
+            legend.key.size = unit(0.5, 'cm'))
+    } 
+    
     if(is.na(legend_exprs)){
         legend_exprs <-  FALSE
     }
@@ -120,6 +156,7 @@
     if(title){
         splot <- splot + labs(title=title.name)+ theme(plot.title = element_text(size=title_size))
     }
+    vertices[["spot"]] <- vertices_spot
     return(list(plot = splot, vertices = vertices))
 }
 # Make vertices outlining spots/subspots for geom_polygon()
@@ -128,27 +165,16 @@
 # @param fill Name of a column in \code{colData(spe)} or a vector of values to
 #   use as fill for each spot
 # @param platform "Visium" or "ST", used to determine spot layout
-# @param is.enhanced If true, \code{spe} contains enhanced subspot data instead
-#   of spot-level expression. Used to determine spot layout.
-#   
 # @return Table of (x.pos, y.pos, spot, fill); where \code{spot} groups the
 #   vertices outlining the spot's border
 # 
 # keywords internal
-.make_vertices <- function(spe, fill, platform, is.enhanced) {
+.make_vertices <- function(spe, fill, platform) {
     cdata <- data.frame(colData(spe))
     if (platform == "Visium") {
-        if (is.enhanced) {
-            vertices <- .make_triangle_subspots(cdata, fill)
-        } else {
-            vertices <- .make_hex_spots(cdata, fill)
-        }
+        vertices <- .make_hex_spots(cdata, fill)
     } else if (platform == "ST") {
-        if (is.enhanced) {
-            vertices <- .make_square_spots(cdata, fill, scale.factor=(1/3))
-        } else {
-            vertices <- .make_square_spots(cdata, fill)
-        }
+        vertices <- .make_square_spots(cdata, fill)
     } else {
         stop("Unsupported platform: \"", platform, "\". Cannot create spot layout.")
     }
@@ -273,35 +299,4 @@
     }
     spot_positions$spot <- rownames(spot_positions)
     spot_positions
-}
-# Make vertices for each triangle subspot of a hex
-# 
-# @return Table of (x.pos, y.pos, spot, fill); where \code{spot} groups the
-#   vertices outlining the spot's border
-#
-# keywords internal
-.make_triangle_subspots <- function(cdata, fill="spatial.cluster") {
-    spot_positions <- .select_subspot_positions(cdata, x="spot.col", y="spot.row", fill=fill)
-    spot_positions <- .adjust_hex_centers(spot_positions)
-    ## R = circumradius, distance from center to vertex
-    ## r = inradius, distance from center to edge midpoint
-    r <- 1/2
-    R <- (2 / sqrt(3)) * r
-    ## Make lists of triangle vertices (with respect to hex center)
-    ## subspot.idx is same ordering as `shift` in spatialEnhance
-    ## that is, beginning in top right and proceeding clockwise, (1, 5, 3, 4, 6, 2)
-    ## NOTE: however, we need to reflect over x-axis to match global negation of y-coordinate
-    vertex_offsets <- do.call(rbind, list(
-        data.frame(x.offset=c(0, 0, r), y.offset=c(0, -R, -R/2), subspot.idx=3),
-        data.frame(x.offset=c(0, r, r), y.offset=c(0, -R/2, R/2), subspot.idx=5),
-        data.frame(x.offset=c(0, r, 0), y.offset=c(0, R/2, R), subspot.idx=1),
-        data.frame(x.offset=c(0, 0, -r), y.offset=c(0, R, R/2), subspot.idx=2),
-        data.frame(x.offset=c(0, -r, -r), y.offset=c(0, R/2, -R/2), subspot.idx=6),
-        data.frame(x.offset=c(0, -r, 0), y.offset=c(0, -R/2, -R), subspot.idx=4)
-    ))
-    ## note that instead of cartesian product, `merge()` does an outer join
-    ## on subspot.idx here
-    spot_vertices <- .make_spot_vertices(spot_positions, vertex_offsets)
-    spot_vertices$y.vertex <- -spot_vertices$y.vertex
-    spot_vertices
 }

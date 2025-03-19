@@ -1,33 +1,33 @@
-#' DESpace_test
+#' svg_test
 #' 
-#' 'DESpace_test' identifies spatially variable genes (SVGs) from spatially-resolved transcriptomics data,
+#' 'svg_test' identifies spatially variable genes (SVGs) from spatially-resolved transcriptomics data,
 #' provided spatial clusters are available.
 #' 
 #' If 'sample_col' is not specified and 'replicates == FALSE',
-#' \code{\link{DESpace_test}} assumed that data comes from an individual sample, 
+#' \code{\link{svg_test}} assumed that data comes from an individual sample, 
 #' and performs SV testing on it.
 #' 
 #' If 'sample_col' is provided and 'replicates == FALSE',
-#' \code{\link{DESpace_test}} tests each sample individually and returns a list of results for each sample.
+#' \code{\link{svg_test}} tests each sample individually and returns a list of results for each sample.
 #' 
 #' If 'sample_col' is provided and 'replicates == TRUE',
-#' \code{\link{DESpace_test}} performs a joint multi-sample test.
+#' \code{\link{svg_test}} performs a joint multi-sample test.
 #'  
 #'
 #' @param spe SpatialExperiment or SingleCellExperiment.
-#' @param spatial_cluster Column name of spatial clusters in \code{colData(spe)}.
+#' @param cluster_col Column name of spatial clusters in \code{colData(spe)}.
 #' @param sample_col Column name of sample ids in \code{colData(spe)}.
 #' @param replicates A logical, indicating whether biological replicates are provided (TRUE) or not (FALSE).
-#' If biological replicates are provided, \code{\link{DESpace_test}} performs a joint test across all replicates, 
+#' If biological replicates are provided, \code{\link{svg_test}} performs a joint test across all replicates, 
 #' searching for SVGs with consistent spatial patterns across samples.
 #' @param min_counts Minimum number of counts per sample (across all spots) for a gene to be analyzed.
 #' @param min_non_zero_spots Minimum number of non-zero spots per sample, for a gene to be analyzed.
 #' @param filter_gene A logical. If TRUE, 
-#' \code{\link{DESpace_test}} filters genes:
-#' genes have to be expressed in at least 'min_non_zero_spots' spots, 
+#' \code{\link{svg_test}} filters genes:
+#' genes have to be expressed in at least 'min_non_zero_spots' spots,    
 #' and a gene requires at least 'min counts' counts per sample (across all locations). 
 #' @param verbose A logical.
-#'   If TRUE, \code{\link{DESpace_test}} returns two more results: 
+#'   If TRUE, \code{\link{svg_test}} returns two more results: 
 #'   'DGEGLM' and 'DGELRT' objects contain full statistics from 'edgeR::glmFit' and 'edgeR::glmLRT'.
 #' @return A list of results:
 #' 
@@ -45,33 +45,33 @@
 #' data("LIBD_subset", package = "DESpace")
 #' LIBD_subset
 #' 
-#' # Fit the model via \code{\link{DESpace_test}} function.
+#' # Fit the model via \code{\link{svg_test}} function.
 #' set.seed(123)
-#' results_DESpace <- DESpace_test(spe = LIBD_subset,
-#'                            spatial_cluster = "layer_guess_reordered",
-#'                            verbose = FALSE)
+#' results_svg_test <- svg_test(spe = LIBD_subset,
+#'                              cluster_col = "layer_guess_reordered",
+#'                              verbose = FALSE)
 #' 
-#' # DESpace_test returns of a list of 2 objects:
+#' # svg_test returns of a list of 2 objects:
 #' # "gene_results": a dataframe contains main edgeR test results;
 #' # "estimated_y": a DGEList object contains the estimated common dispersion, 
 #' #  which can later be used to speed-up calculation when testing individual clusters.
 #' 
 #' # We visualize differential results:
-#' head(results_DESpace$gene_results, 3)
+#' head(results_svg_test$gene_results, 3)
 #' 
-#' @seealso \code{\link{top_results}}, \code{\link{individual_test}}, \code{\link{FeaturePlot}}
+#' @seealso \code{\link{top_results}}, \code{\link{individual_svg}}, \code{\link{FeaturePlot}}, \code{\link{dsp_test}}, \code{\link{individual_dsp}}
 #' 
 #' @export
-DESpace_test <-  function(spe,
-                          spatial_cluster,
-                          sample_col = NULL,
-                          replicates = FALSE,
-                          min_counts = 20,
-                          min_non_zero_spots = 10,
-                          filter_gene = TRUE,
-                          verbose = FALSE) {
+svg_test <-  function(spe,
+                        cluster_col,
+                        sample_col = NULL,
+                        replicates = FALSE,
+                        min_counts = 20,
+                        min_non_zero_spots = 10,
+                        filter_gene = TRUE,
+                        verbose = FALSE) {
   genes <- FDR <- PValue <- NULL
-  message("using 'DESpace_test' for spatial gene/pattern detection.")
+  message("using 'svg_test' for spatial gene/pattern detection.")
   # if rownames(spe) is null, column 'genes' would missing from the edgeR results
   # 'res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")]' would return an error
   if(is.null(rownames(spe))){
@@ -103,7 +103,7 @@ DESpace_test <-  function(spe,
       # sample ids:
       sample_names <- levels(factor(sample_id))
       sel_matrix <- vapply(sample_names, function(id){
-        select = sample_id == id
+        select <- sample_id == id
         spe <- spe[,select]
         sel_1 <- rowSums(counts(spe)) >= min_counts
         sel_2 <- rowSums(counts(spe) > 0) >= min_non_zero_spots 
@@ -121,19 +121,19 @@ DESpace_test <-  function(spe,
       sprintf("'sample_col' %s  not in colData(spe)", sample_col)
       return(NULL)}
     stopifnot(num_sample > 1)
-    if( spatial_cluster %notin% colnames(colData(spe))){
-      sprintf("'spatial_cluster' %s  not in colData(spe)", spatial_cluster)
+    if( cluster_col %notin% colnames(colData(spe))){
+      sprintf("'cluster_col' %s  not in colData(spe)", cluster_col)
       return(NULL)
     }
     message("multi-sample test")
     if(verbose){
       list[gene_results, estimated_y, glmLRT, glmFit] <- .multi_edgeR_test(spe = spe,
-                                                                           spatial_cluster = spatial_cluster,
+                                                                           cluster_col = cluster_col,
                                                                            sample_col = sample_col,
                                                                            verbose = verbose)
     }else{
       list[gene_results, estimated_y] <- .multi_edgeR_test(spe = spe,
-                                                           spatial_cluster = spatial_cluster,
+                                                           cluster_col = cluster_col,
                                                            sample_col = sample_col,
                                                            verbose = verbose)
     }
@@ -146,8 +146,8 @@ DESpace_test <-  function(spe,
   # if spe is a list of spe objects, run single-sample edgeR test for each sample via the function ".multi_single_edgeR_test"
   # results: a list; test results (DT_results_single) and estimated dispersion (estimated_y_single)
   if(replicates == FALSE && !is.null(num_sample) ){
-    if(spatial_cluster %notin% colnames(colData(spe))){
-      sprintf("'spatial_cluster' %s  not in colData(spe)", spatial_cluster)
+    if(cluster_col %notin% colnames(colData(spe))){
+      sprintf("'cluster_col' %s  not in colData(spe)", cluster_col)
       return(NULL)
     }
     if(sample_col %notin% colnames(colData(spe))){
@@ -162,7 +162,7 @@ DESpace_test <-  function(spe,
                       spe = spe,
                       sample_names = sample_names,
                       sample_col = sample_col,
-                      spatial_cluster = spatial_cluster,
+                      cluster_col = cluster_col,
                       verbose = verbose
     )
     names(results) <- sample_names
@@ -172,8 +172,8 @@ DESpace_test <-  function(spe,
   # if spe is a spe object, run a single-sample edgeR test
   # results: a list; test results (DT_results_single) and estimated dispersion (estimated_y_single)
   if(replicates == FALSE && is.null(num_sample)){
-    if( spatial_cluster %notin% colnames(colData(spe))){
-      sprintf("'spatial_cluster' %s  not in colData(spe)", spatial_cluster)
+    if( cluster_col %notin% colnames(colData(spe))){
+      sprintf("'cluster_col' %s  not in colData(spe)", cluster_col)
       return(NULL)
     }
     message("single sample test")
@@ -185,11 +185,11 @@ DESpace_test <-  function(spe,
       assay(spe, "logcounts") <- log2(t(t(counts)/size.factors) + 1)}
     if(verbose){
       list[gene_results, estimated_y, glmLRT, glmFit] <- .single_edgeR_test(spe = spe, 
-                                                                            spatial_cluster = spatial_cluster, 
+                                                                            cluster_col = cluster_col, 
                                                                             verbose = verbose)
     }else{
       list[gene_results, estimated_y] <- .single_edgeR_test(spe = spe,
-                                                            spatial_cluster = spatial_cluster,
+                                                            cluster_col = cluster_col,
                                                             verbose = verbose)
     }
     DT_results_single <- gene_results

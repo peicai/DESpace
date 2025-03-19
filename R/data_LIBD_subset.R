@@ -4,7 +4,7 @@
 #' @name LIBD_subset
 #' @aliases LIBD_subset
 #' 
-#' @param LIBD_subset contains a \code{\linkS4class{SpatialExperiment}} object,
+#' @param LIBD_subset contains a \code{\link[SpatialExperiment]{SpatialExperiment-class}} object,
 #' representing a subset of the sample 151673 from the full real data of the \code{spatialLIBD} package.
 #' Below the code used to subset the original dataset.
 #
@@ -25,8 +25,8 @@
 #' #                                               logcounts = logcounts(LIBD_subset)), 
 #' #                                  colData = colData(LIBD_subset)[keep_col])
 #' # save(LIBD_subset, file = "./DESpace/data/LIBD_subset.RData")
-#' 
+#' @return A spatial experiment object
 #' @author Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}
 #' 
-#' @seealso \code{\link{DESpace_test}}, \code{\link{individual_test}}
+#' @seealso \code{\link{svg_test}}, \code{\link{individual_svg}}
 NULL

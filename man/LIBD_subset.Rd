@@ -4,9 +4,12 @@
 \alias{LIBD_subset}
 \title{Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package}
 \arguments{
-\item{LIBD_subset}{contains a \code{\linkS4class{SpatialExperiment}} object,
+\item{LIBD_subset}{contains a \code{\link[SpatialExperiment]{SpatialExperiment-class}} object,
 representing a subset of the sample 151673 from the full real data of the \code{spatialLIBD} package.
 Below the code used to subset the original dataset.}
+}
+\value{
+A spatial experiment object
 }
 \description{
 Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD} package
@@ -28,10 +31,9 @@ Subset from the human DLPFC 10x Genomics Visium dataset of the \code{spatialLIBD
 #                                               logcounts = logcounts(LIBD_subset)), 
 #                                  colData = colData(LIBD_subset)[keep_col])
 # save(LIBD_subset, file = "./DESpace/data/LIBD_subset.RData")
-
 }
 \seealso{
-\code{\link{DESpace_test}}, \code{\link{individual_test}}
+\code{\link{svg_test}}, \code{\link{individual_svg}}
 }
 \author{
 Peiying Cai \email{peiying.cai@uzh.ch}, Simone Tiberi \email{simone.tiberi@unibo.it}

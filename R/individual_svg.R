@@ -1,4 +1,4 @@
-#' individual_test
+#' individual_svg
 #'
 #' DESpace can also be used to reveal the specific areas of the tissue affected by SVGs; i.e., spatial clusters that are particularly over/under abundant compared to the average signal.
 #' This function can be used to identify SVGs for each individual cluster.
@@ -11,13 +11,13 @@
 #' Alternatively, if you want to re-compute dispersion estimates (significantly slower, but marginally more accurate option), leave edgeR_y empty.
 #'
 #' @param spe SpatialExperiment or SingleCellExperiment.
-#' @param spatial_cluster Column name of spatial clusters in \code{colData(spe)}.
+#' @param cluster_col Column name of spatial clusters in \code{colData(spe)}.
 #' @param sample_col Column name of sample ids in \code{colData(spe)}.
 #' @param edgeR_y Pre-estimated dispersion; if it's null, compute dispersion.
 #' @param min_counts Minimum number of counts per sample (across all spots) for a gene to be analyzed.
 #' @param min_non_zero_spots Minimum number of non-zero spots per sample, for a gene to be analyzed.
 #' @param filter_gene A logical. If TRUE, 
-#' \code{\link{DESpace_test}} filters genes:
+#' \code{\link{svg_test}} filters genes:
 #' genes have to be expressed in at least 'min_non_zero_spots' spots, 
 #' and a gene requires at least 'min counts' counts per sample (across all locations). 
 #' @param replicates Single sample or multi-sample test.
@@ -35,35 +35,35 @@
 #' data("LIBD_subset", package = "DESpace")
 #' LIBD_subset
 #' 
-#' # load pre-computed results (obtaines via `DESpace_test`)
-#' data("results_DESpace_test", package = "DESpace")
+#' # load pre-computed results (obtaines via `svg_test`)
+#' data("results_svg_test", package = "DESpace")
 #' 
-#' # DESpace_test returns of a list of 2 objects:
+#' # svg_test returns of a list of 2 objects:
 #' # "gene_results": a dataframe contains main edgeR test results;
 #' # "estimated_y": a DGEList object contains the estimated common dispersion, 
 #' #  which can later be used to speed-up calculation when testing individual clusters.
 #' 
 #' # We visualize differential results:
-#' head(results_DESpace_test$gene_results, 3)
+#' head(results_svg_test$gene_results, 3)
 #' 
 #' # Individual cluster test: identify SVGs for each individual cluster
 #' # set parallel computing; we suggest using as many cores as the number of spatial clusters.
 #' # Note that parallelizing the script will increase the memory requirement;
 #' # if memory is an issue, leave 'BPPARAM' unspecified and, hence, avoid parallelization.
 #' set.seed(123)
-#' results_individual_test <- individual_test(LIBD_subset, 
-#'                                            edgeR_y = results_DESpace_test$estimated_y, 
-#'                                            spatial_cluster = "layer_guess_reordered")
+#' results_individual_svg <- individual_svg(LIBD_subset, 
+#'                                          edgeR_y = results_svg_test$estimated_y, 
+#'                                          cluster_col = "layer_guess_reordered")
 #'                                            
 #' # We visualize results for the cluster 'WM'
-#' results_WM <- results_individual_test[[7]]
+#' results_WM <- results_individual_svg[[7]]
 #' head(results_WM,3)
 #' 
-#' @seealso \code{\link{top_results}}, \code{\link{DESpace_test}}, \code{\link{FeaturePlot}}
+#' @seealso \code{\link{top_results}}, \code{\link{svg_test}}, \code{\link{FeaturePlot}}
 #' 
 #' @export
-individual_test <- function(spe,
-                            spatial_cluster,
+individual_svg <- function(spe,
+                            cluster_col,
                             sample_col = "sample_id",
                             edgeR_y=NULL,
                             min_counts = 20,
@@ -71,8 +71,8 @@ individual_test <- function(spe,
                             filter_gene = TRUE,
                             replicates = FALSE,
                             BPPARAM = NULL){
-    if( spatial_cluster %notin% colnames(colData(spe))){
-        sprintf("'spatial_cluster' %s  not in colData(spe)", spatial_cluster)
+    if( cluster_col %notin% colnames(colData(spe))){
+        sprintf("'cluster_col' %s  not in colData(spe)", cluster_col)
         return(NULL)
     }
     # if rownames(spe) is null, column 'genes' would missing from the edgeR results
@@ -102,7 +102,7 @@ individual_test <- function(spe,
         dim(spe)[1], ".\n")
     # } # end for !is.null(num_sample)
     }# end for filter_gene == TRUE
-    layer <- factor(colData(spe)[[spatial_cluster]])
+    layer <- factor(colData(spe)[[cluster_col]])
     layer  <- droplevels(layer)
     spe <- spe[, !is.na(layer)]
     if(!is.null(edgeR_y) && !identical(dim(spe), dim(edgeR_y))){
@@ -114,7 +114,7 @@ individual_test <- function(spe,
     message("Pre-processing")
     layer_list <- lapply(seq_len(nlevels(as.factor(layer))), function(x){
         cluster <- levels(as.factor(layer))[x]
-        .cluster_label(spe, cluster_list = cluster, spatial_cluster = spatial_cluster)
+        .cluster_label(spe, cluster_list = cluster, cluster_col = cluster_col)
     })
     message("Start modeling")
     # if edgeR_y != NULL -> use dispersion taken from gene-level test (with all clusters)

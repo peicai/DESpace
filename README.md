@@ -1,6 +1,6 @@
 # DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions
 
-<img src="man/figures/DESpace.png" width="200" align="right"/ alt="Alt text">
+<img src="man/figures/DESpace.png" width="200" align="right" alt="Alt text">
 
 `DESpace` is a framework for identifying spatially variable genes (SVGs), a common task in spatial transcriptomics analyses, and differential spatial variable pattern (DSP) genes, which identify differences in spatial gene expression patterns across experimental conditions.
 

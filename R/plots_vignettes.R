@@ -126,9 +126,9 @@
         geoms <- lapply(seq_along(cluster_use), function(clus) {
         sf_poly <- reconstructShapeDensityImage(spe,
                                     marks = cluster_col,
-                                    mark_select = cluster_use[clus],
-                                    image_col = NULL,
-                                    image_id = NULL,
+                                    markSelect = cluster_use[clus],
+                                    imageCol = NULL,
+                                    imageId = NULL,
                                     dim = sf_dim)
             geom_sf(
               data = sf_poly,

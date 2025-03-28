@@ -1,6 +1,5 @@
 # load SPE object
-eh <- ExperimentHub::ExperimentHub()
-spe <- eh[["EH9613"]]
+spe <- muSpaData::Wei22_example()
 
 test_that("dsp_test() works faultlessly.", {
   # Fit the model via svg_test function.

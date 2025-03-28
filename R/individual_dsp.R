@@ -24,8 +24,7 @@
 #' Specifically, each item in the list is a "gene_results" dataframe which contains main edgeR test results.
 #' @examples
 #' # load the input data:
-#' eh <- ExperimentHub::ExperimentHub()
-#' spe <- eh[["EH9613"]]
+#' spe <- muSpaData::Wei22_example()
 #' set.seed(123)
 #' results_individual_dsp <- individual_dsp(spe,
 #'                                           cluster_col = "Banksy_smooth",
@@ -78,7 +77,7 @@ individual_dsp <- function(spe,
               dim(spe)[1], ".\n")
       # } # end for !is.null(num_sample)
     }# end for filter_gene == TRUE
-    # aggregate data to pseudobulk via muscat  
+    # aggregate data to pseudobulk
     if (!"counts" %in% assayNames(spe)) {
       stop("The 'counts' assay slot, required as input data, is missing.")
     }
@@ -89,7 +88,7 @@ individual_dsp <- function(spe,
       sce_one <- spe
       layer <- .cluster_label(sce_one, cluster_list = each_layer, cluster_col = cluster_col)
       sce_one[["individual_layer"]] <- layer
-      res_edgeR <- .muscat_layer_test(sce_one,
+      res_edgeR <- .layer_test(sce_one,
                          design = NULL,
                          cluster_col = "individual_layer",
                          sample_col,

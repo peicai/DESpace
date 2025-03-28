@@ -23,11 +23,11 @@ biocViews: Spatial, SingleCell, RNASeq, Transcriptomics, GeneExpression,
 License: GPL-3
 Depends: R (>= 4.5.0)
 Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2, 
-        ggpubr, SummarizedExperiment, S4Vectors, BiocGenerics, 
-        data.table, assertthat, sosta, cowplot, ggforce, ggnewscale, 
-        patchwork, BiocParallel, methods, muscat, scales
-Suggests: knitr, rmarkdown, testthat, BiocStyle, ExperimentHub, 
-        spatialLIBD, purrr, scuttle, utils, reshape2, tidyverse, concaveman
+        SummarizedExperiment, S4Vectors, BiocGenerics, data.table, assertthat, 
+        terra, sf, spatstat.explore, spatstat.geom, ggforce, ggnewscale, 
+        patchwork, BiocParallel, methods, scales, scuttle
+Suggests: knitr, rmarkdown, testthat, BiocStyle, muSpaData, ExperimentHub,
+        spatialLIBD, purrr, reshape2, tidyverse, concaveman
 VignetteBuilder: knitr
 RoxygenNote: 7.3.2
 ByteCompile: true

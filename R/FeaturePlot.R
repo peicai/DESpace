@@ -1,9 +1,12 @@
 #' FeaturePlot
 #' 
 #' Plot spatial gene expression.
-#' This function is a modified version of the \code{\link{FeaturePlot}} function from BayesSpace R package.
+#' This function is a modified version of the \code{\link[BayesSpace]{featurePlot}} function from `BayesSpace` R package.
 #' In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously 
 #' and drawing an outline around a specified cluster.
+#' To draw outlines, the \code{\link[sosta]{reconstructShapeDensityImage}} function from the `sosta` R package has been adapted.
+#' Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, 
+#' which cannot be used with `spatialCoords()`.
 #' 
 #' @param spe SpatialExperiment or SingleCellExperiment. If \code{feature} is specified and is a 
 #'   string, it must exist as a row in the specified assay of \code{spe}.
@@ -14,40 +17,41 @@
 #'    in \code{colData(spe)} if they exist. Otherwise, it will use \code{spatialCoords(spe)} if 'spe' is a 
 #'    SpatialExperiment object and \code{spatialCoords(spe)} is not NULL.
 #' @param concave_hull A logical value (TRUE or FALSE).
-#'    If TRUE, the function uses `ggforce::geom_mark_hull()` to outline cluster boundaries 
-#'    (recommended for non-discontinuous clusters).
-#'    If FALSE, `sosta::reconstructShapeDensityImage()` is used for complex cluster shapes.
 #'    For Visium or ST platforms, `concave_hull` is automatically set to TRUE.
+#'    If TRUE, the function uses \code{\link[ggforce]{geom_mark_hull}} to outline cluster boundaries 
+#'    (recommended for non-discontinuous clusters).
+#'    If FALSE, the adapted \code{\link[sosta]{reconstructShapeDensityImage}} is used for complex cluster shapes.
 #' @param sf_dim A numeric value for the x-dimension of the reconstruction (default is 200). 
 #'    A lower value speeds up computation but reduces accuracy. 
 #'    Used only when `concave_hull` is FALSE.
 #' @param assay.type String indicating which assay in \code{spe} the expression
 #'    vector should be taken from.
-#' @param annotation_cluster A logical value (TRUE or FALSE). 
+#' @param annotation_cluster A logical value. TRUE or FALSE. 
 #'    If TRUE, annotated spatial clusters are plotted alongside expression plots. 
 #'    If FALSE, clusters are not displayed.
 #' @param annotation_title A character string for the title of the annotated spatial clusters. 
 #'    Applied only when `annotation_cluster` is TRUE.
 #' @param platform A character string specifying the spatial sequencing platform. 
-#'   If "Visium" or "ST", a hexagonal spot layout will be used. 
-#'   Otherwise, points will be plotted.
+#'    If "Visium" or "ST", a hexagonal spot layout will be used. 
+#'    Otherwise, points will be plotted.
 #' @param cluster_col Column name of spatial clusters in \code{colData(spe)}.
 #' @param cluster Names of the spatial clusters used for drawing a boundary 
 #'    around a group of points that belong to the specify cluster.
 #'    It can be NULL, "all"/"ALL", or a vector of cluster names.
 #' @param legend_cluster A logical value. TRUE of FALSE, 
 #'    indicating whether to plot the legend for the shaped clusters (TRUE), or not (FALSE).
-#'    Only used when 'cluster_col' and 'cluster' are specified.
-#' @param legend_exprs A logical value. 
-#'    TRUE of FALSE, indicating whether to plot the legend for 
+#'    Only used when 'cluster_col' and 'cluster' are specified, 
+#'    and is supported only when 'concave_hull' is set to TRUE.
+#' @param legend_exprs A logical value. TRUE of FALSE, 
+#'    indicating whether to plot the legend for 
 #'    the expression level (TRUE), or not (FALSE).
 #' @param diverging A logical value. 
 #'    If TRUE, uses a diverging color gradient in \code{\link{FeaturePlot}} (e.g., for fold change). 
 #'    If FALSE, uses a sequential gradient (e.g., for expression).
 #' @param low,mid,high Optional hex codes for low, mid, and high values of the
-#'   color gradient used for continuous cell values.
-#' @param color Optional hex code to set color of borders around cells. Set to
-#'   \code{NA} to remove borders.
+#'    color gradient used for continuous cell values.
+#' @param color Optional hex code to set color of borders around cells. 
+#'    Set to \code{NA} to remove borders.
 #' @param linewidth The width of the boundary line around the cluster.
 #' The default ('0.4') size of the boundary line is one.
 #' @param linecolor The colors of the boundary lines around the cluster. 
@@ -96,32 +100,32 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         message("'spe' must be a 'SpatialExperiment' object or a 'SingleCellExperiment' object")
         return(NULL)
     }
-  
+    ## check if 'spe' is a SpatialExperiment and spatialCoords() is provided
     if (is(spe, "SpatialExperiment")){
-        coord <- is.null(spatialCoords(spe))
-    }
-  
-    if ('row' %notin% colnames(colData(spe)) | 'col' %notin% colnames(colData(spe))){
-        if (is.null(coordinates) & (coord | platform %in% c("Visium", "ST"))){
-            message("Spatial coordinates of cells are missing in colData(spe) and spatrialCoords(spe). ")
-            message("Please provide column names of spatial coordinates in 'coordinates'. ")
-            message("Default setting are 'row' and 'col'. ")
-            message("Alternatively, add spatial coordinates to spatrialCoords(spe) if 'spe' is a 'SpatialExperiment' object.")
-        return(NULL)
-    }else if (!is.null(coordinates)){
-        coordinates_col <- colData(spe)[coordinates]
-        colnames(coordinates_col) <- c('row', 'col')
-        colData(spe) <- cbind(colData(spe), coordinates_col)
-        spatialCoords(spe) <- as.matrix(coordinates_col)
+        coord <- !is.null(spatialCoords(spe))
     }else {
-        coordinates_col <- spatialCoords(spe)
-        colnames(coordinates_col) <- c('row', 'col')
-        colData(spe) <- cbind(colData(spe), coordinates_col)
+        coord <- FALSE
     }
-    }
+    ## check for the presence of 'row' and 'col' in colData
+    if ('row' %notin% colnames(colData(spe)) || 'col' %notin% colnames(colData(spe))){
+        if (!is.null(coordinates)){
+            ## use provided coordinates in colData()
+            coordinates_col <- colData(spe)[coordinates]
+            colnames(coordinates_col) <- c('row', 'col')
+            colData(spe) <- cbind(colData(spe), coordinates_col)
+            }else if (coord){
+                ## use spatialCoords() for SpatialExperiment object
+                coordinates_col <- spatialCoords(spe)
+                colnames(coordinates_col) <- c('row', 'col')
+                colData(spe) <- cbind(colData(spe), coordinates_col)
+            }else {
+                stop("Spatial coordinates of cells are missing in colData(spe) and spatialCoords(spe). ",
+                     "Please provide column names of spatial coordinates in 'coordinates', ",
+                     "or add spatial coordinates to spatialCoords(spe) if 'spe' is a 'SpatialExperiment' object.")
+            }
+      }
     if (assay.type %notin%  assayNames(spe)){
-        message("assay.type is missing in assayNames(spe). ")
-        return(NULL)
+        stop("assay.type is missing in assayNames(spe). ")
     }
     if (is.character(feature)) {
         assert_that(all(feature %in% rownames(spe)), msg="Feature not in spe.")
@@ -134,7 +138,7 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         ## and we should encourage composing ggplot functions instead
         fill.name <- "Expression"
     }
-    ## No borders around subspots by default
+    ## no borders around subspots by default
     if (is.null(color)) {
         color <- NA ##"#d8dcd6"
     }
@@ -158,8 +162,8 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         msg = "The number of outline colors provided must match the length of 'cluster'."
     ) }
   
-    MoreArgs <- list(spe, diverging, low, high, mid, legend_exprs, color,
-                platform, cluster_col, cluster,
+    MoreArgs <- list(spe, diverging, low, high, mid, legend_exprs, 
+                legend_cluster, color, platform, cluster_col, cluster,
                 label, title, title_size, linewidth, linecolor,
                 sf_dim, concave_hull, point_size)
     ## if feature is a vector of gene names
@@ -171,40 +175,16 @@ FeaturePlot <- function(spe, feature, coordinates = NULL,
         widths <- NULL
     }else{
         x <- fill
-        plot.list <- .geneExprsPlot(x, fill.name, spe, diverging, low, high, mid, legend_exprs, color,
-                        platform, cluster_col, cluster,
-                        label, title, title_size, linewidth, linecolor,
+        plot.list <- .geneExprsPlot(x, fill.name, spe, diverging, low, high, mid, 
+                        legend_exprs, legend_cluster, color, platform, cluster_col, 
+                        cluster, label, title, title_size, linewidth, linecolor,
                         sf_dim, concave_hull, point_size)
         expression.plots <- list(plot.list$plot)
         vertices <- plot.list$vertices
         ncol <- 1; widths <- c(5, 1)
     }
-    ## if 'cluster_col' and 'cluster' are specified, and legend_cluster == TRUE,  
-    ## draw the shape of the outline of the group and add the legend of clusters
-    if(!is.null(cluster_col) && !is.null(cluster) && legend_cluster){
-        ## create the legend of cluster
-        if(!any(cluster %in% c("all", "ALL"))){
-            filter <- vertices$Cluster %in% (cluster)
-        }else{
-            filter <- NULL
-        }
-    my_hist <- vertices %>% 
-        ggplot(mapping = aes(x=x.vertex, y=y.vertex)) +
-        geom_mark_hull(aes(x = x.vertex, y = y.vertex, 
-                        color = Cluster, 
-                        fill = Cluster, 
-                        filter = filter),
-                        expand = unit(0.02, "cm"), # Adjusts the spacing
-                        inherit.aes = FALSE) +
-        scale_color_manual(values = linecolor) +  # Map custom border colors
-        scale_fill_manual(values = linecolor) +   # Map fill colors if necessary
-        theme(legend.position = "right")
-    legend <- get_plot_component(my_hist, 'guide-box-top', return_all = TRUE)
-    plots <- append(expression.plots, list(as_ggplot(legend)) )
-    plots <- wrap_plots(plots, ncol=min(length(expression.plots),ncol)+1,widths = widths)
-    }else{
-        plots <- wrap_plots(expression.plots, ncol=min(length(expression.plots),ncol))
-    }
+    plots <- wrap_plots(expression.plots, ncol=min(length(expression.plots),ncol)) +
+        plot_layout(guides = "collect")
     ## if 'annotation_cluster' is specified as TRUE, plot the original spatial clusters next to expression plots
     if(annotation_cluster){
         if (is.null(cluster_col))

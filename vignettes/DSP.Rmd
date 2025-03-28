@@ -51,20 +51,19 @@ suppressMessages({
     library(DESpace)
     library(ggplot2)
     library(SpatialExperiment)
-    library(ExperimentHub)
+    library(muSpaData)
     library(reshape2)
     library(tidyverse)
     library(patchwork)
     library(splines)
     library(edgeR)
-    library(muscat)
 })
 set.seed(123)
 ```
 
 # Data
 
-As an example dataset, we consider a multi-sample, multi-group spatially resolved transcriptomics data - the Stereo-seq dataset of taxolotl telencephalon brain regeneration stages [@ARTISTA]. The dataset includes axolotl brain tissues collected at various days post-injury (DPI): 2 (3 sections), 5 (3 sections), 10 (3 sections), 15 (4 sections), 20 (3 sections), 30 (1 section) and 60 (1 section), after the removal of a reproducible portion of dorsal pallium in left telencephalic hemisphere of axolotl. The original dataset is available for download via [ARTISTA] (https://db.cngb.org/stomics/artista/download/), and the processed dataset (including spatial clusters) can be accessed via [*muSpaData*](https://github.com/peicai/muSpaData) ExperimentHub package.
+As an example dataset, we consider a multi-sample, multi-group spatially resolved transcriptomics data - the Stereo-seq dataset of taxolotl telencephalon brain regeneration stages [@ARTISTA]. The dataset includes axolotl brain tissues collected at various days post-injury (DPI): 2 (3 sections), 5 (3 sections), 10 (3 sections), 15 (4 sections), 20 (3 sections), 30 (1 section) and 60 (1 section), after the removal of a reproducible portion of dorsal pallium in left telencephalic hemisphere of axolotl. The original dataset is available for download via [*STOmicsDB*](https://db.cngb.org/stomics/artista/download/), and the processed dataset (including spatial clusters) can be accessed via [*muSpaData*](https://github.com/peicai/muSpaData) ExperimentHub package.
 
 ## Input data
 
@@ -72,8 +71,7 @@ Here, we use a subset of the original data, consisting of three distinct regener
 
 ```{r load-example-data, message = FALSE}
 # Load the small example data
-eh <- ExperimentHub()
-spe <- eh[["EH9613"]]; rm(eh)
+spe <- Wei22_example()
 # The following columns from colData(spe) are specified:
 coordinates <- c("sdimx", "sdimy") # coordinates of cells
 spatial_cluster <- 'Banksy_smooth' # Banksy spatial clusters

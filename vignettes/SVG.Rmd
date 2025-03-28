@@ -307,8 +307,7 @@ FeaturePlot(spe3, feature,
             coordinates = coordinates, 
             annotation_cluster = TRUE,
             cluster_col = cluster_col, 
-            cluster = 'all', 
-            legend_cluster = TRUE, title = TRUE)
+            cluster = 'all', title = TRUE)
 ```
 
 ### Individual cluster test

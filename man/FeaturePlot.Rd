@@ -45,10 +45,10 @@ in \code{colData(spe)} if they exist. Otherwise, it will use \code{spatialCoords
 SpatialExperiment object and \code{spatialCoords(spe)} is not NULL.}
 
 \item{concave_hull}{A logical value (TRUE or FALSE).
-If TRUE, the function uses `ggforce::geom_mark_hull()` to outline cluster boundaries 
+For Visium or ST platforms, `concave_hull` is automatically set to TRUE.
+If TRUE, the function uses \code{\link[ggforce]{geom_mark_hull}} to outline cluster boundaries 
 (recommended for non-discontinuous clusters).
-If FALSE, `sosta::reconstructShapeDensityImage()` is used for complex cluster shapes.
-For Visium or ST platforms, `concave_hull` is automatically set to TRUE.}
+If FALSE, the adapted \code{\link[sosta]{reconstructShapeDensityImage}} is used for complex cluster shapes.}
 
 \item{sf_dim}{A numeric value for the x-dimension of the reconstruction (default is 200). 
 A lower value speeds up computation but reduces accuracy. 
@@ -57,7 +57,7 @@ Used only when `concave_hull` is FALSE.}
 \item{assay.type}{String indicating which assay in \code{spe} the expression
 vector should be taken from.}
 
-\item{annotation_cluster}{A logical value (TRUE or FALSE). 
+\item{annotation_cluster}{A logical value. TRUE or FALSE. 
 If TRUE, annotated spatial clusters are plotted alongside expression plots. 
 If FALSE, clusters are not displayed.}
 
@@ -76,10 +76,11 @@ It can be NULL, "all"/"ALL", or a vector of cluster names.}
 
 \item{legend_cluster}{A logical value. TRUE of FALSE, 
 indicating whether to plot the legend for the shaped clusters (TRUE), or not (FALSE).
-Only used when 'cluster_col' and 'cluster' are specified.}
+Only used when 'cluster_col' and 'cluster' are specified, 
+and is supported only when 'concave_hull' is set to TRUE.}
 
-\item{legend_exprs}{A logical value. 
-TRUE of FALSE, indicating whether to plot the legend for 
+\item{legend_exprs}{A logical value. TRUE of FALSE, 
+indicating whether to plot the legend for 
 the expression level (TRUE), or not (FALSE).}
 
 \item{diverging}{A logical value. 
@@ -89,8 +90,8 @@ If FALSE, uses a sequential gradient (e.g., for expression).}
 \item{low, mid, high}{Optional hex codes for low, mid, and high values of the
 color gradient used for continuous cell values.}
 
-\item{color}{Optional hex code to set color of borders around cells. Set to
-\code{NA} to remove borders.}
+\item{color}{Optional hex code to set color of borders around cells. 
+Set to \code{NA} to remove borders.}
 
 \item{linewidth}{The width of the boundary line around the cluster.
 The default ('0.4') size of the boundary line is one.}
@@ -114,9 +115,12 @@ Returns a ggplot object.
 }
 \description{
 Plot spatial gene expression.
-This function is a modified version of the \code{\link{FeaturePlot}} function from BayesSpace R package.
+This function is a modified version of the \code{\link[BayesSpace]{featurePlot}} function from `BayesSpace` R package.
 In comparison to the original BayesSpace function, this function allows plotting multiple genes simultaneously 
 and drawing an outline around a specified cluster.
+To draw outlines, the \code{\link[sosta]{reconstructShapeDensityImage}} function from the `sosta` R package has been adapted.
+Compared to the original `sosta` function, this version allows the use of a SingleCellExperiment object, 
+which cannot be used with `spatialCoords()`.
 }
 \examples{
 # load the input data:

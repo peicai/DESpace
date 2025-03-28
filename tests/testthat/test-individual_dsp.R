@@ -1,6 +1,5 @@
 # load SPE object
-eh <- ExperimentHub::ExperimentHub()
-spe <- eh[["EH9613"]]
+spe <- muSpaData::Wei22_example()
 
 test_that("individual_dsp() works faultlessly.", {
   # Individual cluster test: identify SVGs for each individual cluster

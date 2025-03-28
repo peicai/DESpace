@@ -45,8 +45,7 @@
 #'
 #' @examples
 #' ## Load the example multi-sample multi-group spe object
-#' eh <- ExperimentHub::ExperimentHub()
-#' spe <- eh[["EH9613"]]
+#' spe <- muSpaData::Wei22_example()
 #' # Fit the model via \code{\link{dsp_test}} function.
 #' set.seed(123)
 #' results_dsp <- dsp_test(spe = spe,
@@ -106,10 +105,10 @@ dsp_test <-  function(spe,
                                     cluster_col, min_pct_cells, 
                                     uniqueness_check[["n_condition"]])
     }
-    # aggregate data to pseudobulk via muscat  
+    # aggregate data to pseudobulk 
     if (!"counts" %in% assayNames(spe)) {
         stop("The 'counts' assay slot, required as input data, is missing.")
     }
-    .muscat_layer_test(spe, design = design, cluster_col, 
+    .layer_test(spe, design = design, cluster_col, 
                     sample_col, condition_col, verbose)
 }

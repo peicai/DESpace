@@ -271,13 +271,13 @@
   # Return the filtered SingleCellExperiment object
   return(spe_filtered)
 }
-.muscat_layer_test <- function(spe,
+.layer_test <- function(spe,
                                design = NULL,
                                cluster_col,
                                sample_col,
                                condition_col,
                                verbose){
-  pb <- muscat::aggregateData(spe, assay = "counts", fun = "sum",
+  pb <- .aggregateData(spe, assay = "counts", fun = "sum",
                       by = c(cluster_col, sample_col))
   X <- do.call(cbind, assays(pb))
   # Create a grid of all combinations
@@ -354,6 +354,121 @@
     return(results)
   }   
 }
+# Function derived from https://github.com/HelenaLC/muscat/blob/main/R/aggregateData.R
+.aggregateData <- function(x, 
+                          assay = NULL, by = c("cluster_id", "sample_id"), 
+                          fun = c("sum", "mean", "median", "prop.detected", "num.detected"), 
+                          scale = FALSE, verbose = TRUE, BPPARAM = SerialParam(progressbar = verbose)) {
+  
+  # check validity of input arguments
+  fun <- match.arg(fun)
+  if (is.null(assay)) 
+    assay <- assayNames(x)[1] 
+  stopifnot(is.character(assay), length(assay) == 1, assay %in% assayNames(x))
+  if (sum(assayNames(x) == assay) > 1)
+      stop("Argument 'assay' was matched to multiple times.\n ", 
+           " Please assure that the input SCE has unique 'assayNames'.")
+  .check_args_aggData(as.list(environment()))
+  stopifnot(is(BPPARAM, "BiocParallelParam"))
+  
+  # assure 'by' colData columns are factors
+  # so that missing combinations aren't dropped
+  for (i in by) 
+    if (!is.factor(x[[i]])) 
+      x[[i]] <- factor(x[[i]])
+  
+  # compute pseudo-bulks
+  pb <- .pb(x, by, assay, fun, BPPARAM)
+  if (scale & length(by) == 2) {
+    # compute library sizes
+    cs <- if (assay == "counts" && fun == "sum")
+      pb else .pb(x, by, "counts", "sum", BPPARAM)
+    ls <- lapply(cs, colSums)
+    # scale pseudobulks by CPM
+    pb <- lapply(seq_along(pb), function(i) pb[[i]] / 1e6 * ls[[i]])
+    names(pb) <- names(ls)
+  }
+  
+  # construct SCE
+  md <- metadata(x)
+  md$agg_pars <- list(assay = assay, by = by, fun = fun, scale = scale)
+  pb <- SingleCellExperiment(pb, rowData = rowData(x), metadata = md)
+  
+  # tabulate number of cells
+  cd <- data.frame(colData(x)[, by])
+  for (i in names(cd))
+    if (is.factor(cd[[i]]))
+      cd[[i]] <- droplevels(cd[[i]])
+  ns <- table(cd)
+  if (length(by) == 2) {
+    ns <- asplit(ns, 2)
+    ns <- lapply(ns, function(x) c(unclass(x)))
+  } else ns <- c(unclass(ns))
+  int_colData(pb)$n_cells <- ns
+  
+  # propagate 'colData' columns that are unique across 2nd 'by'
+  if (length(by) == 2) {
+    cd <- colData(x)
+    ids <- colnames(pb)
+    counts <- vapply(ids, function(u) {
+      m <- as.logical(match(cd[, by[2]], u, nomatch = 0))
+      vapply(cd[m, ], function(u) length(unique(u)), numeric(1))
+    }, numeric(ncol(colData(x))))
+    cd_keep <- apply(counts, 1, function(u) all(u == 1))
+    cd_keep <- setdiff(names(which(cd_keep)), by)
+    if (length(cd_keep) != 0) {
+      m <- match(ids, cd[, by[2]], nomatch = 0)
+      cd <- cd[m, cd_keep, drop = FALSE]
+      rownames(cd) <- ids
+      colData(pb) <- cd
+    }
+  }
+  return(pb)
+}
+.check_args_aggData <- function(u) {
+  stopifnot(is.character(u$by), length(u$by) <= 2, 
+            u$by %in% colnames(colData(u$x)))
+  stopifnot(is.logical(u$scale), length(u$scale) == 1)
+  if (u$scale & (!u$assay %in% c("cpm", "CPM") | u$fun != "sum"))
+    stop("Option 'scale = TRUE' only valid for", 
+         " 'assay = \"cpm/CPM\"' and 'fun = \"sum\"'.")
+}
+.pb <- function(x, by, assay, fun, BPPARAM = SerialParam()) {
+  # compute pseudobulks
+  suppressWarnings( 
+    # temporarily suppressing warnings b/c 'median' 
+    # warns about unspecified 'useNames' argument
+    y <- summarizeAssayByGroup(x,
+                               assay.type = assay, 
+                               ids = (ids <- colData(x)[by]),
+                               statistics = fun,
+                               BPPARAM = BPPARAM))
+  colnames(y) <- y[[by[length(by)]]]
+  
+  if (length(by) == 1) 
+    return(assay(y))
+  
+  # reformat into one assay per 'by[1]'
+  if (is.factor(ids <- y[[by[1]]]))
+    ids <- droplevels(ids)
+  is <- split(seq_len(ncol(y)), ids)
+  ys <- lapply(is, function(idx) assay(y)[, idx, drop = FALSE])
+  
+  # fill in missing combinations
+  unique_by2 <- unique(y[[by[2]]])
+  ys <- lapply(ys, function(mat) {
+      missing_cols <- setdiff(unique_by2, colnames(mat))
+      if (length(missing_cols) > 0) {
+          fill_matrix <- matrix(0, nrow = nrow(x), ncol = length(missing_cols),
+                            dimnames = list(NULL, missing_cols))
+          mat <- cbind(mat, fill_matrix)
+          mat <- mat[, sort(colnames(mat)), drop = FALSE]
+      }
+      mat
+  })
+  return(ys)
+}
+
 `%notin%` <- Negate(`%in%`)
 list <- structure(NA,class="result")
 #' @export

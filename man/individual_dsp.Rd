@@ -53,8 +53,7 @@ This function can be used to identify SVGs among conditions for each individual 
 }
 \examples{
 # load the input data:
-eh <- ExperimentHub::ExperimentHub()
-spe <- eh[["EH9613"]]
+spe <- muSpaData::Wei22_example()
 set.seed(123)
 results_individual_dsp <- individual_dsp(spe,
                                           cluster_col = "Banksy_smooth",

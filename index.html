@@ -57,9 +57,9 @@
 </h1></div>
 <p><img src="reference/figures/DESpace.png" width="200" align="right" alt="Alt text"></p>
 <p><code>DESpace</code> is a framework for identifying spatially variable genes (SVGs), a common task in spatial transcriptomics analyses, and differential spatial variable pattern (DSP) genes, which identify differences in spatial gene expression patterns across experimental conditions.</p>
-<p>By leveraging pre-annotated spatial clusters as summarized spatial information, <code>DESpace</code> models gene expression with a negative binomial (NB), via <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html" class="external-link">edgeR</a>, with spatial clusters as covariates. SV genes are then identified by testing the significance of spatial clusters. For detailed guidance on detecting SVGs with <em>DESpace</em>, refer to <a href="https://www.bioconductor.org/packages/release/bioc/vignettes/DESpace/inst/doc/DESpace.html" class="external-link"><em>SVGs vignettes</em></a>.</p>
+<p>By leveraging pre-annotated spatial clusters as summarized spatial information, <code>DESpace</code> models gene expression with a negative binomial (NB), via <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html" class="external-link">edgeR</a>, with spatial clusters as covariates. SV genes are then identified by testing the significance of spatial clusters.</p>
 <p>For multi-sample, multi-condition datasets, again we fit a NB model via <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html" class="external-link">edgeR</a>, but this time we use spatial clusters, conditions and their interactions as covariates. DSP genes are then identified by testing the interaction between spatial clusters and conditions.</p>
-<p>Check the vignettes for a description of the main conceptual and mathematical aspects, as well as usage guidelines.</p>
+<p>Check the <a href="https://peicai.github.io/DESpace/articles/SVG.html">vignettes</a> for a description of the main conceptual and mathematical aspects, as well as usage guidelines.</p>
 <blockquote>
 <p>Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024).</p>
 <p>DESpace: spatially variable gene detection via differential expression testing of spatial clusters.</p>

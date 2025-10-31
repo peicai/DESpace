@@ -19,9 +19,9 @@ Check the [vignettes](https://peicai.github.io/DESpace/articles/SVG.html) for a 
 > Available [here](https://doi.org/10.1093/bioinformatics/btae027)
 
 > Peiying Cai, Mark D. Robinson, and Simone Tiberi (2025).  
-
+>
 > DESpace2: detection of differential spatial patterns in spatial omics data. 
-
+>
 > bioRxiv preprint. 
 > Available [here](https://www.biorxiv.org/content/10.1101/2025.06.30.662268v1)
 

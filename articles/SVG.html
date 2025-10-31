@@ -71,7 +71,7 @@ Tiberi</h4>
 Italy<br><a class="author_email" href="mailto:#"></a><a href="mailto:simone.tiberi@unibo.it" class="email">simone.tiberi@unibo.it</a>
       </address>
                   
-            <h4 data-toc-skip class="date">05/20/2025</h4>
+            <h4 data-toc-skip class="date">10/31/2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/peicai/DESpace/blob/main/vignettes/SVG.Rmd" class="external-link"><code>vignettes/SVG.Rmd</code></a></small>
       <div class="d-none name"><code>SVG.Rmd</code></div>
@@ -163,8 +163,9 @@ samples</em>.</p>
 <code class="sourceCode R"><span><span class="co"># Connect to ExperimentHub</span></span>
 <span><span class="va">ehub</span> <span class="op">&lt;-</span> <span class="fu">ExperimentHub</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/ExperimentHub/man/ExperimentHub-class.html" class="external-link">ExperimentHub</a></span><span class="op">(</span><span class="op">)</span></span>
 <span><span class="co"># Download the full real data (about 2.1 GB in RAM) use:</span></span>
-<span><span class="va">spe_all</span> <span class="op">&lt;-</span> <span class="fu">spatialLIBD</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/spatialLIBD/man/fetch_data.html" class="external-link">fetch_data</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"spe"</span>, eh <span class="op">=</span> <span class="va">ehub</span><span class="op">)</span></span>
-<span><span class="co"># Specify column names of spatial coordinates in colData(spe) </span></span>
+<span><span class="va">spe_all</span> <span class="op">&lt;-</span> <span class="fu">spatialLIBD</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/spatialLIBD/man/fetch_data.html" class="external-link">fetch_data</a></span><span class="op">(</span>type <span class="op">=</span> <span class="st">"spe"</span>, eh <span class="op">=</span> <span class="va">ehub</span><span class="op">)</span></span></code></pre></div>
+<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Specify column names of spatial coordinates in colData(spe) </span></span>
 <span><span class="va">coordinates</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"array_row"</span>, <span class="st">"array_col"</span><span class="op">)</span></span>
 <span><span class="co"># Specify column names of spatial clusters in colData(spe) </span></span>
 <span><span class="va">cluster_col</span> <span class="op">&lt;-</span> <span class="st">'layer_guess_reordered'</span></span>
@@ -192,7 +193,7 @@ matter (WM) and layers 1 to 6. The manual annotations are stored in
 column <code>layer_guess_reordered</code> of the <code>colData</code>,
 while columns <code>array_col</code> and <code>array_row</code> provide
 the spatial coordinates of spots.</p>
-<div class="sourceCode" id="cb6"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We select a subset of columns</span></span>
 <span><span class="va">keep_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">coordinates</span>,<span class="va">cluster_col</span>,<span class="st">"expr_chrM_ratio"</span>,<span class="st">"cell_count"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">[</span><span class="va">keep_col</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
@@ -224,7 +225,7 @@ Transcriptomics Analysis with Bioconductor” (<a href="https://lmweber.org/OSTA
 The library size, UMI counts, ratio of mitochondrial chromosome (chM)
 expression, and number of cells per spot are used to identify
 low-quality spots.</p>
-<div class="sourceCode" id="cb8"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample 1:</span></span>
 <span><span class="co"># Calculate per-spot QC metrics and store in colData</span></span>
 <span><span class="va">spe1</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe1</span>,<span class="op">)</span></span>
@@ -250,7 +251,7 @@ low-quality spots.</p>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">cell_count</span> <span class="op">&gt;</span> <span class="fl">15</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>Then, we discard lowly abundant genes, which were detected in less
 than 20 spots.</p>
-<div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For each sample i:</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="va">spe_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spe"</span>, <span class="va">i</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -286,7 +287,7 @@ can be easily generated with spatial clustering algorithms.</p>
 pathologist), we can directly use those. With the <code>spe</code> or
 <code>spe</code> object that contains coordinates of the spot-level
 data, we can visualize spatial clusters.</p>
-<div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View LIBD layers for one sample</span></span>
 <span><span class="va">CD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">CD</span>, </span>
@@ -329,11 +330,11 @@ Louvain or k-means (<a href="https://stlearn.readthedocs.io/en/latest/index.html
 There is a tutorial for using StLearn on this dataset (human DLPFC) <a href="https://stlearn.readthedocs.io/en/latest/tutorials/stSME_clustering.html#Human-Brain-dorsolateral-prefrontal-cortex-(DLPFC)" class="external-link"><em>here</em></a>.</p>
 <p>After running stLearn, we can store results as a <code>csv</code>
 file.</p>
-<div class="sourceCode" id="cb14"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb14-1"><a href="#cb14-1" tabindex="-1"></a><span class="co"># Save spatial results</span></span>
-<span id="cb14-2"><a href="#cb14-2" tabindex="-1"></a>obsm.to_csv(<span class="st">"stLearn_clusters.csv"</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Save spatial results</span></span>
+<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>obsm.to_csv(<span class="st">"stLearn_clusters.csv"</span>) </span></code></pre></div>
 <p>Then, we can load these results in R and store spatial clusters in
 the <code>spe</code> object.</p>
-<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stLearn_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"stLearn_clusters.csv"</span>, sep <span class="op">=</span> <span class="st">','</span>, </span>
 <span>                            header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># Match colData(spe) and stLearn results</span></span>
@@ -356,7 +357,7 @@ the <code>spe</code> object.</p>
 defines the column names of <code>colData(spe)</code> containing spatial
 clusters. To obtain all statistics, set <code>verbose</code> to
 <code>TRUE</code> (default value).</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe3</span>,</span>
 <span>                        cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
@@ -372,12 +373,12 @@ columns contain gene names (<code>gene_id</code>), likelihood ratio test
 statistics (<code>LR</code>), average (across spots) log-2 counts per
 million (<code>logCPM</code>), raw p-values (<code>PValue</code>) and
 Benjamini-Hochberg adjusted p-values (<code>FDR</code>).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         gene_id       LR   logCPM        PValue           FDR</span></span>
-<span><span class="co">## SNCG       SNCG 1302.568 14.36227 3.011631e-278 2.731550e-275</span></span>
-<span><span class="co">## ATP1A3   ATP1A3 1235.840 14.68931 8.376122e-264 3.798571e-261</span></span>
-<span><span class="co">## PLEKHH1 PLEKHH1 1045.531 13.69919 1.268125e-222 3.833964e-220</span></span></code></pre>
+<span><span class="co">## SNCG       SNCG 1302.530 14.36227 3.069740e-278 2.784255e-275</span></span>
+<span><span class="co">## ATP1A3   ATP1A3 1235.844 14.68931 8.359666e-264 3.791108e-261</span></span>
+<span><span class="co">## PLEKHH1 PLEKHH1 1045.524 13.69919 1.272120e-222 3.846044e-220</span></span></code></pre>
 <p>The second element of the results (a <code>DGEList</code> object
 <code>estimated_y</code>) contains the estimated common dispersion,
 which can later be used to speed-up calculation when testing individual
@@ -385,7 +386,7 @@ clusters.</p>
 <p>The third and forth element of the results (<code>DGEGLM</code> and
 <code>DGELRT</code> objects) contain full statistics from
 <code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">edgeR::glmFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmLRT.html" class="external-link">edgeR::glmLRT</a></code>.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmLrt</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmFit</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEList"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
@@ -402,17 +403,17 @@ clusters.</p>
 names. Specifying the column names of spatial coordinates of spots is
 only necessary when they are not named <code>row</code> and
 <code>col</code>.</p>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "SNCG"    "ATP1A3"  "PLEKHH1"</span></span></code></pre>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, </span>
 <span>            ncol <span class="op">=</span> <span class="fl">3</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot-1.png" width="700"></p>
 <p>Additionally, function <code><a href="../reference/FeaturePlot.html">FeaturePlot()</a></code> can draw an outline
 around each cluster.</p>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, </span>
 <span>            annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>,</span>
@@ -441,7 +442,7 @@ If you want to use pre-computed gene-level dispersion estimates, set
 <code>edgeR_y</code> to <code>estimated_y</code>. Alternatively, if you
 want to re-compute dispersion estimates (significantly slower, but
 marginally more accurate option), leave <code>edgeR_y</code> empty.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/individual_svg.html">individual_svg</a></span><span class="op">(</span><span class="va">spe3</span>, </span>
 <span>                                    edgeR_y <span class="op">=</span> <span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span>,</span>
@@ -463,10 +464,10 @@ cluster to the rest of the tissue; e.g., a logFC of 2 for WM test
 indicates that the average gene expression in WM is (4 times) higher
 than the average gene expression in non-WM tissue.</p>
 <p>Visualize results for WM.</p>
-<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "list"</span></span></code></pre>
-<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Layer1" "Layer2" "Layer3" "Layer4" "Layer5" "Layer6" "WM"</span></span></code></pre>
 <p><code>top_results</code> function can be used to combine gene-and
@@ -477,95 +478,95 @@ however, users can also choose to only report either, by specifying
 <code>gene_PValue</code> and <code>gene_FDR</code> columns refer to the
 gene-level testing, while the subsequent columns indicate the
 cluster-specific results.</p>
-<div class="sourceCode" id="cb43"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   gene_id  gene_LR gene_logCPM   gene_Pvalue      gene_FDR   Layer1_FDR</span></span>
-<span><span class="co">## 1    SNCG 1302.568    14.36227 3.011631e-278 2.731550e-275 4.639333e-13</span></span>
-<span><span class="co">## 2  ATP1A3 1235.840    14.68931 8.376122e-264 3.798571e-261 3.932518e-15</span></span>
-<span><span class="co">## 3 PLEKHH1 1045.531    13.69919 1.268125e-222 3.833964e-220 6.918017e-15</span></span>
+<span><span class="co">## 1    SNCG 1302.530    14.36227 3.069740e-278 2.784255e-275 4.643298e-13</span></span>
+<span><span class="co">## 2  ATP1A3 1235.844    14.68931 8.359666e-264 3.791108e-261 3.932084e-15</span></span>
+<span><span class="co">## 3 PLEKHH1 1045.524    13.69919 1.272120e-222 3.846044e-220 6.916994e-15</span></span>
 <span><span class="co">##     Layer2_FDR   Layer3_FDR   Layer4_FDR   Layer5_FDR   Layer6_FDR</span></span>
-<span><span class="co">## 1 2.806987e-06 8.405926e-80 7.600571e-13 2.918858e-26 1.920668e-65</span></span>
-<span><span class="co">## 2 2.024988e-03 5.101748e-60 6.778389e-12 1.448295e-15 7.998865e-25</span></span>
-<span><span class="co">## 3 1.210448e-06 6.445085e-44 1.058168e-06 4.480970e-17 3.190486e-01</span></span>
+<span><span class="co">## 1 2.808758e-06 8.458841e-80 7.609621e-13 2.924813e-26 1.929238e-65</span></span>
+<span><span class="co">## 2 2.024939e-03 5.098986e-60 6.777609e-12 1.448142e-15 7.997262e-25</span></span>
+<span><span class="co">## 3 1.210530e-06 6.447729e-44 1.058234e-06 4.481614e-17 3.190429e-01</span></span>
 <span><span class="co">##          WM_FDR Layer1_logFC Layer2_logFC Layer3_logFC Layer4_logFC</span></span>
-<span><span class="co">## 1 3.542972e-133   -0.7714273   -0.4604297    0.8320111    0.6135088</span></span>
-<span><span class="co">## 2 2.069121e-182   -0.6342197    0.2225217    0.5509819    0.4556480</span></span>
-<span><span class="co">## 3 7.833644e-209   -1.4032821   -0.7711669   -1.1047480   -0.8702769</span></span>
+<span><span class="co">## 1 3.571838e-133   -0.7714249   -0.4604275    0.8320115    0.6135086</span></span>
+<span><span class="co">## 2 2.066457e-182   -0.6342199    0.2225215    0.5509819    0.4556480</span></span>
+<span><span class="co">## 3 7.857746e-209   -1.4032823   -0.7711668   -1.1047479   -0.8702769</span></span>
 <span><span class="co">##   Layer5_logFC Layer6_logFC  WM_logFC</span></span>
-<span><span class="co">## 1    0.5492228   -1.0925815 -1.966913</span></span>
-<span><span class="co">## 2    0.3252719   -0.4761104 -1.728962</span></span>
-<span><span class="co">## 3   -0.8053807   -0.1317909  2.320301</span></span></code></pre>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<span><span class="co">## 1    0.5492233   -1.0925799 -1.966911</span></span>
+<span><span class="co">## 2    0.3252717   -0.4761104 -1.728962</span></span>
+<span><span class="co">## 3   -0.8053808   -0.1317911  2.320300</span></span></code></pre>
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span>, </span>
 <span>                        select <span class="op">=</span> <span class="st">"FDR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   gene_id  gene_LR gene_logCPM   gene_Pvalue      gene_FDR   Layer1_FDR</span></span>
-<span><span class="co">## 1    SNCG 1302.568    14.36227 3.011631e-278 2.731550e-275 4.639333e-13</span></span>
-<span><span class="co">## 2  ATP1A3 1235.840    14.68931 8.376122e-264 3.798571e-261 3.932518e-15</span></span>
-<span><span class="co">## 3 PLEKHH1 1045.531    13.69919 1.268125e-222 3.833964e-220 6.918017e-15</span></span>
+<span><span class="co">## 1    SNCG 1302.530    14.36227 3.069740e-278 2.784255e-275 4.643298e-13</span></span>
+<span><span class="co">## 2  ATP1A3 1235.844    14.68931 8.359666e-264 3.791108e-261 3.932084e-15</span></span>
+<span><span class="co">## 3 PLEKHH1 1045.524    13.69919 1.272120e-222 3.846044e-220 6.916994e-15</span></span>
 <span><span class="co">##     Layer2_FDR   Layer3_FDR   Layer4_FDR   Layer5_FDR   Layer6_FDR</span></span>
-<span><span class="co">## 1 2.806987e-06 8.405926e-80 7.600571e-13 2.918858e-26 1.920668e-65</span></span>
-<span><span class="co">## 2 2.024988e-03 5.101748e-60 6.778389e-12 1.448295e-15 7.998865e-25</span></span>
-<span><span class="co">## 3 1.210448e-06 6.445085e-44 1.058168e-06 4.480970e-17 3.190486e-01</span></span>
+<span><span class="co">## 1 2.808758e-06 8.458841e-80 7.609621e-13 2.924813e-26 1.929238e-65</span></span>
+<span><span class="co">## 2 2.024939e-03 5.098986e-60 6.777609e-12 1.448142e-15 7.997262e-25</span></span>
+<span><span class="co">## 3 1.210530e-06 6.447729e-44 1.058234e-06 4.481614e-17 3.190429e-01</span></span>
 <span><span class="co">##          WM_FDR</span></span>
-<span><span class="co">## 1 3.542972e-133</span></span>
-<span><span class="co">## 2 2.069121e-182</span></span>
-<span><span class="co">## 3 7.833644e-209</span></span></code></pre>
+<span><span class="co">## 1 3.571838e-133</span></span>
+<span><span class="co">## 2 2.066457e-182</span></span>
+<span><span class="co">## 3 7.857746e-209</span></span></code></pre>
 <p>We can further specify a cluster and check top genes detected by
 <em>DESpace</em>.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check top genes for WM</span></span>
 <span><span class="va">results_WM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                        cluster <span class="op">=</span> <span class="st">"WM"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## PLEKHH1      WM PLEKHH1   964.6586       13.69919      2.320301  8.636874e-212</span></span>
-<span><span class="co">## ATP1A3       WM  ATP1A3   841.7313       14.68931     -1.728962  4.562561e-185</span></span>
-<span><span class="co">## SLAIN1       WM  SLAIN1   723.0535       13.78576      1.870661  2.901872e-159</span></span>
+<span><span class="co">## PLEKHH1      WM PLEKHH1   964.6524       13.69919      2.320300  8.663446e-212</span></span>
+<span><span class="co">## ATP1A3       WM  ATP1A3   841.7339       14.68931     -1.728962  4.556686e-185</span></span>
+<span><span class="co">## SLAIN1       WM  SLAIN1   723.0543       13.78576      1.870661  2.900809e-159</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## PLEKHH1 7.833644e-209</span></span>
-<span><span class="co">## ATP1A3  2.069121e-182</span></span>
-<span><span class="co">## SLAIN1  8.773325e-157</span></span></code></pre>
+<span><span class="co">## PLEKHH1 7.857746e-209</span></span>
+<span><span class="co">## ATP1A3  2.066457e-182</span></span>
+<span><span class="co">## SLAIN1  8.770113e-157</span></span></code></pre>
 <p>With <code>high_low</code> parameter, we can further filter genes to
 visualize those with higher (<code>high_low = "high"</code>) or lower
 (<code>high_low = "low"</code>) average abundance in the specified
 cluster, compared to the average abundance in the rest of the tissue. By
 default, <code>high_low = “both”</code> and all results are
 provided.</p>
-<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_WM_both</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                                cluster <span class="op">=</span> <span class="st">"WM"</span>, </span>
 <span>                                high_low <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
 <p>Here we present the highly abundant cluster SVGs; i.e., SVGs with
 higher expression in WM compared to the rest of the area.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## PLEKHH1      WM PLEKHH1   964.6586       13.69919      2.320301  8.636874e-212</span></span>
-<span><span class="co">## SLAIN1       WM  SLAIN1   723.0535       13.78576      1.870661  2.901872e-159</span></span>
-<span><span class="co">## CMTM5        WM   CMTM5   659.0744       13.65302      2.098511  2.374763e-145</span></span>
+<span><span class="co">## PLEKHH1      WM PLEKHH1   964.6524       13.69919      2.320300  8.663446e-212</span></span>
+<span><span class="co">## SLAIN1       WM  SLAIN1   723.0543       13.78576      1.870661  2.900809e-159</span></span>
+<span><span class="co">## CMTM5        WM   CMTM5   659.0630       13.65302      2.098509  2.388407e-145</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## PLEKHH1 7.833644e-209</span></span>
-<span><span class="co">## SLAIN1  8.773325e-157</span></span>
-<span><span class="co">## CMTM5   4.307821e-143</span></span></code></pre>
+<span><span class="co">## PLEKHH1 7.857746e-209</span></span>
+<span><span class="co">## SLAIN1  8.770113e-157</span></span>
+<span><span class="co">## CMTM5   4.332571e-143</span></span></code></pre>
 <p>We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the area.</p>
-<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## ATP1A3       WM  ATP1A3   841.7313       14.68931     -1.728962  4.562561e-185</span></span>
-<span><span class="co">## PRKAR1B      WM PRKAR1B   669.2057       14.72797     -1.505988  1.487108e-147</span></span>
-<span><span class="co">## NSF          WM     NSF   628.9360       14.50629     -1.745010  8.515901e-139</span></span>
+<span><span class="co">## ATP1A3       WM  ATP1A3   841.7339       14.68931     -1.728962  4.556686e-185</span></span>
+<span><span class="co">## PRKAR1B      WM PRKAR1B   669.2011       14.72797     -1.505987  1.490527e-147</span></span>
+<span><span class="co">## NSF          WM     NSF   628.9241       14.50629     -1.745008  8.566920e-139</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## ATP1A3  2.069121e-182</span></span>
-<span><span class="co">## PRKAR1B 3.372018e-145</span></span>
-<span><span class="co">## NSF     1.287320e-136</span></span></code></pre>
+<span><span class="co">## ATP1A3  2.066457e-182</span></span>
+<span><span class="co">## PRKAR1B 3.379770e-145</span></span>
+<span><span class="co">## NSF     1.295033e-136</span></span></code></pre>
 <p>Visualize the gene expression of the top genes for layer WM. A
 cluster outline can be drawn by specifying the column names of clusters
 stored in <code>colData(spe)</code> and the vector of cluster names via
 <code>cluster_col</code> and <code>cluster</code>.</p>
-<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with higher than average abundance in WM</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
@@ -573,7 +574,7 @@ stored in <code>colData(spe)</code> and the vector of cluster names via
 <span>            legend_cluster <span class="op">=</span> <span class="cn">TRUE</span>, annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>            linewidth <span class="op">=</span> <span class="fl">0.6</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SVG_files/figure-html/expression%20plots%20high_low-1.png" width="700"></p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with lower than average abundance in WM</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
@@ -607,7 +608,7 @@ labels must be consistent across samples (i.e., WM in sample 1 should
 represent the same tissue as WM in sample 2). With the
 <code>spe.combined</code> object that contains coordinates of the
 spot-level data, we can visualize spatial clusters.</p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="co"># Use common genes</span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dge.html" class="external-link">counts</a></span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">)</span>; </span>
@@ -673,7 +674,7 @@ With <code>replicates = TRUE</code>, we fit the multi-sample model.</p>
 <p>The second element of the result (a <code>DGEList</code> object
 <code>estimated_y_multi</code>) contains the estimated common dispersion
 for the multi-sample case.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">multi_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe.combined</span>,</span>
 <span>                                cluster_col <span class="op">=</span> <span class="va">cluster_col</span>,</span>
@@ -687,17 +688,17 @@ for the multi-sample case.</p>
 <pre><code><span><span class="co">## Repeated column names found in count matrix</span></span></code></pre>
 <p>A list of results are returned. The main results of interest are
 stored in the <code>gene_results</code>.</p>
-<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        gene_id       LR   logCPM PValue FDR</span></span>
-<span><span class="co">## HPCAL1  HPCAL1 2063.975 14.41886      0   0</span></span>
-<span><span class="co">## NSF        NSF 1524.998 14.70448      0   0</span></span>
-<span><span class="co">## ATP1A3  ATP1A3 1578.198 14.88558      0   0</span></span></code></pre>
+<span><span class="co">## HPCAL1  HPCAL1 2063.951 14.41886      0   0</span></span>
+<span><span class="co">## NSF        NSF 1524.989 14.70448      0   0</span></span>
+<span><span class="co">## ATP1A3  ATP1A3 1578.196 14.88558      0   0</span></span></code></pre>
 <p>The second element of the results (a <code>DGEList</code> object
 <code>estimated_y</code>) contains the estimated common dispersion,
 which can later be used to speed-up calculation when testing individual
 clusters.</p>
-<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEList"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
@@ -705,15 +706,15 @@ clusters.</p>
 <p>For each sample, we can visualize the gene expression of the most
 significant SVGs. Note that column names of spatial coordinates of spots
 should be <code>row</code> and <code>col</code>.</p>
-<div class="sourceCode" id="cb68"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Top three spatially variable genes</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span>; <span class="va">feature</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "HPCAL1" "NSF"    "ATP1A3"</span></span></code></pre>
-<div class="sourceCode" id="cb70"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Sample names</span></span>
 <span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe.combined</span><span class="op">)</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span>; <span class="va">samples</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "151507" "151669" "151673"</span></span></code></pre>
-<div class="sourceCode" id="cb72"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Use purrr::map to combine multiple figures</span></span>
 <span><span class="va">spot_plots</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">## Subset spe for each sample j</span></span>
@@ -735,7 +736,7 @@ should be <code>row</code> and <code>col</code>.</p>
 framework can discover the key SV spatial clusters also when jointly
 fitting multiple samples. For a multi-sample testing, set
 <code>replicates = TRUE</code> in <code><a href="../reference/individual_svg.html">individual_svg()</a></code>.</p>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/individual_svg.html">individual_svg</a></span><span class="op">(</span><span class="va">spe.combined</span>, </span>
 <span>                                edgeR_y <span class="op">=</span> <span class="va">multi_results</span><span class="op">$</span><span class="va">estimated_y</span>,</span>
@@ -753,73 +754,73 @@ this case, logFC refers to the log2-FC between the average abundance,
 across all samples, of a spatial cluster and the average abundance of
 all remaining clusters (e.g., WM vs. non-WM tissue).</p>
 <p>Visualize results for WM.</p>
-<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "list"</span></span></code></pre>
-<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Layer1" "Layer2" "Layer3" "Layer4" "Layer5" "Layer6" "WM"</span></span></code></pre>
 <p>As above, <code>top_results</code> function can be used to combine
 gene-level and cluster-level results.</p>
-<div class="sourceCode" id="cb84"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span>, </span>
 <span>                        select <span class="op">=</span> <span class="st">"FDR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   gene_id  gene_LR gene_logCPM gene_Pvalue gene_FDR    Layer1_FDR    Layer2_FDR</span></span>
-<span><span class="co">## 1  ATP1A3 1578.198    14.88558           0        0  1.983900e-93  2.062529e-02</span></span>
-<span><span class="co">## 2  HPCAL1 2063.975    14.41886           0        0  4.526699e-15 1.877187e-191</span></span>
-<span><span class="co">## 3     NSF 1524.998    14.70448           0        0 5.192640e-127  4.090941e-01</span></span>
+<span><span class="co">## 1  ATP1A3 1578.196    14.88558           0        0  1.984383e-93  2.062544e-02</span></span>
+<span><span class="co">## 2  HPCAL1 2063.951    14.41886           0        0  4.528139e-15 1.888747e-191</span></span>
+<span><span class="co">## 3     NSF 1524.989    14.70448           0        0 5.199695e-127  4.090085e-01</span></span>
 <span><span class="co">##      Layer3_FDR   Layer4_FDR    Layer5_FDR   Layer6_FDR        WM_FDR</span></span>
-<span><span class="co">## 1  3.676730e-16 1.916149e-23  1.722706e-46 4.968036e-03 8.763911e-194</span></span>
-<span><span class="co">## 2 4.827595e-126 7.531943e-51 1.021543e-117 3.513481e-15  8.838077e-39</span></span>
-<span><span class="co">## 3  4.327946e-01 1.895747e-24  3.639402e-60 1.000252e-01 3.066341e-147</span></span></code></pre>
+<span><span class="co">## 1  3.677009e-16 1.916312e-23  1.722978e-46 4.968132e-03 8.769877e-194</span></span>
+<span><span class="co">## 2 4.842541e-126 7.539843e-51 1.024299e-117 3.514907e-15  8.846709e-39</span></span>
+<span><span class="co">## 3  4.327942e-01 1.896550e-24  3.643074e-60 1.000256e-01 3.073861e-147</span></span></code></pre>
 <p>We can further select a cluster of interest, and check the top genes
 detected in that cluster.</p>
-<div class="sourceCode" id="cb86"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check top genes for WM</span></span>
 <span><span class="va">results_WM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                        cluster <span class="op">=</span> <span class="st">"WM"</span><span class="op">)</span></span>
 <span><span class="co"># For each gene, adjusted p-values for each cluster</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## PLEKHH1      WM PLEKHH1   933.0275       14.00544      1.725114  6.489199e-205</span></span>
-<span><span class="co">## ATP1A3       WM  ATP1A3   893.8617       14.88558     -1.285887  2.119446e-196</span></span>
-<span><span class="co">## SNCG         WM    SNCG   770.7951       14.60584     -1.597405  1.207471e-169</span></span>
+<span><span class="co">## PLEKHH1      WM PLEKHH1   933.0257       14.00544      1.725113  6.494982e-205</span></span>
+<span><span class="co">## ATP1A3       WM  ATP1A3   893.8603       14.88558     -1.285887  2.120889e-196</span></span>
+<span><span class="co">## SNCG         WM    SNCG   770.7869       14.60584     -1.597403  1.212461e-169</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## PLEKHH1 5.366567e-202</span></span>
-<span><span class="co">## ATP1A3  8.763911e-194</span></span>
-<span><span class="co">## SNCG    3.328596e-167</span></span></code></pre>
+<span><span class="co">## PLEKHH1 5.371350e-202</span></span>
+<span><span class="co">## ATP1A3  8.769877e-194</span></span>
+<span><span class="co">## SNCG    3.342351e-167</span></span></code></pre>
 <p>With <code>high_low = "both"</code>, we can further filter genes to
 visualize highly and lowly abundant SVGs.</p>
-<div class="sourceCode" id="cb88"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_WM_both</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                            cluster <span class="op">=</span> <span class="st">"WM"</span>, high_low <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
 <p>Here we present the highly abundant cluster SVGs; i.e., SVGs with
 higher expression in WM compared to the rest of the tissue.</p>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## PLEKHH1      WM PLEKHH1   933.0275       14.00544      1.725114  6.489199e-205</span></span>
-<span><span class="co">## SLAIN1       WM  SLAIN1   660.4590       14.07042      1.407399  1.187164e-145</span></span>
-<span><span class="co">## CMTM5        WM   CMTM5   617.2535       13.99119      1.479961  2.958830e-136</span></span>
+<span><span class="co">## PLEKHH1      WM PLEKHH1   933.0257       14.00544      1.725113  6.494982e-205</span></span>
+<span><span class="co">## SLAIN1       WM  SLAIN1   660.4551       14.07042      1.407398  1.189483e-145</span></span>
+<span><span class="co">## CMTM5        WM   CMTM5   617.2549       13.99119      1.479961  2.956671e-136</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## PLEKHH1 5.366567e-202</span></span>
-<span><span class="co">## SLAIN1  1.636308e-143</span></span>
-<span><span class="co">## CMTM5   3.495646e-134</span></span></code></pre>
+<span><span class="co">## PLEKHH1 5.371350e-202</span></span>
+<span><span class="co">## SLAIN1  1.639503e-143</span></span>
+<span><span class="co">## CMTM5   3.493095e-134</span></span></code></pre>
 <p>We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the tissue.</p>
-<div class="sourceCode" id="cb91"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
-<span><span class="co">## ATP1A3       WM  ATP1A3   893.8617       14.88558     -1.285887  2.119446e-196</span></span>
-<span><span class="co">## SNCG         WM    SNCG   770.7951       14.60584     -1.597405  1.207471e-169</span></span>
-<span><span class="co">## PRKAR1B      WM PRKAR1B   703.9793       14.89242     -1.135692  4.077463e-155</span></span>
+<span><span class="co">## ATP1A3       WM  ATP1A3   893.8603       14.88558     -1.285887  2.120889e-196</span></span>
+<span><span class="co">## SNCG         WM    SNCG   770.7869       14.60584     -1.597403  1.212461e-169</span></span>
+<span><span class="co">## PRKAR1B      WM PRKAR1B   703.9767       14.89242     -1.135692  4.082649e-155</span></span>
 <span><span class="co">##           Cluster_FDR</span></span>
-<span><span class="co">## ATP1A3  8.763911e-194</span></span>
-<span><span class="co">## SNCG    3.328596e-167</span></span>
-<span><span class="co">## PRKAR1B 8.430155e-153</span></span></code></pre>
+<span><span class="co">## ATP1A3  8.769877e-194</span></span>
+<span><span class="co">## SNCG    3.342351e-167</span></span>
+<span><span class="co">## PRKAR1B 8.440878e-153</span></span></code></pre>
 <p>Visualize the gene expression of top three genes for layer WM.</p>
-<div class="sourceCode" id="cb93"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with higher abundance in WM, than in non-WM tissue</span></span>
 <span><span class="va">feature_high</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># SVGs with lower abundance in WM, than in non-WM tissue</span></span>
@@ -848,7 +849,7 @@ expression in WM compared to the rest of the tissue.</p>
 <span><span class="co"># Expression plots for SVGs with higher abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_high</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SVG_files/figure-html/unnamed-chunk-13-1.png" width="960"></p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Expression plots for SVGs with lower abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_low</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
 <p><img src="SVG_files/figure-html/unnamed-chunk-13-2.png" width="960"></p>
@@ -867,7 +868,7 @@ and (sample-specific) covariates is not possible because the two
 variables are nested.</p>
 <p>To show an example application, we artificially separate samples in 2
 batches:</p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spe.combined</span><span class="op">$</span><span class="va">batch_id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">spe.combined</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">==</span> <span class="st">"151507"</span>, <span class="st">"batch_1"</span>, <span class="st">"batch_2"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">spe.combined</span><span class="op">$</span><span class="va">batch_id</span>, <span class="va">spe.combined</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span></code></pre></div>
@@ -878,7 +879,7 @@ batches:</p>
 <p>Analyses are performed, as explained above, in Section 5; yet, when
 running <code>svg_test</code>, we set the <code>sample_col</code> to
 <code>batch_id</code>:</p>
-<div class="sourceCode" id="cb97"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">batch_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe.combined</span>,</span>
 <span>                                cluster_col <span class="op">=</span> <span class="va">cluster_col</span>,</span>
@@ -890,11 +891,11 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.0 Patched (2025-05-16 r88216)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 RC (2025-10-27 r88973)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 24.04.2 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -914,72 +915,72 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SpatialExperiment_1.18.1    SingleCellExperiment_1.30.1</span></span>
-<span><span class="co">##  [3] SummarizedExperiment_1.38.1 Biobase_2.68.0             </span></span>
-<span><span class="co">##  [5] GenomicRanges_1.60.0        GenomeInfoDb_1.44.0        </span></span>
-<span><span class="co">##  [7] IRanges_2.42.0              S4Vectors_0.46.0           </span></span>
-<span><span class="co">##  [9] BiocGenerics_0.54.0         generics_0.1.4             </span></span>
-<span><span class="co">## [11] MatrixGenerics_1.20.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [13] ggforce_0.4.2               ggplot2_3.5.2              </span></span>
-<span><span class="co">## [15] DESpace_2.0.0               BiocStyle_2.36.0           </span></span>
+<span><span class="co">##  [1] SpatialExperiment_1.20.0    SingleCellExperiment_1.32.0</span></span>
+<span><span class="co">##  [3] SummarizedExperiment_1.40.0 Biobase_2.70.0             </span></span>
+<span><span class="co">##  [5] GenomicRanges_1.62.0        Seqinfo_1.0.0              </span></span>
+<span><span class="co">##  [7] IRanges_2.44.0              S4Vectors_0.48.0           </span></span>
+<span><span class="co">##  [9] BiocGenerics_0.56.0         generics_0.1.4             </span></span>
+<span><span class="co">## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          </span></span>
+<span><span class="co">## [13] ggforce_0.5.0               ggplot2_4.0.0              </span></span>
+<span><span class="co">## [15] DESpace_2.0.0               BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] later_1.4.2              BiocIO_1.18.0            bitops_1.0-9            </span></span>
-<span><span class="co">##   [4] filelock_1.0.3           tibble_3.2.1             polyclip_1.10-7         </span></span>
-<span><span class="co">##   [7] XML_3.99-0.18            lifecycle_1.0.4          sf_1.0-21               </span></span>
-<span><span class="co">##  [10] edgeR_4.6.2              doParallel_1.0.17        lattice_0.22-7          </span></span>
-<span><span class="co">##  [13] MASS_7.3-65              magrittr_2.0.3           limma_3.64.0            </span></span>
-<span><span class="co">##  [16] plotly_4.10.4            sass_0.4.10              rmarkdown_2.29          </span></span>
-<span><span class="co">##  [19] jquerylib_0.1.4          yaml_2.3.10              httpuv_1.6.16           </span></span>
-<span><span class="co">##  [22] sessioninfo_1.2.3        spatstat.sparse_3.1-0    cowplot_1.1.3           </span></span>
-<span><span class="co">##  [25] DBI_1.2.3                RColorBrewer_1.1-3       golem_0.5.1             </span></span>
-<span><span class="co">##  [28] abind_1.4-8              purrr_1.0.4              RCurl_1.98-1.17         </span></span>
-<span><span class="co">##  [31] tweenr_2.0.3             rappdirs_0.3.3           circlize_0.4.16         </span></span>
-<span><span class="co">##  [34] GenomeInfoDbData_1.2.14  ggrepel_0.9.6            irlba_2.3.5.1           </span></span>
-<span><span class="co">##  [37] spatstat.utils_3.1-4     terra_1.8-50             units_0.8-7             </span></span>
-<span><span class="co">##  [40] goftest_1.2-3            spatstat.random_3.3-3    pkgdown_2.1.2           </span></span>
-<span><span class="co">##  [43] codetools_0.2-20         DelayedArray_0.34.1      DT_0.33                 </span></span>
-<span><span class="co">##  [46] scuttle_1.18.0           tidyselect_1.2.1         shape_1.4.6.1           </span></span>
-<span><span class="co">##  [49] UCSC.utils_1.4.0         farver_2.1.2             viridis_0.6.5           </span></span>
-<span><span class="co">##  [52] ScaledMatrix_1.16.0      shinyWidgets_0.9.0       BiocFileCache_2.16.0    </span></span>
-<span><span class="co">##  [55] spatstat.explore_3.4-2   GenomicAlignments_1.44.0 jsonlite_2.0.0          </span></span>
-<span><span class="co">##  [58] BiocNeighbors_2.2.0      GetoptLong_1.0.5         e1071_1.7-16            </span></span>
-<span><span class="co">##  [61] scater_1.36.0            iterators_1.0.14         systemfonts_1.2.3       </span></span>
-<span><span class="co">##  [64] foreach_1.5.2            tools_4.5.0              ggnewscale_0.5.1        </span></span>
-<span><span class="co">##  [67] ragg_1.4.0               Rcpp_1.0.14              glue_1.8.0              </span></span>
-<span><span class="co">##  [70] gridExtra_2.3            SparseArray_1.8.0        xfun_0.52               </span></span>
-<span><span class="co">##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.25     </span></span>
+<span><span class="co">##   [1] later_1.4.4              BiocIO_1.20.0            bitops_1.0-9            </span></span>
+<span><span class="co">##   [4] filelock_1.0.3           tibble_3.3.0             polyclip_1.10-7         </span></span>
+<span><span class="co">##   [7] XML_3.99-0.19            lifecycle_1.0.4          httr2_1.2.1             </span></span>
+<span><span class="co">##  [10] sf_1.0-21                edgeR_4.8.0              doParallel_1.0.17       </span></span>
+<span><span class="co">##  [13] lattice_0.22-7           MASS_7.3-65              magrittr_2.0.4          </span></span>
+<span><span class="co">##  [16] limma_3.66.0             plotly_4.11.0            sass_0.4.10             </span></span>
+<span><span class="co">##  [19] rmarkdown_2.30           jquerylib_0.1.4          yaml_2.3.10             </span></span>
+<span><span class="co">##  [22] httpuv_1.6.16            otel_0.2.0               sessioninfo_1.2.3       </span></span>
+<span><span class="co">##  [25] spatstat.sparse_3.1-0    cowplot_1.2.0            DBI_1.2.3               </span></span>
+<span><span class="co">##  [28] RColorBrewer_1.1-3       golem_0.5.1              abind_1.4-8             </span></span>
+<span><span class="co">##  [31] purrr_1.1.0              RCurl_1.98-1.17          tweenr_2.0.3            </span></span>
+<span><span class="co">##  [34] rappdirs_0.3.3           circlize_0.4.16          ggrepel_0.9.6           </span></span>
+<span><span class="co">##  [37] irlba_2.3.5.1            spatstat.utils_3.2-0     terra_1.8-70            </span></span>
+<span><span class="co">##  [40] units_1.0-0              goftest_1.2-3            spatstat.random_3.4-2   </span></span>
+<span><span class="co">##  [43] pkgdown_2.1.3            codetools_0.2-20         DelayedArray_0.36.0     </span></span>
+<span><span class="co">##  [46] DT_0.34.0                scuttle_1.19.0           tidyselect_1.2.1        </span></span>
+<span><span class="co">##  [49] shape_1.4.6.1            farver_2.1.2             viridis_0.6.5           </span></span>
+<span><span class="co">##  [52] ScaledMatrix_1.18.0      shinyWidgets_0.9.0       BiocFileCache_3.0.0     </span></span>
+<span><span class="co">##  [55] spatstat.explore_3.5-3   GenomicAlignments_1.46.0 jsonlite_2.0.0          </span></span>
+<span><span class="co">##  [58] BiocNeighbors_2.4.0      GetoptLong_1.0.5         e1071_1.7-16            </span></span>
+<span><span class="co">##  [61] scater_1.38.0            iterators_1.0.14         systemfonts_1.3.1       </span></span>
+<span><span class="co">##  [64] foreach_1.5.2            tools_4.5.2              ggnewscale_0.5.2        </span></span>
+<span><span class="co">##  [67] ragg_1.5.0               Rcpp_1.1.0               glue_1.8.0              </span></span>
+<span><span class="co">##  [70] gridExtra_2.3            SparseArray_1.10.0       xfun_0.53               </span></span>
+<span><span class="co">##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.26     </span></span>
 <span><span class="co">##  [76] fastmap_1.2.0            rsvd_1.0.5               digest_0.6.37           </span></span>
-<span><span class="co">##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.1       </span></span>
-<span><span class="co">##  [82] colorspace_2.1-1         tensor_1.5               spatstat.data_3.1-6     </span></span>
-<span><span class="co">##  [85] RSQLite_2.3.11           config_0.3.2             tidyr_1.3.1             </span></span>
-<span><span class="co">##  [88] data.table_1.17.2        rtracklayer_1.68.0       class_7.3-23            </span></span>
-<span><span class="co">##  [91] httr_1.4.7               htmlwidgets_1.6.4        S4Arrays_1.8.0          </span></span>
-<span><span class="co">##  [94] pkgconfig_2.0.3          gtable_0.3.6             blob_1.2.4              </span></span>
-<span><span class="co">##  [97] ComplexHeatmap_2.24.0    XVector_0.48.0           htmltools_0.5.8.1       </span></span>
-<span><span class="co">## [100] bookdown_0.43            clue_0.3-66              scales_1.4.0            </span></span>
-<span><span class="co">## [103] png_0.1-8                attempt_0.3.1            spatstat.univar_3.1-3   </span></span>
-<span><span class="co">## [106] knitr_1.50               rjson_0.2.23             nlme_3.1-168            </span></span>
-<span><span class="co">## [109] curl_6.2.2               proxy_0.4-27             cachem_1.1.0            </span></span>
-<span><span class="co">## [112] GlobalOptions_0.1.2      stringr_1.5.1            BiocVersion_3.21.1      </span></span>
-<span><span class="co">## [115] KernSmooth_2.23-26       concaveman_1.1.0         vipor_0.4.7             </span></span>
-<span><span class="co">## [118] parallel_4.5.0           AnnotationDbi_1.70.0     restfulr_0.0.15         </span></span>
-<span><span class="co">## [121] desc_1.4.3               pillar_1.10.2            grid_4.5.0              </span></span>
-<span><span class="co">## [124] vctrs_0.6.5              promises_1.3.2           BiocSingular_1.24.0     </span></span>
-<span><span class="co">## [127] dbplyr_2.5.0             beachmat_2.24.0          xtable_1.8-4            </span></span>
-<span><span class="co">## [130] cluster_2.1.8.1          beeswarm_0.4.0           paletteer_1.6.0         </span></span>
-<span><span class="co">## [133] evaluate_1.0.3           magick_2.8.6             Rsamtools_2.24.0        </span></span>
-<span><span class="co">## [136] cli_3.6.5                locfit_1.5-9.12          compiler_4.5.0          </span></span>
-<span><span class="co">## [139] rlang_1.1.6              crayon_1.5.3             labeling_0.4.3          </span></span>
-<span><span class="co">## [142] classInt_0.4-11          rematch2_2.1.2           ggbeeswarm_0.7.2        </span></span>
-<span><span class="co">## [145] fs_1.6.6                 stringi_1.8.7            viridisLite_0.4.2       </span></span>
-<span><span class="co">## [148] deldir_2.0-4             BiocParallel_1.42.0      assertthat_0.2.1        </span></span>
-<span><span class="co">## [151] Biostrings_2.76.0        lazyeval_0.2.2           spatstat.geom_3.3-6     </span></span>
-<span><span class="co">## [154] V8_6.0.3                 Matrix_1.7-3             ExperimentHub_2.16.0    </span></span>
-<span><span class="co">## [157] benchmarkme_1.0.8        patchwork_1.3.0          bit64_4.6.0-1           </span></span>
-<span><span class="co">## [160] KEGGREST_1.48.0          statmod_1.5.0            shiny_1.10.0            </span></span>
-<span><span class="co">## [163] AnnotationHub_3.16.0     memoise_2.0.1            bslib_0.9.0             </span></span>
-<span><span class="co">## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.20.1</span></span></code></pre>
+<span><span class="co">##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.4       </span></span>
+<span><span class="co">##  [82] colorspace_2.1-2         tensor_1.5.1             spatstat.data_3.1-9     </span></span>
+<span><span class="co">##  [85] RSQLite_2.4.3            cigarillo_1.0.0          config_0.3.2            </span></span>
+<span><span class="co">##  [88] tidyr_1.3.1              data.table_1.17.8        rtracklayer_1.70.0      </span></span>
+<span><span class="co">##  [91] class_7.3-23             httr_1.4.7               htmlwidgets_1.6.4       </span></span>
+<span><span class="co">##  [94] S4Arrays_1.10.0          pkgconfig_2.0.3          gtable_0.3.6            </span></span>
+<span><span class="co">##  [97] blob_1.2.4               ComplexHeatmap_2.26.0    S7_0.2.0                </span></span>
+<span><span class="co">## [100] XVector_0.50.0           htmltools_0.5.8.1        bookdown_0.45           </span></span>
+<span><span class="co">## [103] clue_0.3-66              scales_1.4.0             attempt_0.3.1           </span></span>
+<span><span class="co">## [106] png_0.1-8                spatstat.univar_3.1-4    knitr_1.50              </span></span>
+<span><span class="co">## [109] rjson_0.2.23             nlme_3.1-168             curl_7.0.0              </span></span>
+<span><span class="co">## [112] proxy_0.4-27             cachem_1.1.0             GlobalOptions_0.1.2     </span></span>
+<span><span class="co">## [115] stringr_1.5.2            BiocVersion_3.22.0       KernSmooth_2.23-26      </span></span>
+<span><span class="co">## [118] vipor_0.4.7              parallel_4.5.2           AnnotationDbi_1.72.0    </span></span>
+<span><span class="co">## [121] restfulr_0.0.16          desc_1.4.3               pillar_1.11.1           </span></span>
+<span><span class="co">## [124] grid_4.5.2               vctrs_0.6.5              promises_1.4.0          </span></span>
+<span><span class="co">## [127] BiocSingular_1.26.0      dbplyr_2.5.1             beachmat_2.26.0         </span></span>
+<span><span class="co">## [130] xtable_1.8-4             cluster_2.1.8.1          beeswarm_0.4.0          </span></span>
+<span><span class="co">## [133] paletteer_1.6.0          evaluate_1.0.5           magick_2.9.0            </span></span>
+<span><span class="co">## [136] Rsamtools_2.26.0         cli_3.6.5                locfit_1.5-9.12         </span></span>
+<span><span class="co">## [139] compiler_4.5.2           rlang_1.1.6              crayon_1.5.3            </span></span>
+<span><span class="co">## [142] labeling_0.4.3           classInt_0.4-11          rematch2_2.1.2          </span></span>
+<span><span class="co">## [145] ggbeeswarm_0.7.2         fs_1.6.6                 stringi_1.8.7           </span></span>
+<span><span class="co">## [148] viridisLite_0.4.2        deldir_2.0-4             BiocParallel_1.44.0     </span></span>
+<span><span class="co">## [151] assertthat_0.2.1         Biostrings_2.78.0        lazyeval_0.2.2          </span></span>
+<span><span class="co">## [154] spatstat.geom_3.6-0      Matrix_1.7-4             ExperimentHub_3.0.0     </span></span>
+<span><span class="co">## [157] benchmarkme_1.0.8        patchwork_1.3.2          bit64_4.6.0-1           </span></span>
+<span><span class="co">## [160] KEGGREST_1.50.0          statmod_1.5.1            shiny_1.11.1            </span></span>
+<span><span class="co">## [163] AnnotationHub_4.0.0      memoise_2.0.1            bslib_0.9.0             </span></span>
+<span><span class="co">## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.21.6</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1026,7 +1027,7 @@ Biotechnology</em> 39 (11): 1375–84. <a href="https://doi.org/10.1038/s41587-0
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer>

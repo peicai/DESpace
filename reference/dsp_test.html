@@ -147,9 +147,11 @@ which can later be used to speed-up calculation when testing individual clusters
     <h2 id="ref-examples">Examples<a class="anchor" aria-label="anchor" href="#ref-examples"></a></h2>
     <div class="sourceCode"><pre class="sourceCode r"><code><span class="r-in"><span><span class="co">## Load the example multi-sample multi-group spe object</span></span></span>
 <span class="r-in"><span><span class="va">spe</span> <span class="op">&lt;-</span> <span class="fu">muSpaData</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/muSpaData/man/Wei22_example.html" class="external-link">Wei22_example</a></span><span class="op">(</span><span class="op">)</span></span></span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> see ?muSpaData and browseVignettes('muSpaData') for documentation</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> downloading 1 resources</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> retrieving 1 resource</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> </span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> loading from cache</span>
 <span class="r-msg co"><span class="r-pr">#&gt;</span> require(“SpatialExperiment”)</span>
 <span class="r-in"><span><span class="co"># Fit the model via \code{\link{dsp_test}} function.</span></span></span>
@@ -188,29 +190,29 @@ which can later be used to speed-up calculation when testing individual clusters
 <span class="r-in"><span><span class="co"># We visualize differential results:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_dsp</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       gene_id logFC.condition20DPI.cluster_id1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 AMEX60DD014721                      -0.07170723</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 AMEX60DD045083                       0.08759059</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 AMEX60DD011151                      -0.97377297</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 AMEX60DD014721                      -0.07164635</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 AMEX60DD045083                       0.08745636</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 AMEX60DD011151                      -0.97427030</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id1 logFC.condition20DPI.cluster_id2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.3898784                       -0.8510223</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       0.5418637                       -1.3377605</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                      -2.1019048                        0.1861520</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.3898630                       -0.8509553</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       0.5417202                       -1.3379152</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                      -2.1021922                        0.1858888</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id2 logFC.condition20DPI.cluster_id3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.8526301                       -0.8328237</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.1226997                        0.2478193</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4671347                       -0.4011555</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.8526198                       -0.8327653</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.1227184                        0.2479755</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4670452                       -0.4015208</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id3 logFC.condition20DPI.cluster_id4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.9450830                       0.22287797</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.2666344                      -0.99648014</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4086612                      -0.01634095</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.9450822                       0.22292996</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.2663910                      -0.99664679</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4085178                      -0.01664598</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id4   logCPM        LR       PValue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.2085777 9.344907 100.69288 3.081052e-18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                      -0.7969334 7.505402  97.72697 1.243325e-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.1810959 7.959492  85.69149 3.472538e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.2085998 9.344907 102.25832 1.473888e-18</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                      -0.7966179 7.505402  95.35246 3.791697e-17</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.1808006 7.959492  83.09107 1.164512e-14</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         FDR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 1.540526e-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 3.108313e-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 5.787563e-12</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 7.369440e-15</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 9.479243e-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 1.940854e-11</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -223,7 +225,7 @@ which can later be used to speed-up calculation when testing individual clusters
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.2.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
 </div>
 
     </footer></div>

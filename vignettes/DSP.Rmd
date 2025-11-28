@@ -135,13 +135,16 @@ Once we have spatial clusters, we can search for DSP between conditions. Importa
 ## Gene-level test
 
 Fit the model via `dsp_test` function.
-Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `cluster_col`, `sample_col` and `condition_col` define the column names in `colData(spe)` for spatial clusters, sample ids, and condition ids, respectively. Set `verbose` to `TRUE` (default value) to view detailed statistics.
+Parameter `spe` specifies the input `SpatialExperiment` or `SingleCellExperiment` object, while `cluster_col`, `sample_col` and `condition_col` indicate the corresponding column names in `colData(spe)` for spatial clusters, sample ids, and condition labels. 
+
+The `test` argument determines whether to use quasi-likelihood F-tests (`test = "QLF"`) or likelihood ratio tests (`test = "LRT"`). QLF provides stronger error control by modeling dispersion uncertainty, whereas LRT is generally more sensitive. In this example, we use the default setting, `test = QLF`. Set `verbose = TRUE` (default) to view detailed statistics.
 
 ```{r DESpace}
 results <- dsp_test(spe = spe,
                     cluster_col = spatial_cluster,
                     sample_col = sample_col,
                     condition_col = condition_col,
+                    test = 'QLF',
                     verbose = TRUE)
 ```
 
@@ -157,10 +160,12 @@ head(results$gene_results, 2)
 
 The second element of the results (a `DGEList` object `estimated_y`) contains the estimated common dispersion.
 
-The third and fourth element of the results (`DGEGLM` and `DGELRT` objects) contain full statistics from `edgeR::glmFit` and `edgeR::glmLRT`.
+The third and fourth element of the results (`DGEGLM` and `DGELRT` objects) contain the underlying statistics returned by the chosen testing framework. For `test = "QLF"`, these are `glmQLFit` and `glmQLFTest`; for `test = "LRT`, they are `glmFit` and `glmLRT`.
 
 ```{r}
-class(results$estimated_y); class(results$glmLrt); class(results$glmFit)
+class(results$estimated_y)
+class(results$glmQLFit)    # or results$glmFit  depending on test
+class(results$glmQLFTest)  # or results$glmLRT  depending on test
 ```
 
 Visualize the gene expression of the most significant genes with `FeaturePlot()`.
@@ -446,7 +451,7 @@ The expression of `r feature_name` in cluster 2 first increase and then decrease
 <summary>Code</summary>
 
 ```{r}
-fitted_values <- results2[["glmFit"]][["fitted.values"]]
+fitted_values <- results2[["glmQLFit"]][["fitted.values"]]
 m <- melt(fitted_values[feature,]) |>
     rownames_to_column("row_name_column") |>
     setNames(c("sample_id", "fitted")) |>

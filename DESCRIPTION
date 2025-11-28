@@ -1,7 +1,7 @@
 Package: DESpace
 Type: Package
 Title: DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions
-Version: 2.3.1
+Version: 2.3.2
 Description: Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses.
   Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. 
   SVGs are then identified by testing the significance of spatial clusters.
@@ -29,7 +29,7 @@ Imports: edgeR, limma, dplyr, stats, Matrix, SpatialExperiment, ggplot2,
 Suggests: knitr, rmarkdown, testthat, BiocStyle, muSpaData, ExperimentHub,
         spatialLIBD, purrr, reshape2, tidyverse, concaveman
 VignetteBuilder: knitr
-RoxygenNote: 7.3.2
+RoxygenNote: 7.3.3
 ByteCompile: true
 Encoding: UTF-8
 URL: https://github.com/peicai/DESpace, https://peicai.github.io/DESpace/

@@ -10,6 +10,7 @@ dsp_test(
   cluster_col,
   sample_col,
   condition_col,
+  test = "QLF",
   min_counts = 20,
   min_non_zero_spots = 10,
   min_pct_cells = 0.5,
@@ -30,6 +31,11 @@ regression-like model created by `model.matrix` function.}
 Sample ids must be either a factor or character.}
 
 \item{condition_col}{Character. Column name of condition ids in \code{colData(spe)}.}
+
+\item{test}{Character. Either 'QLF' or 'LRT'. Default is 'QLF'. 
+Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to 
+genewise dispersions, account for intra-sample variability, and provide more conservative error control.}
 
 \item{min_counts}{Numeric. Minimum number of counts per sample 
 (across all spots) for a gene to be analyzed.}
@@ -54,21 +60,30 @@ Only clusters meeting the 'min_pct_cells' threshold
 across all conditions) will be retained for analysis.}
 
 \item{verbose}{Logical.
-If TRUE, \code{\link{svg_test}} returns two more results: 
-'DGEGLM' and 'DGELRT' objects contain full statistics from 
-'edgeR::glmFit' and 'edgeR::glmLRT'.}
+If TRUE, \code{\link{svg_test}} returns additional components containing
+the underlying edgeR model object. By default (\code{test = "QLF"}), these are 
+the 'edgeR::glmQLFTest' and 'edgeR::glmQLFit' results. When \code{test = "LRT"}, 
+the returned objects correspond to 'edgeR::glmFit' and 'edgeR::glmLRT'.}
 }
 \value{
-A list of results:
+A list containing:
 
-- "gene_results": a dataframe contains main edgeR test results;
+- "gene_results": a data frame with the main edgeR test results.
 
-- "estimated_y": a DGEList object contains the estimated common dispersion, 
-which can later be used to speed-up calculation when testing individual clusters.
+- "estimated_y": a DGEList object containing the estimated common dispersion,
+  which can be reused to speed up computation when testing individual clusters.
 
-- "glmFit" (only if \code{verbose = TRUE}): a DGEGLM object contains full statistics from "edgeR::glmFit".
+- "glmQLFit" (only if \code{verbose = TRUE}): a DGEGLM object containing the
+  full statistics from `edgeR::glmQLFit` (when \code{test = "QLF"}).
 
-- "glmLRT" (only if \code{verbose = TRUE}): a DGELRT object contains full statistics from "edgeR::glmLRT".
+- "glmQLFTest" (only if \code{verbose = TRUE}): a DGELRT-like object 
+  containing the full statistics from `edgeR::glmQLFTest` (when \code{test = "QLF"}).
+
+- "glmFit" (only if \code{verbose = TRUE}): a DGEGLM object containing the
+  full statistics from `edgeR::glmFit` (when \code{test = "LRT"}).
+
+- "glmLRT" (only if \code{verbose = TRUE}): a DGELRT object containing the
+  full statistics from `edgeR::glmLRT` (when \code{test = "LRT"}).
 }
 \description{
 'dsp_test' identifies differential spatial pattern (DSP) genes 

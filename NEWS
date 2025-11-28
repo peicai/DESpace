@@ -1,3 +1,6 @@
+Changes in version 2.3.2:
++ add quasi-likelihood F tests 
+
 Changes in version 1.99.1:
 + add detection of differential spatial patterns (DSP) across conditions
 + rename functions for consistency

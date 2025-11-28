@@ -276,6 +276,7 @@
                                cluster_col,
                                sample_col,
                                condition_col,
+                               test,
                                verbose){
   pb <- .aggregateData(spe, assay = "counts", fun = "sum",
                       by = c(cluster_col, sample_col))
@@ -321,8 +322,8 @@
       # Validate dimensions
       if (dim(design)[1] != dim(X_df)[2]) {
         stop(
-          "The 'design' matrix must have the same number of rows as 
-          the pseudo-bulk count matrix has columns.\n"
+          "The 'design' matrix must have the same number of rows as ",
+          "the pseudo-bulk count matrix has columns.\n"
         )
       }
       colnames(X_df) <- rownames(design_model)
@@ -331,25 +332,36 @@
   }
 
   if (!is.fullrank(design_model)) {
-    stop("The design matrix is not full rank. 
-                Please check for multicollinearity or redundant columns in your model.")
+    stop("The design matrix is not full rank. ",
+         "Please check for multicollinearity or redundant columns in your model.")
   }
   y <- DGEList(counts= X_df, genes=rownames(X_df))
   y$samples$lib.size <- colSums(y$counts)
   y <- calcNormFactors(y)
   y <- estimateDisp(y, design_model, robust=TRUE)
-  
-  fit <- glmFit(y, design_model)
-  # include all interaction terms
-  lrt <- glmLRT(fit, coef = col_with_colon)
+  if(test == "QLF"){
+    fit <- glmQLFit(y, design_model)
+    # include all interaction terms
+    lrt <- glmQLFTest(fit, coef = col_with_colon)
+  }else{ # LRT
+    fit <- glmFit(y, design_model)
+    lrt <- glmLRT(fit, coef = col_with_colon)
+  }
   res_edgeR <- topTags(lrt, n = Inf)
   results <- as.data.frame(res_edgeR[[1]])
   colnames(results)[1] <- "gene_id"
   if(verbose){
-    return(list(gene_results = results,
-                estimated_y = y,
-                glmLRT = lrt,
-                glmFit = fit))
+      if(test == "QLF"){
+          return(list(gene_results = results,
+                      estimated_y = y,
+                      glmQLFTest = lrt,
+                      glmQLFit = fit))
+      } else{ # LRT
+          return(list(gene_results = results,
+                      estimated_y = y,
+                      glmLRT = lrt,
+                      glmFit = fit))
+      }
   }else{
     return(results)
   }   

@@ -177,12 +177,6 @@ svg_test <-  function(spe,
       return(NULL)
     }
     message("single sample test")
-    # if "logcounts" not included in assayNames(spe), calculate logcounts
-    if(length(assayNames(spe)) == 1){
-      counts <- assays(spe)$counts
-      libsizes <- colSums(counts)
-      size.factors <- libsizes/mean(libsizes)
-      assay(spe, "logcounts") <- log2(t(t(counts)/size.factors) + 1)}
     if(verbose){
       list[gene_results, estimated_y, glmLRT, glmFit] <- .single_edgeR_test(spe = spe, 
                                                                             cluster_col = cluster_col, 

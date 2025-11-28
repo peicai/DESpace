@@ -11,6 +11,10 @@
 #' @param sample_col Character. Column name of sample ids in \code{colData(spe)}.
 #' Sample ids must be either a factor or character.
 #' @param condition_col Character. Column name of condition ids in \code{colData(spe)}.
+#' @param test Character. Either 'QLF' or 'LRT'. Default is 'QLF'. 
+#' Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+#' ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to 
+#' genewise dispersions, account for intra-sample variability, and provide more conservative error control. 
 #' @param min_counts Numeric. Minimum number of counts per sample 
 #' (across all spots) for a gene to be analyzed.
 #' @param min_non_zero_spots Numeric. Minimum number of non-zero spots 
@@ -29,20 +33,29 @@
 #' (i.e., containing at least the specified percentage of cells 
 #' across all conditions) will be retained for analysis.
 #' @param verbose Logical.
-#'   If TRUE, \code{\link{svg_test}} returns two more results: 
-#'   'DGEGLM' and 'DGELRT' objects contain full statistics from 
-#'   'edgeR::glmFit' and 'edgeR::glmLRT'.
-#' @return A list of results:
-#' 
-#' - "gene_results": a dataframe contains main edgeR test results;
-#' 
-#' - "estimated_y": a DGEList object contains the estimated common dispersion, 
-#' which can later be used to speed-up calculation when testing individual clusters.
-#' 
-#' - "glmFit" (only if \code{verbose = TRUE}): a DGEGLM object contains full statistics from "edgeR::glmFit".
-#' 
-#' - "glmLRT" (only if \code{verbose = TRUE}): a DGELRT object contains full statistics from "edgeR::glmLRT".
+#'   If TRUE, \code{\link{svg_test}} returns additional components containing
+#'   the underlying edgeR model object. By default (\code{test = "QLF"}), these are 
+#'   the 'edgeR::glmQLFTest' and 'edgeR::glmQLFit' results. When \code{test = "LRT"}, 
+#'   the returned objects correspond to 'edgeR::glmFit' and 'edgeR::glmLRT'.
+#' @return A list containing:
 #'
+#' - "gene_results": a data frame with the main edgeR test results.
+#'
+#' - "estimated_y": a DGEList object containing the estimated common dispersion,
+#'   which can be reused to speed up computation when testing individual clusters.
+#'
+#' - "glmQLFit" (only if \code{verbose = TRUE}): a DGEGLM object containing the
+#'   full statistics from `edgeR::glmQLFit` (when \code{test = "QLF"}).
+#'
+#' - "glmQLFTest" (only if \code{verbose = TRUE}): a DGELRT-like object 
+#'   containing the full statistics from `edgeR::glmQLFTest` (when \code{test = "QLF"}).
+#'
+#' - "glmFit" (only if \code{verbose = TRUE}): a DGEGLM object containing the
+#'   full statistics from `edgeR::glmFit` (when \code{test = "LRT"}).
+#'
+#' - "glmLRT" (only if \code{verbose = TRUE}): a DGELRT object containing the
+#'   full statistics from `edgeR::glmLRT` (when \code{test = "LRT"}).
+
 #' @examples
 #' ## Load the example multi-sample multi-group spe object
 #' spe <- muSpaData::Wei22_example()
@@ -69,6 +82,7 @@ dsp_test <-  function(spe,
                     cluster_col,
                     sample_col,
                     condition_col,
+                    test = 'QLF',
                     min_counts = 20,
                     min_non_zero_spots = 10,
                     min_pct_cells = 0.5,
@@ -79,6 +93,7 @@ dsp_test <-  function(spe,
     # check
     uniqueness_check <- .check_columns(spe, cluster_col, sample_col, condition_col)
     spe <- uniqueness_check[["updated_spe"]]
+    test <- match.arg(test, c("QLF", "LRT"))
     # filter genes
     if(filter_gene){
         message("Filter low quality genes: \n")
@@ -110,5 +125,5 @@ dsp_test <-  function(spe,
         stop("The 'counts' assay slot, required as input data, is missing.")
     }
     .layer_test(spe, design = design, cluster_col, 
-                    sample_col, condition_col, verbose)
+                    sample_col, condition_col, test, verbose)
 }

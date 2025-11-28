@@ -9,6 +9,7 @@ individual_dsp(
   cluster_col,
   sample_col,
   condition_col,
+  test = "QLF",
   min_counts = 20,
   min_non_zero_spots = 10,
   min_pct_cells = 0.5,
@@ -25,6 +26,11 @@ individual_dsp(
 Sample ids must be either a factor or character.}
 
 \item{condition_col}{Character. Column name of condition ids in \code{colData(spe)}.}
+
+\item{test}{Character. Either 'QLF' or 'LRT'. Default is 'QLF'. 
+Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to 
+genewise dispersions, account for intra-sample variability, and provide more conservative error control.}
 
 \item{min_counts}{Numeric. Minimum number of counts per sample (across all spots) for a gene to be analyzed.}
 

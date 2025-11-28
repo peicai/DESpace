@@ -8,6 +8,10 @@
 #' @param sample_col Character. Column name of sample ids in \code{colData(spe)}.
 #' Sample ids must be either a factor or character.
 #' @param condition_col Character. Column name of condition ids in \code{colData(spe)}.
+#' @param test Character. Either 'QLF' or 'LRT'. Default is 'QLF'. 
+#' Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+#' ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to 
+#' genewise dispersions, account for intra-sample variability, and provide more conservative error control. 
 #' @param min_counts Numeric. Minimum number of counts per sample (across all spots) for a gene to be analyzed.
 #' @param min_non_zero_spots Numeric. Minimum number of non-zero spots per sample, for a gene to be analyzed.
 #' @param min_pct_cells Numeric. Minimum percentage of cells required for each cluster to be 
@@ -42,6 +46,7 @@ individual_dsp <- function(spe,
                             cluster_col,
                             sample_col,
                             condition_col,
+                            test = 'QLF',
                             min_counts = 20,
                             min_non_zero_spots = 10,
                             min_pct_cells = 0.5,
@@ -50,6 +55,7 @@ individual_dsp <- function(spe,
     # check
     uniqueness_check <- .check_columns(spe, cluster_col, sample_col, condition_col)
     spe <- uniqueness_check[["updated_spe"]]
+    test <- match.arg(test, c("QLF", "LRT"))
     # if rownames(spe) is null, column 'genes' would missing from the edgeR results
     # 'res_edgeR[[1]][c("genes", "LR", "logCPM", "PValue", "FDR")]' would return an error
     if(is.null(rownames(spe))){
@@ -93,6 +99,7 @@ individual_dsp <- function(spe,
                          cluster_col = "individual_layer",
                          sample_col,
                          condition_col,
+                         test,
                          verbose = FALSE)
       return(res_edgeR)
     })

@@ -11,7 +11,7 @@ provided spatial clusters are available."></head><body>
 
     <a class="navbar-brand me-2" href="../index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,6 +55,7 @@ provided spatial clusters are available.</p>
 <span>  <span class="va">cluster_col</span>,</span>
 <span>  <span class="va">sample_col</span>,</span>
 <span>  <span class="va">condition_col</span>,</span>
+<span>  test <span class="op">=</span> <span class="st">"QLF"</span>,</span>
 <span>  min_counts <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  min_non_zero_spots <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  min_pct_cells <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -88,6 +89,13 @@ Sample ids must be either a factor or character.</p></dd>
 
 <dt id="arg-condition-col">condition_col<a class="anchor" aria-label="anchor" href="#arg-condition-col"></a></dt>
 <dd><p>Character. Column name of condition ids in <code>colData(spe)</code>.</p></dd>
+
+
+<dt id="arg-test">test<a class="anchor" aria-label="anchor" href="#arg-test"></a></dt>
+<dd><p>Character. Either 'QLF' or 'LRT'. Default is 'QLF'.
+Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to
+genewise dispersions, account for intra-sample variability, and provide more conservative error control.</p></dd>
 
 
 <dt id="arg-min-counts">min_counts<a class="anchor" aria-label="anchor" href="#arg-min-counts"></a></dt>
@@ -124,19 +132,26 @@ across all conditions) will be retained for analysis.</p></dd>
 
 <dt id="arg-verbose">verbose<a class="anchor" aria-label="anchor" href="#arg-verbose"></a></dt>
 <dd><p>Logical.
-If TRUE, <code><a href="svg_test.html">svg_test</a></code> returns two more results:
-'DGEGLM' and 'DGELRT' objects contain full statistics from
-'edgeR::glmFit' and 'edgeR::glmLRT'.</p></dd>
+If TRUE, <code><a href="svg_test.html">svg_test</a></code> returns additional components containing
+the underlying edgeR model object. By default (<code>test = "QLF"</code>), these are
+the 'edgeR::glmQLFTest' and 'edgeR::glmQLFit' results. When <code>test = "LRT"</code>,
+the returned objects correspond to 'edgeR::glmFit' and 'edgeR::glmLRT'.</p></dd>
 
 </dl></div>
     <div class="section level2">
     <h2 id="value">Value<a class="anchor" aria-label="anchor" href="#value"></a></h2>
-    <p>A list of results:</p>
-<p>- "gene_results": a dataframe contains main edgeR test results;</p>
-<p>- "estimated_y": a DGEList object contains the estimated common dispersion,
-which can later be used to speed-up calculation when testing individual clusters.</p>
-<p>- "glmFit" (only if <code>verbose = TRUE</code>): a DGEGLM object contains full statistics from "edgeR::glmFit".</p>
-<p>- "glmLRT" (only if <code>verbose = TRUE</code>): a DGELRT object contains full statistics from "edgeR::glmLRT".</p>
+    <p>A list containing:</p>
+<p>- "gene_results": a data frame with the main edgeR test results.</p>
+<p>- "estimated_y": a DGEList object containing the estimated common dispersion,
+  which can be reused to speed up computation when testing individual clusters.</p>
+<p>- "glmQLFit" (only if <code>verbose = TRUE</code>): a DGEGLM object containing the
+  full statistics from `edgeR::glmQLFit` (when <code>test = "QLF"</code>).</p>
+<p>- "glmQLFTest" (only if <code>verbose = TRUE</code>): a DGELRT-like object
+  containing the full statistics from `edgeR::glmQLFTest` (when <code>test = "QLF"</code>).</p>
+<p>- "glmFit" (only if <code>verbose = TRUE</code>): a DGEGLM object containing the
+  full statistics from `edgeR::glmFit` (when <code>test = "LRT"</code>).</p>
+<p>- "glmLRT" (only if <code>verbose = TRUE</code>): a DGELRT object containing the
+  full statistics from `edgeR::glmLRT` (when <code>test = "LRT"</code>).</p>
     </div>
     <div class="section level2">
     <h2 id="see-also">See also<a class="anchor" aria-label="anchor" href="#see-also"></a></h2>
@@ -190,29 +205,29 @@ which can later be used to speed-up calculation when testing individual clusters
 <span class="r-in"><span><span class="co"># We visualize differential results:</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_dsp</span>, <span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       gene_id logFC.condition20DPI.cluster_id1</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 AMEX60DD014721                      -0.07164635</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 AMEX60DD045083                       0.08745636</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 AMEX60DD011151                      -0.97427030</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 AMEX60DD014721                      -0.06833567</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 AMEX60DD045083                       0.09389617</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 AMEX60DD011151                      -0.95581559</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id1 logFC.condition20DPI.cluster_id2</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.3898630                       -0.8509553</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       0.5417202                       -1.3379152</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                      -2.1021922                        0.1858888</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.3889827                       -0.8473123</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       0.5489107                       -1.3304455</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                      -2.0941135                        0.1954802</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id2 logFC.condition20DPI.cluster_id3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.8526198                       -0.8327653</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.1227184                        0.2479755</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4670452                       -0.4015208</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.8520273                       -0.8295217</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.1215511                        0.2403202</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4696708                       -0.3879388</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id3 logFC.condition20DPI.cluster_id4</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.9450822                       0.22292996</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.2663910                      -0.99664679</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4085178                      -0.01664598</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id4   logCPM        LR       PValue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.2085998 9.344907 102.25832 1.473888e-18</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                      -0.7966179 7.505402  95.35246 3.791697e-17</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.1808006 7.959492  83.09107 1.164512e-14</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                      -0.9450144                      0.225834891</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                       1.2768794                     -0.988959429</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.4134572                     -0.005150601</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id4   logCPM        F       PValue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721                       0.2097897 9.344907 17.14731 1.401391e-08</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083                      -0.8093096 7.505402 13.65550 1.458452e-07</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151                       0.1887139 7.959492 11.55525 7.505891e-07</span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                         FDR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 7.369440e-15</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 9.479243e-14</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 1.940854e-11</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD014721 7.006953e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD045083 3.646131e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD011151 1.058324e-03</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -225,7 +240,7 @@ which can later be used to speed-up calculation when testing individual clusters
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

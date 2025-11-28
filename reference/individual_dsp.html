@@ -9,7 +9,7 @@ This function can be used to identify SVGs among conditions for each individual 
 
     <a class="navbar-brand me-2" href="../index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -51,6 +51,7 @@ This function can be used to identify SVGs among conditions for each individual 
 <span>  <span class="va">cluster_col</span>,</span>
 <span>  <span class="va">sample_col</span>,</span>
 <span>  <span class="va">condition_col</span>,</span>
+<span>  test <span class="op">=</span> <span class="st">"QLF"</span>,</span>
 <span>  min_counts <span class="op">=</span> <span class="fl">20</span>,</span>
 <span>  min_non_zero_spots <span class="op">=</span> <span class="fl">10</span>,</span>
 <span>  min_pct_cells <span class="op">=</span> <span class="fl">0.5</span>,</span>
@@ -78,6 +79,13 @@ Sample ids must be either a factor or character.</p></dd>
 
 <dt id="arg-condition-col">condition_col<a class="anchor" aria-label="anchor" href="#arg-condition-col"></a></dt>
 <dd><p>Character. Column name of condition ids in <code>colData(spe)</code>.</p></dd>
+
+
+<dt id="arg-test">test<a class="anchor" aria-label="anchor" href="#arg-test"></a></dt>
+<dd><p>Character. Either 'QLF' or 'LRT'. Default is 'QLF'.
+Specifies whether to perform quasi-likelihood F-tests (`edgeR::glmQLFTest`) or likelihood
+ratio tests (`edgeR::glmLRT`). Quasi-likelihood tests apply empirical Bayes moderation to
+genewise dispersions, account for intra-sample variability, and provide more conservative error control.</p></dd>
 
 
 <dt id="arg-min-counts">min_counts<a class="anchor" aria-label="anchor" href="#arg-min-counts"></a></dt>
@@ -177,17 +185,17 @@ Specifically, each item in the list is a "gene_results" dataframe which contains
 <span class="r-in"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="va">results_individual_dsp</span><span class="op">[[</span><span class="st">'3'</span><span class="op">]</span><span class="op">]</span></span></span>
 <span class="r-in"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span>,<span class="fl">3</span><span class="op">)</span></span></span>
 <span class="r-out co"><span class="r-pr">#&gt;</span>                       gene_id logFC.condition20DPI.cluster_id3</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921 AMEX60DD005921                       -0.4164827</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984 AMEX60DD002984                        1.6438569</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD009927 AMEX60DD009927                       -0.8606468</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id3   logCPM       LR       PValue</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921                        1.724158 5.262614 38.40390 4.578235e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984                        1.295172 7.473809 37.27289 8.059245e-09</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD009927                       -1.483183 8.534270 33.14959 6.333698e-08</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span>                         FDR</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921 2.014811e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984 2.014811e-05</span>
-<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD009927 1.055616e-04</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD046788 AMEX60DD046788                       -1.1700137</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984 AMEX60DD002984                        1.6467572</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921 AMEX60DD005921                       -0.4105442</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                logFC.condition2DPI.cluster_id3   logCPM        F       PValue</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD046788                       0.2544327 5.623569 23.11317 5.933891e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984                       1.2951010 7.473809 22.94955 6.144564e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921                       1.7236189 5.262614 22.35051 7.045976e-05</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span>                       FDR</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD046788 0.09002682</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD002984 0.09002682</span>
+<span class="r-out co"><span class="r-pr">#&gt;</span> AMEX60DD005921 0.09002682</span>
 <span class="r-in"><span></span></span>
 </code></pre></div>
     </div>
@@ -200,7 +208,7 @@ Specifically, each item in the list is a "gene_results" dataframe which contains
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer></div>

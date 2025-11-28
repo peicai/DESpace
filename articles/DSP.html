@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@ Tiberi</h4>
 Italy<br><a class="author_email" href="mailto:#"></a><a href="mailto:simone.tiberi@unibo.it" class="email">simone.tiberi@unibo.it</a>
       </address>
                   
-            <h4 data-toc-skip class="date">10/31/2025</h4>
+            <h4 data-toc-skip class="date">11/28/2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/peicai/DESpace/blob/main/vignettes/DSP.Rmd" class="external-link"><code>vignettes/DSP.Rmd</code></a></small>
       <div class="d-none name"><code>DSP.Rmd</code></div>
@@ -223,7 +223,7 @@ R scripts</em></a>.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guides.html" class="external-link">guides</a></span><span class="op">(</span>color <span class="op">=</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/guide_legend.html" class="external-link">guide_legend</a></span><span class="op">(</span>override.aes <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/list.html" class="external-link">list</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="cn">NULL</span>, title <span class="op">=</span> <span class="st">"Banksy Spatial Clusters"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="DSP_files/figure-html/view%20ARTISTA%20Banksy-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/view%20ARTISTA%20Banksy-1.png" class="r-plt" width="700"></p>
 <div class="section level5">
 <h5 id="single-sample-clustering">Single sample clustering<a class="anchor" aria-label="anchor" href="#single-sample-clustering"></a>
 </h5>
@@ -253,15 +253,22 @@ analyzed.</p>
 <code>spe</code> specifies the input <code>SpatialExperiment</code> or
 <code>SingleCellExperiment</code> object, while
 <code>cluster_col</code>, <code>sample_col</code> and
-<code>condition_col</code> define the column names in
+<code>condition_col</code> indicate the corresponding column names in
 <code>colData(spe)</code> for spatial clusters, sample ids, and
-condition ids, respectively. Set <code>verbose</code> to
-<code>TRUE</code> (default value) to view detailed statistics.</p>
+condition labels.</p>
+<p>The <code>test</code> argument determines whether to use
+quasi-likelihood F-tests (<code>test = "QLF"</code>) or likelihood ratio
+tests (<code>test = "LRT"</code>). QLF provides stronger error control
+by modeling dispersion uncertainty, whereas LRT is generally more
+sensitive. In this example, we use the default setting,
+<code>test = QLF</code>. Set <code>verbose = TRUE</code> (default) to
+view detailed statistics.</p>
 <div class="sourceCode" id="cb5"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsp_test.html">dsp_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe</span>,</span>
 <span>                    cluster_col <span class="op">=</span> <span class="va">spatial_cluster</span>,</span>
 <span>                    sample_col <span class="op">=</span> <span class="va">sample_col</span>,</span>
 <span>                    condition_col <span class="op">=</span> <span class="va">condition_col</span>,</span>
+<span>                    test <span class="op">=</span> <span class="st">'QLF'</span>,</span>
 <span>                    verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## Using 'dsp_test' for spatial variable pattern genes detection.</span></span></code></pre>
 <pre><code><span><span class="co">## Filter low quality clusters:</span></span></code></pre>
@@ -304,35 +311,44 @@ DPI.</p>
 <div class="sourceCode" id="cb11"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="fl">2</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                       gene_id logFC.condition20DPI.cluster_id1</span></span>
-<span><span class="co">## AMEX60DD014721 AMEX60DD014721                      -0.07164635</span></span>
-<span><span class="co">## AMEX60DD045083 AMEX60DD045083                       0.08745636</span></span>
+<span><span class="co">## AMEX60DD014721 AMEX60DD014721                      -0.06833567</span></span>
+<span><span class="co">## AMEX60DD045083 AMEX60DD045083                       0.09389617</span></span>
 <span><span class="co">##                logFC.condition2DPI.cluster_id1 logFC.condition20DPI.cluster_id2</span></span>
-<span><span class="co">## AMEX60DD014721                      -0.3898630                       -0.8509553</span></span>
-<span><span class="co">## AMEX60DD045083                       0.5417202                       -1.3379152</span></span>
+<span><span class="co">## AMEX60DD014721                      -0.3889827                       -0.8473123</span></span>
+<span><span class="co">## AMEX60DD045083                       0.5489107                       -1.3304455</span></span>
 <span><span class="co">##                logFC.condition2DPI.cluster_id2 logFC.condition20DPI.cluster_id3</span></span>
-<span><span class="co">## AMEX60DD014721                       0.8526198                       -0.8327653</span></span>
-<span><span class="co">## AMEX60DD045083                       1.1227184                        0.2479755</span></span>
+<span><span class="co">## AMEX60DD014721                       0.8520273                       -0.8295217</span></span>
+<span><span class="co">## AMEX60DD045083                       1.1215511                        0.2403202</span></span>
 <span><span class="co">##                logFC.condition2DPI.cluster_id3 logFC.condition20DPI.cluster_id4</span></span>
-<span><span class="co">## AMEX60DD014721                      -0.9450822                        0.2229300</span></span>
-<span><span class="co">## AMEX60DD045083                       1.2663910                       -0.9966468</span></span>
-<span><span class="co">##                logFC.condition2DPI.cluster_id4   logCPM        LR       PValue</span></span>
-<span><span class="co">## AMEX60DD014721                       0.2085998 9.344907 102.25832 1.473888e-18</span></span>
-<span><span class="co">## AMEX60DD045083                      -0.7966179 7.505402  95.35246 3.791697e-17</span></span>
+<span><span class="co">## AMEX60DD014721                      -0.9450144                        0.2258349</span></span>
+<span><span class="co">## AMEX60DD045083                       1.2768794                       -0.9889594</span></span>
+<span><span class="co">##                logFC.condition2DPI.cluster_id4   logCPM        F       PValue</span></span>
+<span><span class="co">## AMEX60DD014721                       0.2097897 9.344907 17.14731 1.401391e-08</span></span>
+<span><span class="co">## AMEX60DD045083                      -0.8093096 7.505402 13.65550 1.458452e-07</span></span>
 <span><span class="co">##                         FDR</span></span>
-<span><span class="co">## AMEX60DD014721 7.369440e-15</span></span>
-<span><span class="co">## AMEX60DD045083 9.479243e-14</span></span></code></pre>
+<span><span class="co">## AMEX60DD014721 7.006953e-05</span></span>
+<span><span class="co">## AMEX60DD045083 3.646131e-04</span></span></code></pre>
 <p>The second element of the results (a <code>DGEList</code> object
 <code>estimated_y</code>) contains the estimated common dispersion.</p>
 <p>The third and fourth element of the results (<code>DGEGLM</code> and
-<code>DGELRT</code> objects) contain full statistics from
-<code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">edgeR::glmFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmLRT.html" class="external-link">edgeR::glmLRT</a></code>.</p>
+<code>DGELRT</code> objects) contain the underlying statistics returned
+by the chosen testing framework. For <code>test = "QLF"</code>, these
+are <code>glmQLFit</code> and <code>glmQLFTest</code>; for
+<code>test = "LRT</code>, they are <code>glmFit</code> and
+<code>glmLRT</code>.</p>
 <div class="sourceCode" id="cb13"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmLrt</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmFit</span><span class="op">)</span></span></code></pre></div>
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEList"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
 <span><span class="co">## [1] "edgeR"</span></span></code></pre>
-<pre><code><span><span class="co">## [1] "NULL"</span></span></code></pre>
+<div class="sourceCode" id="cb15"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmQLFit</span><span class="op">)</span>    <span class="co"># or results$glmFit  depending on test</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEGLM"</span></span>
+<span><span class="co">## attr(,"package")</span></span>
+<span><span class="co">## [1] "edgeR"</span></span></code></pre>
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmQLFTest</span><span class="op">)</span>  <span class="co"># or results$glmLRT  depending on test</span></span></code></pre></div>
+<pre><code><span><span class="co">## [1] "DGELRT"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
 <span><span class="co">## [1] "edgeR"</span></span></code></pre>
 <p>Visualize the gene expression of the most significant genes with
@@ -341,19 +357,19 @@ DPI.</p>
 names. Specifying the column names of spatial coordinates of spots is
 only necessary when they are not named <code>row</code> and
 <code>col</code>.</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">sample_ids</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">CD</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span>
 <span></span>
 <span><span class="co"># Identify the top DSP</span></span>
 <span><span class="op">(</span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fl">1</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "AMEX60DD014721"</span></span></code></pre>
-<div class="sourceCode" id="cb19"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the gene_name by matching the gene_id</span></span>
 <span><span class="op">(</span><span class="va">feature_name</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span></span>
 <span>  <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">feature</span></span>
 <span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "ECM1"</span></span></code></pre>
-<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># generate a list of plots</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sample_ids</span>, <span class="kw">function</span><span class="op">(</span><span class="va">sample_id</span><span class="op">)</span> <span class="op">{</span></span>
 <span>  </span>
@@ -375,12 +391,12 @@ only necessary when they are not named <code>row</code> and
 <p>The spatial structure of gene expression changes across conditions,
 transitioning from more localized patterns at earlier stages (2 and 10
 DPI) to a broader distribution at a later stage (20 DPI).</p>
-<div class="sourceCode" id="cb22"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined_plot</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plots</span>, ncol <span class="op">=</span> <span class="fl">3</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="co"># common legend</span></span>
 <span>    <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">'collect'</span><span class="op">)</span>  </span>
 <span><span class="va">combined_plot</span></span></code></pre></div>
-<p><img src="DSP_files/figure-html/unnamed-chunk-4-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/unnamed-chunk-4-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level3">
 <h3 id="individual-cluster-test">Individual cluster test<a class="anchor" aria-label="anchor" href="#individual-cluster-test"></a>
@@ -394,7 +410,7 @@ identify DSP genes for each individual cluster. Parameters
 <code>condition_col</code> indicate the column names in
 <code>colData(spe)</code> for spatial clusters, sample ids, and
 condition ids, respectively.</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/individual_dsp.html">individual_dsp</a></span><span class="op">(</span><span class="va">spe</span>,</span>
 <span>                                  cluster_col <span class="op">=</span> <span class="va">spatial_cluster</span>,</span>
 <span>                                  sample_col <span class="op">=</span> <span class="va">sample_col</span>,</span>
@@ -415,47 +431,47 @@ log-fold change value suggests that, the increase in gene expression in
 <strong>cluster 2</strong> from 10 DPI (the baseline) to 20 DPI is
 <strong>greater</strong> than the increase in gene expression in
 <strong>all other clusters</strong> from 10 DPI to 20 DPI.</p>
-<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "list"</span></span></code></pre>
-<div class="sourceCode" id="cb26"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "0" "1" "2" "3" "4"</span></span></code></pre>
-<div class="sourceCode" id="cb28"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">cluster_results</span><span class="op">$</span><span class="va">`2`</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">4</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##                       gene_id logFC.condition20DPI.cluster_id2</span></span>
-<span><span class="co">## AMEX60DD014721 AMEX60DD014721                       -0.5801491</span></span>
-<span><span class="co">## AMEX60DD014991 AMEX60DD014991                        2.6942759</span></span>
-<span><span class="co">## AMEX60DD055246 AMEX60DD055246                       -0.2661447</span></span>
-<span><span class="co">## AMEX60DD045083 AMEX60DD045083                       -1.0631435</span></span>
-<span><span class="co">##                logFC.condition2DPI.cluster_id2   logCPM       LR       PValue</span></span>
-<span><span class="co">## AMEX60DD014721                       1.2700494 9.582333 76.16657 2.888278e-17</span></span>
-<span><span class="co">## AMEX60DD014991                       3.0151238 7.330327 73.02536 1.389135e-16</span></span>
-<span><span class="co">## AMEX60DD055246                      -2.2986026 5.661946 60.91208 5.930751e-14</span></span>
-<span><span class="co">## AMEX60DD045083                       0.9065434 8.266790 59.19339 1.400618e-13</span></span>
+<span><span class="co">## AMEX60DD014721 AMEX60DD014721                       -0.5804007</span></span>
+<span><span class="co">## AMEX60DD045083 AMEX60DD045083                       -1.0629587</span></span>
+<span><span class="co">## AMEX60DD055246 AMEX60DD055246                       -0.2621394</span></span>
+<span><span class="co">## AMEX60DD014991 AMEX60DD014991                        2.7065895</span></span>
+<span><span class="co">##                logFC.condition2DPI.cluster_id2   logCPM        F       PValue</span></span>
+<span><span class="co">## AMEX60DD014721                       1.2700217 9.582333 79.74974 7.282047e-08</span></span>
+<span><span class="co">## AMEX60DD045083                       0.9054036 8.266790 40.96951 3.136418e-06</span></span>
+<span><span class="co">## AMEX60DD055246                      -2.2986562 5.661946 37.18572 5.300901e-06</span></span>
+<span><span class="co">## AMEX60DD014991                       3.0257108 7.330327 36.55611 5.813224e-06</span></span>
 <span><span class="co">##                         FDR</span></span>
-<span><span class="co">## AMEX60DD014721 1.444139e-13</span></span>
-<span><span class="co">## AMEX60DD014991 3.472837e-13</span></span>
-<span><span class="co">## AMEX60DD055246 9.884585e-11</span></span>
-<span><span class="co">## AMEX60DD045083 1.750772e-10</span></span></code></pre>
+<span><span class="co">## AMEX60DD014721 0.0003641023</span></span>
+<span><span class="co">## AMEX60DD045083 0.0072665306</span></span>
+<span><span class="co">## AMEX60DD055246 0.0072665306</span></span>
+<span><span class="co">## AMEX60DD014991 0.0072665306</span></span></code></pre>
 <p>Visualize the gene expression of the top gene for cluster 2.</p>
-<div class="sourceCode" id="cb30"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># one of top DSPs for cluster 2</span></span>
 <span><span class="op">(</span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">[[</span><span class="st">"2"</span><span class="op">]</span><span class="op">]</span><span class="op">)</span><span class="op">[</span><span class="fl">4</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "AMEX60DD045083"</span></span></code></pre>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<pre><code><span><span class="co">## [1] "AMEX60DD014991"</span></span></code></pre>
+<div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Extract the gene_name by matching the gene_id</span></span>
 <span><span class="op">(</span><span class="va">feature_name</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span></span>
 <span>  <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_name</span> <span class="op">==</span> <span class="va">feature</span></span>
 <span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## [1] "SFRP2"</span></span></code></pre>
+<pre><code><span><span class="co">## [1] "LOC108699649[nr]"</span></span></code></pre>
 <div class="section level4">
 <h4 class="tabset" id="visualization">Visualization<a class="anchor" aria-label="anchor" href="#visualization"></a>
 </h4>
 <div class="section level5">
 <h5 id="abundance-trend">Abundance trend<a class="anchor" aria-label="anchor" href="#abundance-trend"></a>
 </h5>
-<p>One way is to plot the overall abundance of SFRP2 for each
+<p>One way is to plot the overall abundance of LOC108699649[nr] for each
 cluster-sample combination. Under the null hypothesis, gene expression
 changes across conditions are consistent across clusters.</p>
 <p>The boxplots below show the average log-CPM for cluster 2 and for all
@@ -466,7 +482,7 @@ decrease in abundance across other clusters, it remains relatively
 constant overall.</p>
 <details><summary>
 Code
-</summary><div class="sourceCode" id="cb34"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># calculate log cpm</span></span>
 <span><span class="va">cps</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/edgeR/man/cpm.html" class="external-link">cpm</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span>, log <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="va">cps_name</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">colnames</a></span><span class="op">(</span><span class="va">cps</span><span class="op">)</span></span>
@@ -487,10 +503,10 @@ Code
 <span>         y <span class="op">=</span> <span class="st">"log-2 counts per million (logCPM)"</span>, fill <span class="op">=</span> <span class="st">""</span>,</span>
 <span>         color <span class="op">=</span> <span class="st">"Banksy cluster"</span><span class="op">)</span> <span class="op">+</span></span>
 <span>     <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position <span class="op">=</span> <span class="st">"right"</span><span class="op">)</span></span></code></pre></div>
-</details><div class="sourceCode" id="cb35"><pre class="downlit sourceCode r">
+</details><div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># figure</span></span>
 <span><span class="va">plt</span></span></code></pre></div>
-<p><img src="DSP_files/figure-html/unnamed-chunk-6-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/unnamed-chunk-6-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level5">
 <h5 id="spatial-expression">Spatial expression<a class="anchor" aria-label="anchor" href="#spatial-expression"></a>
@@ -502,7 +518,7 @@ vector of cluster names via <code>cluster_col</code> and
 <code>cluster</code>.</p>
 <details><summary>
 Code
-</summary><div class="sourceCode" id="cb36"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># generate a list of FeaturePlots</span></span>
 <span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sample_ids</span>, <span class="kw">function</span><span class="op">(</span><span class="va">sample_id</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># Subset spe for each sample</span></span>
@@ -528,10 +544,10 @@ Code
 in particular, at 2 and 10 DPI, abundance is higher in cluster 2
 (outlined in the plot), compared to the rest of the tissue, while at 20
 DPI abundance is more homogeneous.</p>
-<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># figure</span></span>
 <span><span class="va">combined_plot</span> </span></code></pre></div>
-<p><img src="DSP_files/figure-html/unnamed-chunk-8-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/unnamed-chunk-8-1.png" class="r-plt" width="700"></p>
 </div>
 </div>
 </div>
@@ -546,7 +562,7 @@ to account for the effect of time.</p>
 <p>First, we create metadata associated with the samples and clusters.
 For each cluster level, there are 3 time phases (i.e., <code>day</code>)
 and 2 replicates (i.e., `rep``) for each time point.</p>
-<div class="sourceCode" id="cb38"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># all combinations of sample and cluster</span></span>
 <span><span class="va">metadata</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/expand.grid.html" class="external-link">expand.grid</a></span><span class="op">(</span>sample_id <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">spe</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span>,</span>
 <span>                        cluster <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/levels.html" class="external-link">levels</a></span><span class="op">(</span><span class="va">spe</span><span class="op">$</span><span class="va">Banksy_smooth</span><span class="op">)</span></span>
@@ -570,14 +586,14 @@ phases (<code>day</code> in the <code>metadata</code>) in our case-and
 <code>df</code> specifies the degrees of freedom, which determine the
 total number of parameters in the <code><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns()</a></code> time model,
 including the intercept.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">design_model</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">cluster</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">day</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>, </span>
 <span>                             data <span class="op">=</span> <span class="va">metadata</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">design_model</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="va">metadata</span><span class="op">$</span><span class="va">sample_id</span>, <span class="st">"_"</span>,</span>
 <span>                                 <span class="va">metadata</span><span class="op">$</span><span class="va">cluster</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/dim.html" class="external-link">dim</a></span><span class="op">(</span><span class="va">design_model</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] 30 15</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">design_model</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##           (Intercept) cluster1 cluster2 cluster3 cluster4 ns(day, df = 2)1</span></span>
 <span><span class="co">## 2DPI_1_0            1        0        0        0        0        0.0000000</span></span>
@@ -600,26 +616,26 @@ including the intercept.</p>
 <span><span class="co">## 2DPI_2_0                          0                         0</span></span>
 <span><span class="co">## 10DPI_1_0                         0                         0</span></span></code></pre>
 <p>Fit the model via <code>dsp_test</code> function.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsp_test.html">dsp_test</a></span><span class="op">(</span><span class="va">spe</span>,</span>
 <span>                    design <span class="op">=</span> <span class="va">design_model</span>,</span>
 <span>                    cluster_col <span class="op">=</span> <span class="va">spatial_cluster</span>,</span>
 <span>                    sample_col <span class="op">=</span> <span class="va">sample_col</span>,</span>
 <span>                    condition_col <span class="op">=</span> <span class="va">condition_col</span>,</span>
 <span>                    verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb45"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># count significant DSP genes (at 5% FDR significance level)</span></span>
 <span><span class="va">res_global</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">$</span><span class="va">gene_results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">res_global</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FALSE  TRUE </span></span>
-<span><span class="co">##  4799   201</span></span></code></pre>
+<span><span class="co">##  4943    57</span></span></code></pre>
 <p>To identify key spatial clusters where expression changes across
 conditions, we apply the smooth spline with a single-cluster design.
 Specifically, we convert the original Banksy clusters into two groups:
 the target cluster and all other clusters. We then apply the same test
 as in the global test above.</p>
-<div class="sourceCode" id="cb47"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb49"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># example: testing for cluster 2</span></span>
 <span><span class="co"># convert 5 Banksy clusters into 2 groups: cluster 2 vs. all other clusters</span></span>
 <span><span class="va">new_cluster</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/factor.html" class="external-link">factor</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">spe</span><span class="op">$</span><span class="va">Banksy_smooth</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="st">'2'</span>, <span class="st">'2'</span>, <span class="st">'Other'</span><span class="op">)</span><span class="op">)</span></span>
@@ -631,7 +647,7 @@ as in the global test above.</p>
 <span>        rep <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/numeric.html" class="external-link">as.numeric</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/grep.html" class="external-link">sub</a></span><span class="op">(</span><span class="st">".*_"</span>, <span class="st">""</span>, <span class="va">sample_id</span><span class="op">)</span><span class="op">)</span> </span>
 <span>      <span class="op">)</span></span></code></pre></div>
 <p>Create a single-cluster design.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># design model for testing the cluster 2</span></span>
 <span><span class="va">design_model2</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/stats/model.matrix.html" class="external-link">model.matrix</a></span><span class="op">(</span><span class="op">~</span> <span class="va">cluster</span> <span class="op">*</span> <span class="fu"><a href="https://rdrr.io/r/splines/ns.html" class="external-link">ns</a></span><span class="op">(</span><span class="va">day</span>, df <span class="op">=</span> <span class="fl">2</span><span class="op">)</span>,</span>
 <span>                              data <span class="op">=</span> <span class="va">metadata2</span><span class="op">)</span></span>
@@ -647,7 +663,7 @@ as in the global test above.</p>
 <span><span class="co">## 2DPI_2_2                              0                             0</span></span>
 <span><span class="co">## 10DPI_1_2                             0                             0</span></span></code></pre>
 <p>Fit the single-cluster model via <code>dsp_test</code>.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spe</span><span class="op">$</span><span class="va">cluster2</span> <span class="op">&lt;-</span> <span class="va">new_cluster</span></span>
 <span><span class="va">results2</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/dsp_test.html">dsp_test</a></span><span class="op">(</span><span class="va">spe</span>,</span>
 <span>                    design <span class="op">=</span> <span class="va">design_model2</span>,</span>
@@ -655,18 +671,18 @@ as in the global test above.</p>
 <span>                    sample_col <span class="op">=</span> <span class="va">sample_col</span>,</span>
 <span>                    condition_col <span class="op">=</span> <span class="va">condition_col</span>,</span>
 <span>                    verbose <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># count significant DSP genes (at 5% FDR significance level)</span></span>
 <span><span class="va">res_global2</span> <span class="op">&lt;-</span> <span class="va">results2</span><span class="op">$</span><span class="va">gene_results</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">res_global2</span><span class="op">$</span><span class="va">FDR</span> <span class="op">&lt;=</span> <span class="fl">0.05</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## </span></span>
 <span><span class="co">## FALSE  TRUE </span></span>
-<span><span class="co">##  4955    45</span></span></code></pre>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<span><span class="co">##  4994     6</span></span></code></pre>
+<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># identify the top DSP for cluster 2</span></span>
 <span><span class="op">(</span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">results2</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fl">5</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "AMEX60DD002984"</span></span></code></pre>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># extract the gene_name by matching the gene_id</span></span>
 <span><span class="op">(</span><span class="va">feature_name</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span></span>
 <span>  <span class="fu">rowData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">gene_name</span> <span class="op"><a href="https://rdrr.io/r/base/match.html" class="external-link">%in%</a></span> <span class="va">feature</span></span>
@@ -684,8 +700,8 @@ NEFM in cluster 2 first increase and then decrease, while in the
 remaining regions, the expression slightly increase over time.</p>
 <details><summary>
 Code
-</summary><div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
-<code class="sourceCode R"><span><span class="va">fitted_values</span> <span class="op">&lt;-</span> <span class="va">results2</span><span class="op">[[</span><span class="st">"glmFit"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"fitted.values"</span><span class="op">]</span><span class="op">]</span></span>
+</summary><div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="va">fitted_values</span> <span class="op">&lt;-</span> <span class="va">results2</span><span class="op">[[</span><span class="st">"glmQLFit"</span><span class="op">]</span><span class="op">]</span><span class="op">[[</span><span class="st">"fitted.values"</span><span class="op">]</span><span class="op">]</span></span>
 <span><span class="va">m</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/pkg/reshape2/man/melt.html" class="external-link">melt</a></span><span class="op">(</span><span class="va">fitted_values</span><span class="op">[</span><span class="va">feature</span>,<span class="op">]</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://tibble.tidyverse.org/reference/rownames.html" class="external-link">rownames_to_column</a></span><span class="op">(</span><span class="st">"row_name_column"</span><span class="op">)</span> <span class="op">|&gt;</span></span>
 <span>    <span class="fu"><a href="https://rdrr.io/r/stats/setNames.html" class="external-link">setNames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="st">"sample_id"</span>, <span class="st">"fitted"</span><span class="op">)</span><span class="op">)</span> <span class="op">|&gt;</span></span>
@@ -695,20 +711,20 @@ Code
 <span>      <span class="op">)</span></span>
 <span><span class="va">m</span> <span class="op">|&gt;</span> <span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span>n <span class="op">=</span> <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   sample_id    fitted day cluster</span></span>
-<span><span class="co">## 1  2DPI_1_2  151.7510   2       2</span></span>
-<span><span class="co">## 2  2DPI_2_2  130.8886   2       2</span></span>
-<span><span class="co">## 3 10DPI_1_2 1024.0528  10       2</span></span></code></pre>
-<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
+<span><span class="co">## 1  2DPI_1_2  151.6301   2       2</span></span>
+<span><span class="co">## 2  2DPI_2_2  130.7843   2       2</span></span>
+<span><span class="co">## 3 10DPI_1_2 1025.4625  10       2</span></span></code></pre>
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plt</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">m</span>, <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/aes.html" class="external-link">aes</a></span><span class="op">(</span>x<span class="op">=</span><span class="va">day</span>, y<span class="op">=</span><span class="va">fitted</span>, group<span class="op">=</span><span class="va">cluster</span>, colour <span class="op">=</span> <span class="va">cluster</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/geom_jitter.html" class="external-link">geom_jitter</a></span><span class="op">(</span>size <span class="op">=</span> <span class="fl">3</span>, width <span class="op">=</span> <span class="fl">0.2</span>, height <span class="op">=</span> <span class="fl">0</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_sqrt</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>title <span class="op">=</span> <span class="va">feature_name</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_x_continuous</a></span><span class="op">(</span>breaks <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="fl">2</span>, <span class="fl">10</span>, <span class="fl">20</span><span class="op">)</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">xlab</a></span><span class="op">(</span><span class="st">"Days post injury"</span><span class="op">)</span></span></code></pre></div>
-</details><div class="sourceCode" id="cb60"><pre class="downlit sourceCode r">
+</details><div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># figure</span></span>
 <span><span class="va">plt</span></span></code></pre></div>
-<p><img src="DSP_files/figure-html/unnamed-chunk-16-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/unnamed-chunk-16-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level5">
 <h5 id="spatial-expression-1">Spatial expression<a class="anchor" aria-label="anchor" href="#spatial-expression-1"></a>
@@ -718,7 +734,7 @@ using <code>annotation_cluster = TRUE</code>, cluster annotations are
 displayed on the expression plots.</p>
 <details><summary>
 Code
-</summary><div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
+</summary><div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">plots</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/lapply.html" class="external-link">lapply</a></span><span class="op">(</span><span class="va">sample_ids</span>, <span class="kw">function</span><span class="op">(</span><span class="va">sample_id</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co"># Subset spe for each sample</span></span>
 <span>    <span class="va">spe_j</span> <span class="op">&lt;-</span> <span class="va">spe</span><span class="op">[</span>, <span class="fu">colData</span><span class="op">(</span><span class="va">spe</span><span class="op">)</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">==</span> <span class="va">sample_id</span><span class="op">]</span></span>
@@ -739,9 +755,9 @@ Code
 <span>    <span class="fu"><a href="https://patchwork.data-imaginist.com/reference/plot_layout.html" class="external-link">plot_layout</a></span><span class="op">(</span>guides <span class="op">=</span> <span class="st">'collect'</span><span class="op">)</span>  </span></code></pre></div>
 </details><p>The trend aligns with the model’s prediction: gene abundance in
 cluster 2 peaks at 10 DPI compared to other clusters.</p>
-<div class="sourceCode" id="cb62"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">combined_plot</span></span></code></pre></div>
-<p><img src="DSP_files/figure-html/unnamed-chunk-18-1.png" width="700"></p>
+<p><img src="DSP_files/figure-html/unnamed-chunk-18-1.png" class="r-plt" width="700"></p>
 </div>
 </div>
 </div>
@@ -749,9 +765,9 @@ cluster 2 peaks at 10 DPI compared to other clusters.</p>
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.2 RC (2025-10-27 r88973)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 Patched (2025-11-24 r89071)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -775,11 +791,11 @@ cluster 2 peaks at 10 DPI compared to other clusters.</p>
 <span><span class="co">## other attached packages:</span></span>
 <span><span class="co">##  [1] edgeR_4.8.0                 limma_3.66.0               </span></span>
 <span><span class="co">##  [3] patchwork_1.3.2             lubridate_1.9.4            </span></span>
-<span><span class="co">##  [5] forcats_1.0.1               stringr_1.5.2              </span></span>
-<span><span class="co">##  [7] dplyr_1.1.4                 purrr_1.1.0                </span></span>
-<span><span class="co">##  [9] readr_2.1.5                 tidyr_1.3.1                </span></span>
+<span><span class="co">##  [5] forcats_1.0.1               stringr_1.6.0              </span></span>
+<span><span class="co">##  [7] dplyr_1.1.4                 purrr_1.2.0                </span></span>
+<span><span class="co">##  [9] readr_2.1.6                 tidyr_1.3.1                </span></span>
 <span><span class="co">## [11] tibble_3.3.0                tidyverse_2.0.0            </span></span>
-<span><span class="co">## [13] reshape2_1.4.4              muSpaData_1.1.0            </span></span>
+<span><span class="co">## [13] reshape2_1.4.5              muSpaData_1.2.0            </span></span>
 <span><span class="co">## [15] ExperimentHub_3.0.0         AnnotationHub_4.0.0        </span></span>
 <span><span class="co">## [17] BiocFileCache_3.0.0         dbplyr_2.5.1               </span></span>
 <span><span class="co">## [19] SpatialExperiment_1.20.0    SingleCellExperiment_1.32.0</span></span>
@@ -788,44 +804,44 @@ cluster 2 peaks at 10 DPI compared to other clusters.</p>
 <span><span class="co">## [25] IRanges_2.44.0              S4Vectors_0.48.0           </span></span>
 <span><span class="co">## [27] BiocGenerics_0.56.0         generics_0.1.4             </span></span>
 <span><span class="co">## [29] MatrixGenerics_1.22.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [31] ggplot2_4.0.0               DESpace_2.0.0              </span></span>
+<span><span class="co">## [31] ggplot2_4.0.1               DESpace_2.3.2              </span></span>
 <span><span class="co">## [33] BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] RColorBrewer_1.1-3     jsonlite_2.0.0         magrittr_2.0.4        </span></span>
 <span><span class="co">##   [4] spatstat.utils_3.2-0   magick_2.9.0           farver_2.1.2          </span></span>
 <span><span class="co">##   [7] rmarkdown_2.30         fs_1.6.6               ragg_1.5.0            </span></span>
-<span><span class="co">##  [10] vctrs_0.6.5            memoise_2.0.1          spatstat.explore_3.5-3</span></span>
-<span><span class="co">##  [13] terra_1.8-70           htmltools_0.5.8.1      S4Arrays_1.10.0       </span></span>
-<span><span class="co">##  [16] curl_7.0.0             SparseArray_1.10.0     sass_0.4.10           </span></span>
+<span><span class="co">##  [10] vctrs_0.6.5            memoise_2.0.1          spatstat.explore_3.6-0</span></span>
+<span><span class="co">##  [13] terra_1.8-80           htmltools_0.5.8.1      S4Arrays_1.10.0       </span></span>
+<span><span class="co">##  [16] curl_7.0.0             SparseArray_1.10.3     sass_0.4.10           </span></span>
 <span><span class="co">##  [19] KernSmooth_2.23-26     bslib_0.9.0            htmlwidgets_1.6.4     </span></span>
 <span><span class="co">##  [22] desc_1.4.3             plyr_1.8.9             httr2_1.2.1           </span></span>
 <span><span class="co">##  [25] cachem_1.1.0           lifecycle_1.0.4        pkgconfig_2.0.3       </span></span>
 <span><span class="co">##  [28] Matrix_1.7-4           R6_2.6.1               fastmap_1.2.0         </span></span>
-<span><span class="co">##  [31] digest_0.6.37          ggnewscale_0.5.2       AnnotationDbi_1.72.0  </span></span>
-<span><span class="co">##  [34] tensor_1.5.1           textshaping_1.0.4      RSQLite_2.4.3         </span></span>
+<span><span class="co">##  [31] digest_0.6.39          ggnewscale_0.5.2       AnnotationDbi_1.72.0  </span></span>
+<span><span class="co">##  [34] tensor_1.5.1           textshaping_1.0.4      RSQLite_2.4.4         </span></span>
 <span><span class="co">##  [37] beachmat_2.26.0        labeling_0.4.3         filelock_1.0.3        </span></span>
 <span><span class="co">##  [40] timechange_0.3.0       spatstat.sparse_3.1-0  httr_1.4.7            </span></span>
 <span><span class="co">##  [43] polyclip_1.10-7        abind_1.4-8            compiler_4.5.2        </span></span>
 <span><span class="co">##  [46] proxy_0.4-27           bit64_4.6.0-1          withr_3.0.2           </span></span>
-<span><span class="co">##  [49] S7_0.2.0               BiocParallel_1.44.0    DBI_1.2.3             </span></span>
+<span><span class="co">##  [49] S7_0.2.1               BiocParallel_1.44.0    DBI_1.2.3             </span></span>
 <span><span class="co">##  [52] ggforce_0.5.0          MASS_7.3-65            rappdirs_0.3.3        </span></span>
 <span><span class="co">##  [55] DelayedArray_0.36.0    rjson_0.2.23           classInt_0.4-11       </span></span>
 <span><span class="co">##  [58] tools_4.5.2            units_1.0-0            goftest_1.2-3         </span></span>
 <span><span class="co">##  [61] glue_1.8.0             nlme_3.1-168           grid_4.5.2            </span></span>
-<span><span class="co">##  [64] sf_1.0-21              gtable_0.3.6           spatstat.data_3.1-9   </span></span>
+<span><span class="co">##  [64] sf_1.0-22              gtable_0.3.6           spatstat.data_3.1-9   </span></span>
 <span><span class="co">##  [67] tzdb_0.5.0             class_7.3-23           hms_1.1.4             </span></span>
-<span><span class="co">##  [70] data.table_1.17.8      XVector_0.50.0         spatstat.geom_3.6-0   </span></span>
+<span><span class="co">##  [70] data.table_1.17.8      XVector_0.50.0         spatstat.geom_3.6-1   </span></span>
 <span><span class="co">##  [73] BiocVersion_3.22.0     pillar_1.11.1          tweenr_2.0.3          </span></span>
 <span><span class="co">##  [76] lattice_0.22-7         bit_4.6.0              deldir_2.0-4          </span></span>
 <span><span class="co">##  [79] tidyselect_1.2.1       locfit_1.5-9.12        Biostrings_2.78.0     </span></span>
-<span><span class="co">##  [82] scuttle_1.19.0         knitr_1.50             bookdown_0.45         </span></span>
-<span><span class="co">##  [85] xfun_0.53              statmod_1.5.1          stringi_1.8.7         </span></span>
+<span><span class="co">##  [82] scuttle_1.20.0         knitr_1.50             bookdown_0.45         </span></span>
+<span><span class="co">##  [85] xfun_0.54              statmod_1.5.1          stringi_1.8.7         </span></span>
 <span><span class="co">##  [88] yaml_2.3.10            evaluate_1.0.5         codetools_0.2-20      </span></span>
-<span><span class="co">##  [91] BiocManager_1.30.26    cli_3.6.5              systemfonts_1.3.1     </span></span>
-<span><span class="co">##  [94] jquerylib_0.1.4        Rcpp_1.1.0             spatstat.random_3.4-2 </span></span>
-<span><span class="co">##  [97] png_0.1-8              spatstat.univar_3.1-4  parallel_4.5.2        </span></span>
-<span><span class="co">## [100] pkgdown_2.1.3          assertthat_0.2.1       blob_1.2.4            </span></span>
+<span><span class="co">##  [91] BiocManager_1.30.27    cli_3.6.5              systemfonts_1.3.1     </span></span>
+<span><span class="co">##  [94] jquerylib_0.1.4        Rcpp_1.1.0             spatstat.random_3.4-3 </span></span>
+<span><span class="co">##  [97] png_0.1-8              spatstat.univar_3.1-5  parallel_4.5.2        </span></span>
+<span><span class="co">## [100] pkgdown_2.2.0          assertthat_0.2.1       blob_1.2.4            </span></span>
 <span><span class="co">## [103] scales_1.4.0           e1071_1.7-16           crayon_1.5.3          </span></span>
 <span><span class="co">## [106] rlang_1.1.6            KEGGREST_1.50.0</span></span></code></pre>
 </div>
@@ -871,7 +887,7 @@ Biotechnology</em> 39 (11): 1375–84. <a href="https://doi.org/10.1038/s41587-0
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

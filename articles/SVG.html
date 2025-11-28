@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.0.0</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@ Tiberi</h4>
 Italy<br><a class="author_email" href="mailto:#"></a><a href="mailto:simone.tiberi@unibo.it" class="email">simone.tiberi@unibo.it</a>
       </address>
                   
-            <h4 data-toc-skip class="date">10/31/2025</h4>
+            <h4 data-toc-skip class="date">11/28/2025</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/peicai/DESpace/blob/main/vignettes/SVG.Rmd" class="external-link"><code>vignettes/SVG.Rmd</code></a></small>
       <div class="d-none name"><code>SVG.Rmd</code></div>
@@ -297,7 +297,7 @@ data, we can visualize spatial clusters.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Manually annotated spatial clusters"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/view%20LIBD%20layers-1.png" width="480"></p>
+<p><img src="SVG_files/figure-html/view%20LIBD%20layers-1.png" class="r-plt" width="480"></p>
 </div>
 <div class="section level4">
 <h4 id="spatially-resolved-clustering">Spatially resolved clustering<a class="anchor" aria-label="anchor" href="#spatially-resolved-clustering"></a>
@@ -410,7 +410,7 @@ only necessary when they are not named <code>row</code> and
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, </span>
 <span>            ncol <span class="op">=</span> <span class="fl">3</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot-1.png" width="700"></p>
+<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot-1.png" class="r-plt" width="700"></p>
 <p>Additionally, function <code><a href="../reference/FeaturePlot.html">FeaturePlot()</a></code> can draw an outline
 around each cluster.</p>
 <div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
@@ -419,7 +419,7 @@ around each cluster.</p>
 <span>            annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>            cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
 <span>            cluster <span class="op">=</span> <span class="st">'all'</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20all%20cluster-1.png" width="700"></p>
+<p><img src="SVG_files/figure-html/expression%20plots%20all%20cluster-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="individual-cluster-test">Individual cluster test<a class="anchor" aria-label="anchor" href="#individual-cluster-test"></a>
@@ -573,7 +573,7 @@ stored in <code>colData(spe)</code> and the vector of cluster names via
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, cluster <span class="op">=</span> <span class="st">'WM'</span>, </span>
 <span>            legend_cluster <span class="op">=</span> <span class="cn">TRUE</span>, annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>            linewidth <span class="op">=</span> <span class="fl">0.6</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20high_low-1.png" width="700"></p>
+<p><img src="SVG_files/figure-html/expression%20plots%20high_low-1.png" class="r-plt" width="700"></p>
 <div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with lower than average abundance in WM</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
@@ -581,7 +581,7 @@ stored in <code>colData(spe)</code> and the vector of cluster names via
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, cluster <span class="op">=</span> <span class="st">'WM'</span>, </span>
 <span>            legend_cluster <span class="op">=</span> <span class="cn">TRUE</span>, annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>            linewidth <span class="op">=</span> <span class="fl">0.6</span>,title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20high_low-2.png" width="700"></p>
+<p><img src="SVG_files/figure-html/expression%20plots%20high_low-2.png" class="r-plt" width="700"></p>
 </div>
 </div>
 </div>
@@ -630,7 +630,7 @@ spot-level data, we can visualize spatial clusters.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Manually annotated spatial clusters"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/view%20LIBD%20layers%20%5Bmulti%5D-1.png" width="700"></p>
+<p><img src="SVG_files/figure-html/view%20LIBD%20layers%20%5Bmulti%5D-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="spatially-resolved-multi-sample-clustering">Spatially resolved (multi-sample) clustering<a class="anchor" aria-label="anchor" href="#spatially-resolved-multi-sample-clustering"></a>
@@ -727,7 +727,7 @@ should be <code>row</code> and <code>col</code>.</p>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">spot_plots</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">spot_plots</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot%20%5Bmulti%5D-1.png" width="700"></p>
+<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot%20%5Bmulti%5D-1.png" class="r-plt" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="individual-cluster-test-1">Individual cluster test<a class="anchor" aria-label="anchor" href="#individual-cluster-test-1"></a>
@@ -848,11 +848,11 @@ expression in WM compared to the rest of the tissue.</p>
 <span><span class="op">}</span></span>
 <span><span class="co"># Expression plots for SVGs with higher abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_high</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/unnamed-chunk-13-1.png" width="960"></p>
+<p><img src="SVG_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="960"></p>
 <div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Expression plots for SVGs with lower abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_low</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/unnamed-chunk-13-2.png" width="960"></p>
+<p><img src="SVG_files/figure-html/unnamed-chunk-13-2.png" class="r-plt" width="960"></p>
 </div>
 <div class="section level4">
 <h4 id="sample-specific-covariates-e-g--batch-effects">Sample-specific covariates (e.g., batch effects)<a class="anchor" aria-label="anchor" href="#sample-specific-covariates-e-g--batch-effects"></a>
@@ -893,7 +893,7 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 </h2>
 <div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.2 RC (2025-10-27 r88973)</span></span>
+<pre><code><span><span class="co">## R version 4.5.2 Patched (2025-11-24 r89071)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
 <span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
 <span><span class="co">## </span></span>
@@ -921,53 +921,53 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <span><span class="co">##  [7] IRanges_2.44.0              S4Vectors_0.48.0           </span></span>
 <span><span class="co">##  [9] BiocGenerics_0.56.0         generics_0.1.4             </span></span>
 <span><span class="co">## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [13] ggforce_0.5.0               ggplot2_4.0.0              </span></span>
-<span><span class="co">## [15] DESpace_2.0.0               BiocStyle_2.38.0           </span></span>
+<span><span class="co">## [13] ggforce_0.5.0               ggplot2_4.0.1              </span></span>
+<span><span class="co">## [15] DESpace_2.3.2               BiocStyle_2.38.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
 <span><span class="co">##   [1] later_1.4.4              BiocIO_1.20.0            bitops_1.0-9            </span></span>
 <span><span class="co">##   [4] filelock_1.0.3           tibble_3.3.0             polyclip_1.10-7         </span></span>
-<span><span class="co">##   [7] XML_3.99-0.19            lifecycle_1.0.4          httr2_1.2.1             </span></span>
-<span><span class="co">##  [10] sf_1.0-21                edgeR_4.8.0              doParallel_1.0.17       </span></span>
+<span><span class="co">##   [7] XML_3.99-0.20            lifecycle_1.0.4          httr2_1.2.1             </span></span>
+<span><span class="co">##  [10] sf_1.0-22                edgeR_4.8.0              doParallel_1.0.17       </span></span>
 <span><span class="co">##  [13] lattice_0.22-7           MASS_7.3-65              magrittr_2.0.4          </span></span>
 <span><span class="co">##  [16] limma_3.66.0             plotly_4.11.0            sass_0.4.10             </span></span>
 <span><span class="co">##  [19] rmarkdown_2.30           jquerylib_0.1.4          yaml_2.3.10             </span></span>
 <span><span class="co">##  [22] httpuv_1.6.16            otel_0.2.0               sessioninfo_1.2.3       </span></span>
 <span><span class="co">##  [25] spatstat.sparse_3.1-0    cowplot_1.2.0            DBI_1.2.3               </span></span>
 <span><span class="co">##  [28] RColorBrewer_1.1-3       golem_0.5.1              abind_1.4-8             </span></span>
-<span><span class="co">##  [31] purrr_1.1.0              RCurl_1.98-1.17          tweenr_2.0.3            </span></span>
+<span><span class="co">##  [31] purrr_1.2.0              RCurl_1.98-1.17          tweenr_2.0.3            </span></span>
 <span><span class="co">##  [34] rappdirs_0.3.3           circlize_0.4.16          ggrepel_0.9.6           </span></span>
-<span><span class="co">##  [37] irlba_2.3.5.1            spatstat.utils_3.2-0     terra_1.8-70            </span></span>
-<span><span class="co">##  [40] units_1.0-0              goftest_1.2-3            spatstat.random_3.4-2   </span></span>
-<span><span class="co">##  [43] pkgdown_2.1.3            codetools_0.2-20         DelayedArray_0.36.0     </span></span>
-<span><span class="co">##  [46] DT_0.34.0                scuttle_1.19.0           tidyselect_1.2.1        </span></span>
+<span><span class="co">##  [37] irlba_2.3.5.1            spatstat.utils_3.2-0     terra_1.8-80            </span></span>
+<span><span class="co">##  [40] units_1.0-0              goftest_1.2-3            spatstat.random_3.4-3   </span></span>
+<span><span class="co">##  [43] pkgdown_2.2.0            codetools_0.2-20         DelayedArray_0.36.0     </span></span>
+<span><span class="co">##  [46] DT_0.34.0                scuttle_1.20.0           tidyselect_1.2.1        </span></span>
 <span><span class="co">##  [49] shape_1.4.6.1            farver_2.1.2             viridis_0.6.5           </span></span>
 <span><span class="co">##  [52] ScaledMatrix_1.18.0      shinyWidgets_0.9.0       BiocFileCache_3.0.0     </span></span>
-<span><span class="co">##  [55] spatstat.explore_3.5-3   GenomicAlignments_1.46.0 jsonlite_2.0.0          </span></span>
+<span><span class="co">##  [55] spatstat.explore_3.6-0   GenomicAlignments_1.46.0 jsonlite_2.0.0          </span></span>
 <span><span class="co">##  [58] BiocNeighbors_2.4.0      GetoptLong_1.0.5         e1071_1.7-16            </span></span>
 <span><span class="co">##  [61] scater_1.38.0            iterators_1.0.14         systemfonts_1.3.1       </span></span>
 <span><span class="co">##  [64] foreach_1.5.2            tools_4.5.2              ggnewscale_0.5.2        </span></span>
 <span><span class="co">##  [67] ragg_1.5.0               Rcpp_1.1.0               glue_1.8.0              </span></span>
-<span><span class="co">##  [70] gridExtra_2.3            SparseArray_1.10.0       xfun_0.53               </span></span>
-<span><span class="co">##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.26     </span></span>
-<span><span class="co">##  [76] fastmap_1.2.0            rsvd_1.0.5               digest_0.6.37           </span></span>
+<span><span class="co">##  [70] gridExtra_2.3            SparseArray_1.10.3       xfun_0.54               </span></span>
+<span><span class="co">##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.27     </span></span>
+<span><span class="co">##  [76] fastmap_1.2.0            rsvd_1.0.5               digest_0.6.39           </span></span>
 <span><span class="co">##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.4       </span></span>
 <span><span class="co">##  [82] colorspace_2.1-2         tensor_1.5.1             spatstat.data_3.1-9     </span></span>
-<span><span class="co">##  [85] RSQLite_2.4.3            cigarillo_1.0.0          config_0.3.2            </span></span>
+<span><span class="co">##  [85] RSQLite_2.4.4            cigarillo_1.0.0          config_0.3.2            </span></span>
 <span><span class="co">##  [88] tidyr_1.3.1              data.table_1.17.8        rtracklayer_1.70.0      </span></span>
 <span><span class="co">##  [91] class_7.3-23             httr_1.4.7               htmlwidgets_1.6.4       </span></span>
 <span><span class="co">##  [94] S4Arrays_1.10.0          pkgconfig_2.0.3          gtable_0.3.6            </span></span>
-<span><span class="co">##  [97] blob_1.2.4               ComplexHeatmap_2.26.0    S7_0.2.0                </span></span>
+<span><span class="co">##  [97] blob_1.2.4               ComplexHeatmap_2.26.0    S7_0.2.1                </span></span>
 <span><span class="co">## [100] XVector_0.50.0           htmltools_0.5.8.1        bookdown_0.45           </span></span>
 <span><span class="co">## [103] clue_0.3-66              scales_1.4.0             attempt_0.3.1           </span></span>
-<span><span class="co">## [106] png_0.1-8                spatstat.univar_3.1-4    knitr_1.50              </span></span>
+<span><span class="co">## [106] png_0.1-8                spatstat.univar_3.1-5    knitr_1.50              </span></span>
 <span><span class="co">## [109] rjson_0.2.23             nlme_3.1-168             curl_7.0.0              </span></span>
 <span><span class="co">## [112] proxy_0.4-27             cachem_1.1.0             GlobalOptions_0.1.2     </span></span>
-<span><span class="co">## [115] stringr_1.5.2            BiocVersion_3.22.0       KernSmooth_2.23-26      </span></span>
+<span><span class="co">## [115] stringr_1.6.0            BiocVersion_3.22.0       KernSmooth_2.23-26      </span></span>
 <span><span class="co">## [118] vipor_0.4.7              parallel_4.5.2           AnnotationDbi_1.72.0    </span></span>
 <span><span class="co">## [121] restfulr_0.0.16          desc_1.4.3               pillar_1.11.1           </span></span>
-<span><span class="co">## [124] grid_4.5.2               vctrs_0.6.5              promises_1.4.0          </span></span>
-<span><span class="co">## [127] BiocSingular_1.26.0      dbplyr_2.5.1             beachmat_2.26.0         </span></span>
+<span><span class="co">## [124] grid_4.5.2               vctrs_0.6.5              promises_1.5.0          </span></span>
+<span><span class="co">## [127] BiocSingular_1.26.1      dbplyr_2.5.1             beachmat_2.26.0         </span></span>
 <span><span class="co">## [130] xtable_1.8-4             cluster_2.1.8.1          beeswarm_0.4.0          </span></span>
 <span><span class="co">## [133] paletteer_1.6.0          evaluate_1.0.5           magick_2.9.0            </span></span>
 <span><span class="co">## [136] Rsamtools_2.26.0         cli_3.6.5                locfit_1.5-9.12         </span></span>
@@ -976,11 +976,11 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <span><span class="co">## [145] ggbeeswarm_0.7.2         fs_1.6.6                 stringi_1.8.7           </span></span>
 <span><span class="co">## [148] viridisLite_0.4.2        deldir_2.0-4             BiocParallel_1.44.0     </span></span>
 <span><span class="co">## [151] assertthat_0.2.1         Biostrings_2.78.0        lazyeval_0.2.2          </span></span>
-<span><span class="co">## [154] spatstat.geom_3.6-0      Matrix_1.7-4             ExperimentHub_3.0.0     </span></span>
+<span><span class="co">## [154] spatstat.geom_3.6-1      Matrix_1.7-4             ExperimentHub_3.0.0     </span></span>
 <span><span class="co">## [157] benchmarkme_1.0.8        patchwork_1.3.2          bit64_4.6.0-1           </span></span>
 <span><span class="co">## [160] KEGGREST_1.50.0          statmod_1.5.1            shiny_1.11.1            </span></span>
 <span><span class="co">## [163] AnnotationHub_4.0.0      memoise_2.0.1            bslib_0.9.0             </span></span>
-<span><span class="co">## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.21.6</span></span></code></pre>
+<span><span class="co">## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.22.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
@@ -1027,7 +1027,7 @@ Biotechnology</em> 39 (11): 1375–84. <a href="https://doi.org/10.1038/s41587-0
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.1.3.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
 </div>
 
     </footer>

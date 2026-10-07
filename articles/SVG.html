@@ -7,8 +7,8 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>A framework to discover Spatially Variable genes via spatial clusters • DESpace</title>
 <script src="../deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="../deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="../deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="../deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="../deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="../deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="../deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="../deps/headroom-0.11.0/headroom.min.js"></script><script src="../deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="../deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="../deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="../deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="../deps/search-1.0.0/fuse.min.js"></script><script src="../deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="../pkgdown.js"></script><meta property="og:title" content="A framework to discover Spatially Variable genes via spatial clusters">
 </head>
@@ -20,7 +20,7 @@
 
     <a class="navbar-brand me-2" href="../index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -71,7 +71,7 @@ Tiberi</h4>
 Italy<br><a class="author_email" href="mailto:#"></a><a href="mailto:simone.tiberi@unibo.it" class="email">simone.tiberi@unibo.it</a>
       </address>
                   
-            <h4 data-toc-skip class="date">11/28/2025</h4>
+            <h4 data-toc-skip class="date">10/07/2026</h4>
       
       <small class="dont-index">Source: <a href="https://github.com/peicai/DESpace/blob/main/vignettes/SVG.Rmd" class="external-link"><code>vignettes/SVG.Rmd</code></a></small>
       <div class="d-none name"><code>SVG.Rmd</code></div>
@@ -84,14 +84,13 @@ Italy<br><a class="author_email" href="mailto:#"></a><a href="mailto:simone.tibe
 <h2 id="introduction">Introduction<a class="anchor" aria-label="anchor" href="#introduction"></a>
 </h2>
 <p><em>DESpace</em> is an intuitive framework for identifying spatially
-variable (SV) genes (SVGs) via <em>edgeR</em> <span class="citation">(Robinson, McCarthy, and Smyth 2010)</span>, one of the
-most common methods for performing differential expression analyses.</p>
+variable (SV) genes (SVGs) via <em>edgeR</em> <span class="citation">(Robinson et al. 2010)</span>, one of the most common
+methods for performing differential expression analyses.</p>
 <p>Based on pre-annotated spatial clusters as summarized spatial
 information, <em>DESpace</em> models gene expression using a negative
-binomial (NB), via <em>edgeR</em> <span class="citation">(Robinson,
-McCarthy, and Smyth 2010)</span>, with spatial clusters as covariates.
-SV genes (SVGs) are then identified by testing the significance of
-spatial clusters.</p>
+binomial (NB), via <em>edgeR</em> <span class="citation">(Robinson et
+al. 2010)</span>, with spatial clusters as covariates. SV genes (SVGs)
+are then identified by testing the significance of spatial clusters.</p>
 <p>Our approach assumes that the spatial structure can be summarized by
 spatial clusters, which should reproduce the key features of the tissue
 (e.g., white matter and layers in brain cortex). A significant test of
@@ -147,8 +146,9 @@ issue at <a href="https://github.com/peicai/DESpace/issues" class="external-link
 <p>As an example dataset, we consider a human dorsolateral pre-frontal
 cortex (DLPFC) spatial transcriptomics dataset from the 10x Genomics
 Visium platform, including three neurotypical adult donors (i.e.,
-biological replicates), with four images per subject <span class="citation">(Maynard et al. 2020)</span>. The full dataset consists
-of 12 samples, which can be accessed via <a href="https://bioconductor.org/packages/release/data/experiment/vignettes/spatialLIBD/inst/doc/spatialLIBD.html" class="external-link"><em>spatialLIBD</em></a>
+biological replicates), with four images per subject <span class="citation">(<span class="nocase">Maynard et al.</span>
+2020)</span>. The full dataset consists of 12 samples, which can be
+accessed via <a href="https://bioconductor.org/packages/release/data/experiment/vignettes/spatialLIBD/inst/doc/spatialLIBD.html" class="external-link"><em>spatialLIBD</em></a>
 Bioconductor package.</p>
 <div class="section level3">
 <h3 id="input-data">Input data<a class="anchor" aria-label="anchor" href="#input-data"></a>
@@ -187,12 +187,12 @@ samples</em>.</p>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span><span class="op">$</span><span class="va">gene_name</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span> <span class="op">&lt;-</span> <span class="fu">rowData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">gene_name</span></span></code></pre></div>
 <p>The spatial tissues of each sample were manually annotated in the
-original manuscript <span class="citation">(Maynard et al. 2020)</span>,
-and spots were labeled into one of the following categories: white
-matter (WM) and layers 1 to 6. The manual annotations are stored in
-column <code>layer_guess_reordered</code> of the <code>colData</code>,
-while columns <code>array_col</code> and <code>array_row</code> provide
-the spatial coordinates of spots.</p>
+original manuscript <span class="citation">(<span class="nocase">Maynard
+et al.</span> 2020)</span>, and spots were labeled into one of the
+following categories: white matter (WM) and layers 1 to 6. The manual
+annotations are stored in column <code>layer_guess_reordered</code> of
+the <code>colData</code>, while columns <code>array_col</code> and
+<code>array_row</code> provide the spatial coordinates of spots.</p>
 <div class="sourceCode" id="cb7"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># We select a subset of columns</span></span>
 <span><span class="va">keep_col</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/c.html" class="external-link">c</a></span><span class="op">(</span><span class="va">coordinates</span>,<span class="va">cluster_col</span>,<span class="st">"expr_chrM_ratio"</span>,<span class="st">"cell_count"</span><span class="op">)</span></span>
@@ -228,30 +228,51 @@ low-quality spots.</p>
 <div class="sourceCode" id="cb9"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Sample 1:</span></span>
 <span><span class="co"># Calculate per-spot QC metrics and store in colData</span></span>
-<span><span class="va">spe1</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe1</span>,<span class="op">)</span></span>
-<span><span class="co"># Remove combined set of low-quality spots</span></span>
+<span><span class="va">spe1</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe1</span>,<span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in scuttle::addPerCellQC(spe1, ): 'scuttle::addPerCellQC' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::quickRnaQc.se' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span></code></pre>
+<pre><code><span><span class="co">## Warning in .per_cell_qc_metrics(assay(x, assay.type), subsets = subsets, : 'perCellQCMetrics' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::computeRnaQcMetrics' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span></code></pre>
+<div class="sourceCode" id="cb12"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Remove combined set of low-quality spots</span></span>
 <span><span class="va">spe1</span> <span class="op">&lt;-</span> <span class="va">spe1</span><span class="op">[</span>, <span class="op">!</span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">$</span><span class="va">sum</span> <span class="op">&lt;</span> <span class="fl">10</span> <span class="op">|</span>             <span class="co"># library size</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;</span> <span class="fl">10</span> <span class="op">|</span>         <span class="co"># number of expressed genes</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">$</span><span class="va">expr_chrM_ratio</span> <span class="op">&gt;</span> <span class="fl">0.30</span><span class="op">|</span> <span class="co"># mitochondrial expression ratio</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">$</span><span class="va">cell_count</span> <span class="op">&gt;</span> <span class="fl">10</span><span class="op">)</span><span class="op">]</span>       <span class="co"># number of cells per spot</span></span>
 <span><span class="co"># Sample 2:</span></span>
 <span><span class="co"># Calculate per-spot QC metrics and store in colData</span></span>
-<span><span class="va">spe2</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe2</span>,<span class="op">)</span></span>
-<span><span class="co"># Remove combined set of low-quality spots</span></span>
+<span><span class="va">spe2</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe2</span>,<span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in scuttle::addPerCellQC(spe2, ): 'scuttle::addPerCellQC' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::quickRnaQc.se' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span>
+<span><span class="co">## Warning in scuttle::addPerCellQC(spe2, ): 'perCellQCMetrics' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::computeRnaQcMetrics' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span></code></pre>
+<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Remove combined set of low-quality spots</span></span>
 <span><span class="va">spe2</span> <span class="op">&lt;-</span> <span class="va">spe2</span><span class="op">[</span>, <span class="op">!</span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span><span class="op">$</span><span class="va">sum</span> <span class="op">&lt;</span> <span class="fl">20</span> <span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;</span> <span class="fl">15</span> <span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span><span class="op">$</span><span class="va">expr_chrM_ratio</span> <span class="op">&gt;</span> <span class="fl">0.35</span><span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe2</span><span class="op">)</span><span class="op">$</span><span class="va">cell_count</span> <span class="op">&gt;</span> <span class="fl">8</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># Sample 3:</span></span>
-<span><span class="va">spe3</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe3</span>,<span class="op">)</span></span>
-<span><span class="co"># Remove combined set of low-quality spots</span></span>
+<span><span class="va">spe3</span> <span class="op">&lt;-</span> <span class="fu">scuttle</span><span class="fu">::</span><span class="fu"><a href="https://rdrr.io/pkg/scuttle/man/addPerCellQCMetrics.html" class="external-link">addPerCellQC</a></span><span class="op">(</span><span class="va">spe3</span>,<span class="op">)</span></span></code></pre></div>
+<pre><code><span><span class="co">## Warning in scuttle::addPerCellQC(spe3, ): 'scuttle::addPerCellQC' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::quickRnaQc.se' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span>
+<span><span class="co">## Warning in scuttle::addPerCellQC(spe3, ): 'perCellQCMetrics' is deprecated.</span></span>
+<span><span class="co">## Use 'scrapper::computeRnaQcMetrics' instead.</span></span>
+<span><span class="co">## See help("Deprecated")</span></span></code></pre>
+<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<code class="sourceCode R"><span><span class="co"># Remove combined set of low-quality spots</span></span>
 <span><span class="va">spe3</span> <span class="op">&lt;-</span> <span class="va">spe3</span><span class="op">[</span>, <span class="op">!</span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">sum</span> <span class="op">&lt;</span> <span class="fl">25</span> <span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">detected</span> <span class="op">&lt;</span> <span class="fl">25</span> <span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">expr_chrM_ratio</span> <span class="op">&gt;</span> <span class="fl">0.3</span><span class="op">|</span></span>
 <span>                <span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">$</span><span class="va">cell_count</span> <span class="op">&gt;</span> <span class="fl">15</span><span class="op">)</span><span class="op">]</span></span></code></pre></div>
 <p>Then, we discard lowly abundant genes, which were detected in less
 than 20 spots.</p>
-<div class="sourceCode" id="cb10"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># For each sample i:</span></span>
 <span><span class="kw">for</span><span class="op">(</span><span class="va">i</span> <span class="kw">in</span> <span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">)</span><span class="op">{</span></span>
 <span>    <span class="va">spe_i</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/eval.html" class="external-link">eval</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/parse.html" class="external-link">parse</a></span><span class="op">(</span>text <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"spe"</span>, <span class="va">i</span><span class="op">)</span><span class="op">)</span><span class="op">)</span></span>
@@ -287,7 +308,7 @@ can be easily generated with spatial clustering algorithms.</p>
 pathologist), we can directly use those. With the <code>spe</code> or
 <code>spe</code> object that contains coordinates of the spot-level
 data, we can visualize spatial clusters.</p>
-<div class="sourceCode" id="cb14"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb21"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># View LIBD layers for one sample</span></span>
 <span><span class="va">CD</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/as.data.frame.html" class="external-link">as.data.frame</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe3</span><span class="op">)</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggplot.html" class="external-link">ggplot</a></span><span class="op">(</span><span class="va">CD</span>, </span>
@@ -297,7 +318,7 @@ data, we can visualize spatial clusters.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/paste.html" class="external-link">paste0</a></span><span class="op">(</span><span class="st">"Manually annotated spatial clusters"</span><span class="op">)</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/view%20LIBD%20layers-1.png" class="r-plt" width="480"></p>
+<p><img src="SVG_files/figure-html/view%20LIBD%20layers-1.png" class="r-plt" alt="" width="480"></p>
 </div>
 <div class="section level4">
 <h4 id="spatially-resolved-clustering">Spatially resolved clustering<a class="anchor" aria-label="anchor" href="#spatially-resolved-clustering"></a>
@@ -307,9 +328,7 @@ resolved clustering tools. These methods, by jointly employing spatial
 coordinates and gene expression data, enable obtaining spatial clusters.
 Although, in this vignette we use pre-computed manually annotated
 clusters, below we provide links to two popular spatially resolved
-clustering tools: BayesSpace <span class="citation">(Zhao et al.
-2021)</span> and StLearn <span class="citation">(Pham et al.
-2020)</span>.</p>
+clustering tools: BayesSpace <span class="citation">(<span class="nocase">Zhao et al.</span> 2021)</span> and StLearn <span class="citation">(Pham et al. 2020)</span>.</p>
 <div class="section level5">
 <h5 id="bayesspace">BayesSpace<a class="anchor" aria-label="anchor" href="#bayesspace"></a>
 </h5>
@@ -330,11 +349,11 @@ Louvain or k-means (<a href="https://stlearn.readthedocs.io/en/latest/index.html
 There is a tutorial for using StLearn on this dataset (human DLPFC) <a href="https://stlearn.readthedocs.io/en/latest/tutorials/stSME_clustering.html#Human-Brain-dorsolateral-prefrontal-cortex-(DLPFC)" class="external-link"><em>here</em></a>.</p>
 <p>After running stLearn, we can store results as a <code>csv</code>
 file.</p>
-<div class="sourceCode" id="cb15"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb15-1"><a href="#cb15-1" tabindex="-1"></a><span class="co"># Save spatial results</span></span>
-<span id="cb15-2"><a href="#cb15-2" tabindex="-1"></a>obsm.to_csv(<span class="st">"stLearn_clusters.csv"</span>) </span></code></pre></div>
+<div class="sourceCode" id="cb22"><pre class="sourceCode python"><code class="sourceCode python"><span id="cb22-1"><a href="#cb22-1" tabindex="-1"></a><span class="co"># Save spatial results</span></span>
+<span id="cb22-2"><a href="#cb22-2" tabindex="-1"></a>obsm.to_csv(<span class="st">"stLearn_clusters.csv"</span>) </span></code></pre></div>
 <p>Then, we can load these results in R and store spatial clusters in
 the <code>spe</code> object.</p>
-<div class="sourceCode" id="cb16"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">stLearn_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/utils/read.table.html" class="external-link">read.csv</a></span><span class="op">(</span><span class="st">"stLearn_clusters.csv"</span>, sep <span class="op">=</span> <span class="st">','</span>, </span>
 <span>                            header <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span>
 <span><span class="co"># Match colData(spe) and stLearn results</span></span>
@@ -357,7 +376,7 @@ the <code>spe</code> object.</p>
 defines the column names of <code>colData(spe)</code> containing spatial
 clusters. To obtain all statistics, set <code>verbose</code> to
 <code>TRUE</code> (default value).</p>
-<div class="sourceCode" id="cb17"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb24"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe3</span>,</span>
 <span>                        cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
@@ -367,13 +386,14 @@ clusters. To obtain all statistics, set <code>verbose</code> to
 <pre><code><span><span class="co">## min_counts = 20; min_non_zero_spots = 10.</span></span></code></pre>
 <pre><code><span><span class="co">## The number of genes that pass filtering is 907.</span></span></code></pre>
 <pre><code><span><span class="co">## single sample test</span></span></code></pre>
+<pre><code><span><span class="co">## calcNormFactors has been renamed to normLibSizes</span></span></code></pre>
 <p>A list of results is returned. The main results of interest are
 stored in the <code>gene_results</code>: a <code>data.fame</code>, where
 columns contain gene names (<code>gene_id</code>), likelihood ratio test
 statistics (<code>LR</code>), average (across spots) log-2 counts per
 million (<code>logCPM</code>), raw p-values (<code>PValue</code>) and
 Benjamini-Hochberg adjusted p-values (<code>FDR</code>).</p>
-<div class="sourceCode" id="cb23"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         gene_id       LR   logCPM        PValue           FDR</span></span>
 <span><span class="co">## SNCG       SNCG 1302.530 14.36227 3.069740e-278 2.784255e-275</span></span>
@@ -386,7 +406,7 @@ clusters.</p>
 <p>The third and forth element of the results (<code>DGEGLM</code> and
 <code>DGELRT</code> objects) contain full statistics from
 <code><a href="https://rdrr.io/pkg/edgeR/man/glmfit.html" class="external-link">edgeR::glmFit</a></code> and <code><a href="https://rdrr.io/pkg/edgeR/man/glmLRT.html" class="external-link">edgeR::glmLRT</a></code>.</p>
-<div class="sourceCode" id="cb25"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmLrt</span><span class="op">)</span>; <span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">glmFit</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEList"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
@@ -403,23 +423,23 @@ clusters.</p>
 names. Specifying the column names of spatial coordinates of spots is
 only necessary when they are not named <code>row</code> and
 <code>col</code>.</p>
-<div class="sourceCode" id="cb29"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb37"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="op">(</span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">results</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "SNCG"    "ATP1A3"  "PLEKHH1"</span></span></code></pre>
-<div class="sourceCode" id="cb31"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb39"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, </span>
 <span>            ncol <span class="op">=</span> <span class="fl">3</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot-1.png" class="r-plt" width="700"></p>
+<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot-1.png" class="r-plt" alt="" width="700"></p>
 <p>Additionally, function <code><a href="../reference/FeaturePlot.html">FeaturePlot()</a></code> can draw an outline
 around each cluster.</p>
-<div class="sourceCode" id="cb32"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, </span>
 <span>            annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>,</span>
 <span>            cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
 <span>            cluster <span class="op">=</span> <span class="st">'all'</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20all%20cluster-1.png" class="r-plt" width="700"></p>
+<p><img src="SVG_files/figure-html/expression%20plots%20all%20cluster-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="individual-cluster-test">Individual cluster test<a class="anchor" aria-label="anchor" href="#individual-cluster-test"></a>
@@ -442,7 +462,7 @@ If you want to use pre-computed gene-level dispersion estimates, set
 <code>edgeR_y</code> to <code>estimated_y</code>. Alternatively, if you
 want to re-compute dispersion estimates (significantly slower, but
 marginally more accurate option), leave <code>edgeR_y</code> empty.</p>
-<div class="sourceCode" id="cb33"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb41"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/individual_svg.html">individual_svg</a></span><span class="op">(</span><span class="va">spe3</span>, </span>
 <span>                                    edgeR_y <span class="op">=</span> <span class="va">results</span><span class="op">$</span><span class="va">estimated_y</span>,</span>
@@ -464,10 +484,10 @@ cluster to the rest of the tissue; e.g., a logFC of 2 for WM test
 indicates that the average gene expression in WM is (4 times) higher
 than the average gene expression in non-WM tissue.</p>
 <p>Visualize results for WM.</p>
-<div class="sourceCode" id="cb40"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "list"</span></span></code></pre>
-<div class="sourceCode" id="cb42"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Layer1" "Layer2" "Layer3" "Layer4" "Layer5" "Layer6" "WM"</span></span></code></pre>
 <p><code>top_results</code> function can be used to combine gene-and
@@ -478,7 +498,7 @@ however, users can also choose to only report either, by specifying
 <code>gene_PValue</code> and <code>gene_FDR</code> columns refer to the
 gene-level testing, while the subsequent columns indicate the
 cluster-specific results.</p>
-<div class="sourceCode" id="cb44"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb52"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##   gene_id  gene_LR gene_logCPM   gene_Pvalue      gene_FDR   Layer1_FDR</span></span>
@@ -497,7 +517,7 @@ cluster-specific results.</p>
 <span><span class="co">## 1    0.5492233   -1.0925799 -1.966911</span></span>
 <span><span class="co">## 2    0.3252717   -0.4761104 -1.728962</span></span>
 <span><span class="co">## 3   -0.8053808   -0.1317911  2.320300</span></span></code></pre>
-<div class="sourceCode" id="cb46"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb54"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span>, </span>
 <span>                        select <span class="op">=</span> <span class="st">"FDR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
@@ -515,7 +535,7 @@ cluster-specific results.</p>
 <span><span class="co">## 3 7.857746e-209</span></span></code></pre>
 <p>We can further specify a cluster and check top genes detected by
 <em>DESpace</em>.</p>
-<div class="sourceCode" id="cb48"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check top genes for WM</span></span>
 <span><span class="va">results_WM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                        cluster <span class="op">=</span> <span class="st">"WM"</span><span class="op">)</span></span>
@@ -534,13 +554,13 @@ visualize those with higher (<code>high_low = "high"</code>) or lower
 cluster, compared to the average abundance in the rest of the tissue. By
 default, <code>high_low = “both”</code> and all results are
 provided.</p>
-<div class="sourceCode" id="cb50"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_WM_both</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                                cluster <span class="op">=</span> <span class="st">"WM"</span>, </span>
 <span>                                high_low <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
 <p>Here we present the highly abundant cluster SVGs; i.e., SVGs with
 higher expression in WM compared to the rest of the area.</p>
-<div class="sourceCode" id="cb51"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb59"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
 <span><span class="co">## PLEKHH1      WM PLEKHH1   964.6524       13.69919      2.320300  8.663446e-212</span></span>
@@ -552,7 +572,7 @@ higher expression in WM compared to the rest of the area.</p>
 <span><span class="co">## CMTM5   4.332571e-143</span></span></code></pre>
 <p>We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the area.</p>
-<div class="sourceCode" id="cb53"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb61"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span>, <span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
 <span><span class="co">## ATP1A3       WM  ATP1A3   841.7339       14.68931     -1.728962  4.556686e-185</span></span>
@@ -566,22 +586,22 @@ expression in WM compared to the rest of the area.</p>
 cluster outline can be drawn by specifying the column names of clusters
 stored in <code>colData(spe)</code> and the vector of cluster names via
 <code>cluster_col</code> and <code>cluster</code>.</p>
-<div class="sourceCode" id="cb55"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb63"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with higher than average abundance in WM</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, cluster <span class="op">=</span> <span class="st">'WM'</span>, </span>
 <span>            legend_cluster <span class="op">=</span> <span class="cn">TRUE</span>, annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>            linewidth <span class="op">=</span> <span class="fl">0.6</span>, title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20high_low-1.png" class="r-plt" width="700"></p>
-<div class="sourceCode" id="cb56"><pre class="downlit sourceCode r">
+<p><img src="SVG_files/figure-html/expression%20plots%20high_low-1.png" class="r-plt" alt="" width="700"></p>
+<div class="sourceCode" id="cb64"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with lower than average abundance in WM</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="fu"><a href="../reference/FeaturePlot.html">FeaturePlot</a></span><span class="op">(</span><span class="va">spe3</span>, <span class="va">feature</span>, cluster_col <span class="op">=</span> <span class="va">cluster_col</span>, </span>
 <span>            coordinates <span class="op">=</span> <span class="va">coordinates</span>, cluster <span class="op">=</span> <span class="st">'WM'</span>, </span>
 <span>            legend_cluster <span class="op">=</span> <span class="cn">TRUE</span>, annotation_cluster <span class="op">=</span> <span class="cn">TRUE</span>, </span>
 <span>            linewidth <span class="op">=</span> <span class="fl">0.6</span>,title <span class="op">=</span> <span class="cn">TRUE</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/expression%20plots%20high_low-2.png" class="r-plt" width="700"></p>
+<p><img src="SVG_files/figure-html/expression%20plots%20high_low-2.png" class="r-plt" alt="" width="700"></p>
 </div>
 </div>
 </div>
@@ -608,7 +628,7 @@ labels must be consistent across samples (i.e., WM in sample 1 should
 represent the same tissue as WM in sample 2). With the
 <code>spe.combined</code> object that contains coordinates of the
 spot-level data, we can visualize spatial clusters.</p>
-<div class="sourceCode" id="cb57"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="co"># Use common genes</span></span>
 <span><span class="va">a</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/pkg/BiocGenerics/man/dge.html" class="external-link">counts</a></span><span class="op">(</span><span class="va">spe1</span><span class="op">)</span><span class="op">)</span>; </span>
@@ -630,15 +650,16 @@ spot-level data, we can visualize spatial clusters.</p>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/ggtheme.html" class="external-link">theme_void</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span> <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/scale_continuous.html" class="external-link">scale_y_reverse</a></span><span class="op">(</span><span class="op">)</span> <span class="op">+</span></span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/theme.html" class="external-link">theme</a></span><span class="op">(</span>legend.position<span class="op">=</span><span class="st">"bottom"</span><span class="op">)</span> <span class="op">+</span> </span>
 <span>    <span class="fu"><a href="https://ggplot2.tidyverse.org/reference/labs.html" class="external-link">labs</a></span><span class="op">(</span>color <span class="op">=</span> <span class="st">""</span>, title <span class="op">=</span> <span class="st">"Manually annotated spatial clusters"</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/view%20LIBD%20layers%20%5Bmulti%5D-1.png" class="r-plt" width="700"></p>
+<p><img src="SVG_files/figure-html/view%20LIBD%20layers%20%5Bmulti%5D-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="spatially-resolved-multi-sample-clustering">Spatially resolved (multi-sample) clustering<a class="anchor" aria-label="anchor" href="#spatially-resolved-multi-sample-clustering"></a>
 </h4>
 <p>Similarly to above, if manual annotations are not available, we can
-use spatially resolved clustering tools. Both BayesSpace <span class="citation">(Zhao et al. 2021)</span> and StLearn <span class="citation">(Pham et al. 2020)</span> allow jointly clustering
-multiple samples. In particular each tool has a specific vignettes for
-multi-testing clustering: <a href="https://edward130603.github.io/BayesSpace/articles/joint_clustering.html" class="external-link"><em>BayesSpace
+use spatially resolved clustering tools. Both BayesSpace <span class="citation">(<span class="nocase">Zhao et al.</span> 2021)</span>
+and StLearn <span class="citation">(Pham et al. 2020)</span> allow
+jointly clustering multiple samples. In particular each tool has a
+specific vignettes for multi-testing clustering: <a href="https://edward130603.github.io/BayesSpace/articles/joint_clustering.html" class="external-link"><em>BayesSpace
 vignettes</em></a>, and <a href="https://stlearn.readthedocs.io/en/latest/tutorials/Integration_multiple_datasets.html" class="external-link"><em>stLearn
 vignettes</em></a>.</p>
 <div class="section level5">
@@ -674,7 +695,7 @@ With <code>replicates = TRUE</code>, we fit the multi-sample model.</p>
 <p>The second element of the result (a <code>DGEList</code> object
 <code>estimated_y_multi</code>) contains the estimated common dispersion
 for the multi-sample case.</p>
-<div class="sourceCode" id="cb58"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb66"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">multi_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe.combined</span>,</span>
 <span>                                cluster_col <span class="op">=</span> <span class="va">cluster_col</span>,</span>
@@ -686,9 +707,10 @@ for the multi-sample case.</p>
 <pre><code><span><span class="co">## The number of genes that pass filtering is 827.</span></span></code></pre>
 <pre><code><span><span class="co">## multi-sample test</span></span></code></pre>
 <pre><code><span><span class="co">## Repeated column names found in count matrix</span></span></code></pre>
+<pre><code><span><span class="co">## calcNormFactors has been renamed to normLibSizes</span></span></code></pre>
 <p>A list of results are returned. The main results of interest are
 stored in the <code>gene_results</code>.</p>
-<div class="sourceCode" id="cb65"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##        gene_id       LR   logCPM PValue FDR</span></span>
 <span><span class="co">## HPCAL1  HPCAL1 2063.951 14.41886      0   0</span></span>
@@ -698,7 +720,7 @@ stored in the <code>gene_results</code>.</p>
 <code>estimated_y</code>) contains the estimated common dispersion,
 which can later be used to speed-up calculation when testing individual
 clusters.</p>
-<div class="sourceCode" id="cb67"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb76"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">estimated_y</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "DGEList"</span></span>
 <span><span class="co">## attr(,"package")</span></span>
@@ -706,15 +728,15 @@ clusters.</p>
 <p>For each sample, we can visualize the gene expression of the most
 significant SVGs. Note that column names of spatial coordinates of spots
 should be <code>row</code> and <code>col</code>.</p>
-<div class="sourceCode" id="cb69"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb78"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Top three spatially variable genes</span></span>
 <span><span class="va">feature</span> <span class="op">&lt;-</span> <span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span><span class="op">$</span><span class="va">gene_id</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span>; <span class="va">feature</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "HPCAL1" "NSF"    "ATP1A3"</span></span></code></pre>
-<div class="sourceCode" id="cb71"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb80"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Sample names</span></span>
 <span><span class="va">samples</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/unique.html" class="external-link">unique</a></span><span class="op">(</span><span class="fu">colData</span><span class="op">(</span><span class="va">spe.combined</span><span class="op">)</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span>; <span class="va">samples</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "151507" "151669" "151673"</span></span></code></pre>
-<div class="sourceCode" id="cb73"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb82"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co">## Use purrr::map to combine multiple figures</span></span>
 <span><span class="va">spot_plots</span> <span class="op">&lt;-</span> <span class="fu">purrr</span><span class="fu">::</span><span class="fu"><a href="https://purrr.tidyverse.org/reference/map.html" class="external-link">map</a></span><span class="op">(</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_along</a></span><span class="op">(</span><span class="va">samples</span><span class="op">)</span>, <span class="kw">function</span><span class="op">(</span><span class="va">j</span><span class="op">)</span> <span class="op">{</span></span>
 <span>    <span class="co">## Subset spe for each sample j</span></span>
@@ -727,7 +749,7 @@ should be <code>row</code> and <code>col</code>.</p>
 <span>    <span class="kw"><a href="https://rdrr.io/r/base/function.html" class="external-link">return</a></span><span class="op">(</span><span class="va">spot_plots</span><span class="op">)</span></span>
 <span><span class="op">}</span><span class="op">)</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">spot_plots</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot%20%5Bmulti%5D-1.png" class="r-plt" width="700"></p>
+<p><img src="SVG_files/figure-html/top%20SVGs%20expression%20plot%20%5Bmulti%5D-1.png" class="r-plt" alt="" width="700"></p>
 </div>
 <div class="section level4">
 <h4 id="individual-cluster-test-1">Individual cluster test<a class="anchor" aria-label="anchor" href="#individual-cluster-test-1"></a>
@@ -736,7 +758,7 @@ should be <code>row</code> and <code>col</code>.</p>
 framework can discover the key SV spatial clusters also when jointly
 fitting multiple samples. For a multi-sample testing, set
 <code>replicates = TRUE</code> in <code><a href="../reference/individual_svg.html">individual_svg()</a></code>.</p>
-<div class="sourceCode" id="cb74"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">cluster_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/individual_svg.html">individual_svg</a></span><span class="op">(</span><span class="va">spe.combined</span>, </span>
 <span>                                edgeR_y <span class="op">=</span> <span class="va">multi_results</span><span class="op">$</span><span class="va">estimated_y</span>,</span>
@@ -754,15 +776,15 @@ this case, logFC refers to the log2-FC between the average abundance,
 across all samples, of a spatial cluster and the average abundance of
 all remaining clusters (e.g., WM vs. non-WM tissue).</p>
 <p>Visualize results for WM.</p>
-<div class="sourceCode" id="cb81"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/class.html" class="external-link">class</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "list"</span></span></code></pre>
-<div class="sourceCode" id="cb83"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/names.html" class="external-link">names</a></span><span class="op">(</span><span class="va">cluster_results</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">## [1] "Layer1" "Layer2" "Layer3" "Layer4" "Layer5" "Layer6" "WM"</span></span></code></pre>
 <p>As above, <code>top_results</code> function can be used to combine
 gene-level and cluster-level results.</p>
-<div class="sourceCode" id="cb85"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">merge_res</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span><span class="va">multi_results</span><span class="op">$</span><span class="va">gene_results</span>, <span class="va">cluster_results</span>, </span>
 <span>                        select <span class="op">=</span> <span class="st">"FDR"</span><span class="op">)</span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">merge_res</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
@@ -776,7 +798,7 @@ gene-level and cluster-level results.</p>
 <span><span class="co">## 3  4.327942e-01 1.896550e-24  3.643074e-60 1.000256e-01 3.073861e-147</span></span></code></pre>
 <p>We can further select a cluster of interest, and check the top genes
 detected in that cluster.</p>
-<div class="sourceCode" id="cb87"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Check top genes for WM</span></span>
 <span><span class="va">results_WM</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                        cluster <span class="op">=</span> <span class="st">"WM"</span><span class="op">)</span></span>
@@ -792,12 +814,12 @@ detected in that cluster.</p>
 <span><span class="co">## SNCG    3.342351e-167</span></span></code></pre>
 <p>With <code>high_low = "both"</code>, we can further filter genes to
 visualize highly and lowly abundant SVGs.</p>
-<div class="sourceCode" id="cb89"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">results_WM_both</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/top_results.html">top_results</a></span><span class="op">(</span>cluster_results <span class="op">=</span> <span class="va">cluster_results</span>, </span>
 <span>                            cluster <span class="op">=</span> <span class="st">"WM"</span>, high_low <span class="op">=</span> <span class="st">"both"</span><span class="op">)</span></span></code></pre></div>
 <p>Here we present the highly abundant cluster SVGs; i.e., SVGs with
 higher expression in WM compared to the rest of the tissue.</p>
-<div class="sourceCode" id="cb90"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
 <span><span class="co">## PLEKHH1      WM PLEKHH1   933.0257       14.00544      1.725113  6.494982e-205</span></span>
@@ -809,7 +831,7 @@ higher expression in WM compared to the rest of the tissue.</p>
 <span><span class="co">## CMTM5   3.493095e-134</span></span></code></pre>
 <p>We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the tissue.</p>
-<div class="sourceCode" id="cb92"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb101"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/head.html" class="external-link">head</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">low_genes</span>,<span class="fl">3</span><span class="op">)</span></span></code></pre></div>
 <pre><code><span><span class="co">##         Cluster gene_id Cluster_LR Cluster_logCPM Cluster_logFC Cluster_PValue</span></span>
 <span><span class="co">## ATP1A3       WM  ATP1A3   893.8603       14.88558     -1.285887  2.120889e-196</span></span>
@@ -820,7 +842,7 @@ expression in WM compared to the rest of the tissue.</p>
 <span><span class="co">## SNCG    3.342351e-167</span></span>
 <span><span class="co">## PRKAR1B 8.440878e-153</span></span></code></pre>
 <p>Visualize the gene expression of top three genes for layer WM.</p>
-<div class="sourceCode" id="cb94"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb103"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># SVGs with higher abundance in WM, than in non-WM tissue</span></span>
 <span><span class="va">feature_high</span> <span class="op">&lt;-</span> <span class="fu"><a href="https://rdrr.io/r/base/colnames.html" class="external-link">rownames</a></span><span class="op">(</span><span class="va">results_WM_both</span><span class="op">$</span><span class="va">high_genes</span><span class="op">)</span><span class="op">[</span><span class="fu"><a href="https://rdrr.io/r/base/seq.html" class="external-link">seq_len</a></span><span class="op">(</span><span class="fl">3</span><span class="op">)</span><span class="op">]</span></span>
 <span><span class="co"># SVGs with lower abundance in WM, than in non-WM tissue</span></span>
@@ -848,11 +870,11 @@ expression in WM compared to the rest of the tissue.</p>
 <span><span class="op">}</span></span>
 <span><span class="co"># Expression plots for SVGs with higher abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_high</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" width="960"></p>
-<div class="sourceCode" id="cb95"><pre class="downlit sourceCode r">
+<p><img src="SVG_files/figure-html/unnamed-chunk-13-1.png" class="r-plt" alt="" width="960"></p>
+<div class="sourceCode" id="cb104"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="co"># Expression plots for SVGs with lower abundance in WM, than in non-WM tissue</span></span>
 <span><span class="fu">patchwork</span><span class="fu">::</span><span class="fu"><a href="https://patchwork.data-imaginist.com/reference/wrap_plots.html" class="external-link">wrap_plots</a></span><span class="op">(</span><span class="va">plot_list_low</span>, ncol<span class="op">=</span><span class="fl">1</span><span class="op">)</span></span></code></pre></div>
-<p><img src="SVG_files/figure-html/unnamed-chunk-13-2.png" class="r-plt" width="960"></p>
+<p><img src="SVG_files/figure-html/unnamed-chunk-13-2.png" class="r-plt" alt="" width="960"></p>
 </div>
 <div class="section level4">
 <h4 id="sample-specific-covariates-e-g--batch-effects">Sample-specific covariates (e.g., batch effects)<a class="anchor" aria-label="anchor" href="#sample-specific-covariates-e-g--batch-effects"></a>
@@ -868,7 +890,7 @@ and (sample-specific) covariates is not possible because the two
 variables are nested.</p>
 <p>To show an example application, we artificially separate samples in 2
 batches:</p>
-<div class="sourceCode" id="cb96"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb105"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="va">spe.combined</span><span class="op">$</span><span class="va">batch_id</span> <span class="op">=</span> <span class="fu"><a href="https://rdrr.io/r/base/ifelse.html" class="external-link">ifelse</a></span><span class="op">(</span><span class="va">spe.combined</span><span class="op">$</span><span class="va">sample_id</span> <span class="op">==</span> <span class="st">"151507"</span>, <span class="st">"batch_1"</span>, <span class="st">"batch_2"</span><span class="op">)</span></span>
 <span></span>
 <span><span class="fu"><a href="https://rdrr.io/r/base/table.html" class="external-link">table</a></span><span class="op">(</span><span class="va">spe.combined</span><span class="op">$</span><span class="va">batch_id</span>, <span class="va">spe.combined</span><span class="op">$</span><span class="va">sample_id</span><span class="op">)</span></span></code></pre></div>
@@ -879,7 +901,7 @@ batches:</p>
 <p>Analyses are performed, as explained above, in Section 5; yet, when
 running <code>svg_test</code>, we set the <code>sample_col</code> to
 <code>batch_id</code>:</p>
-<div class="sourceCode" id="cb98"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb107"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/base/Random.html" class="external-link">set.seed</a></span><span class="op">(</span><span class="fl">123</span><span class="op">)</span></span>
 <span><span class="va">batch_results</span> <span class="op">&lt;-</span> <span class="fu"><a href="../reference/svg_test.html">svg_test</a></span><span class="op">(</span>spe <span class="op">=</span> <span class="va">spe.combined</span>,</span>
 <span>                                cluster_col <span class="op">=</span> <span class="va">cluster_col</span>,</span>
@@ -891,11 +913,11 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <div class="section level2">
 <h2 id="session-info">Session info<a class="anchor" aria-label="anchor" href="#session-info"></a>
 </h2>
-<div class="sourceCode" id="cb99"><pre class="downlit sourceCode r">
+<div class="sourceCode" id="cb108"><pre class="downlit sourceCode r">
 <code class="sourceCode R"><span><span class="fu"><a href="https://rdrr.io/r/utils/sessionInfo.html" class="external-link">sessionInfo</a></span><span class="op">(</span><span class="op">)</span></span></code></pre></div>
-<pre><code><span><span class="co">## R version 4.5.2 Patched (2025-11-24 r89071)</span></span>
+<pre><code><span><span class="co">## R version 4.6.1 Patched (2026-10-05 r90643)</span></span>
 <span><span class="co">## Platform: x86_64-pc-linux-gnu</span></span>
-<span><span class="co">## Running under: Ubuntu 24.04.3 LTS</span></span>
+<span><span class="co">## Running under: Ubuntu 24.04.5 LTS</span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## Matrix products: default</span></span>
 <span><span class="co">## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 </span></span>
@@ -915,91 +937,88 @@ running <code>svg_test</code>, we set the <code>sample_col</code> to
 <span><span class="co">## [8] base     </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## other attached packages:</span></span>
-<span><span class="co">##  [1] SpatialExperiment_1.20.0    SingleCellExperiment_1.32.0</span></span>
-<span><span class="co">##  [3] SummarizedExperiment_1.40.0 Biobase_2.70.0             </span></span>
-<span><span class="co">##  [5] GenomicRanges_1.62.0        Seqinfo_1.0.0              </span></span>
-<span><span class="co">##  [7] IRanges_2.44.0              S4Vectors_0.48.0           </span></span>
-<span><span class="co">##  [9] BiocGenerics_0.56.0         generics_0.1.4             </span></span>
-<span><span class="co">## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          </span></span>
-<span><span class="co">## [13] ggforce_0.5.0               ggplot2_4.0.1              </span></span>
-<span><span class="co">## [15] DESpace_2.3.2               BiocStyle_2.38.0           </span></span>
+<span><span class="co">##  [1] SpatialExperiment_1.22.0    SingleCellExperiment_1.34.0</span></span>
+<span><span class="co">##  [3] SummarizedExperiment_1.42.0 Biobase_2.72.0             </span></span>
+<span><span class="co">##  [5] GenomicRanges_1.64.0        Seqinfo_1.2.0              </span></span>
+<span><span class="co">##  [7] IRanges_2.46.0              S4Vectors_0.50.3           </span></span>
+<span><span class="co">##  [9] BiocGenerics_0.58.1         generics_0.1.4             </span></span>
+<span><span class="co">## [11] MatrixGenerics_1.24.0       matrixStats_1.5.0          </span></span>
+<span><span class="co">## [13] ggforce_0.5.0               ggplot2_4.0.3              </span></span>
+<span><span class="co">## [15] DESpace_2.5.1               BiocStyle_2.40.0           </span></span>
 <span><span class="co">## </span></span>
 <span><span class="co">## loaded via a namespace (and not attached):</span></span>
-<span><span class="co">##   [1] later_1.4.4              BiocIO_1.20.0            bitops_1.0-9            </span></span>
-<span><span class="co">##   [4] filelock_1.0.3           tibble_3.3.0             polyclip_1.10-7         </span></span>
-<span><span class="co">##   [7] XML_3.99-0.20            lifecycle_1.0.4          httr2_1.2.1             </span></span>
-<span><span class="co">##  [10] sf_1.0-22                edgeR_4.8.0              doParallel_1.0.17       </span></span>
-<span><span class="co">##  [13] lattice_0.22-7           MASS_7.3-65              magrittr_2.0.4          </span></span>
-<span><span class="co">##  [16] limma_3.66.0             plotly_4.11.0            sass_0.4.10             </span></span>
-<span><span class="co">##  [19] rmarkdown_2.30           jquerylib_0.1.4          yaml_2.3.10             </span></span>
-<span><span class="co">##  [22] httpuv_1.6.16            otel_0.2.0               sessioninfo_1.2.3       </span></span>
-<span><span class="co">##  [25] spatstat.sparse_3.1-0    cowplot_1.2.0            DBI_1.2.3               </span></span>
-<span><span class="co">##  [28] RColorBrewer_1.1-3       golem_0.5.1              abind_1.4-8             </span></span>
-<span><span class="co">##  [31] purrr_1.2.0              RCurl_1.98-1.17          tweenr_2.0.3            </span></span>
-<span><span class="co">##  [34] rappdirs_0.3.3           circlize_0.4.16          ggrepel_0.9.6           </span></span>
-<span><span class="co">##  [37] irlba_2.3.5.1            spatstat.utils_3.2-0     terra_1.8-80            </span></span>
-<span><span class="co">##  [40] units_1.0-0              goftest_1.2-3            spatstat.random_3.4-3   </span></span>
-<span><span class="co">##  [43] pkgdown_2.2.0            codetools_0.2-20         DelayedArray_0.36.0     </span></span>
-<span><span class="co">##  [46] DT_0.34.0                scuttle_1.20.0           tidyselect_1.2.1        </span></span>
+<span><span class="co">##   [1] later_1.4.8              BiocIO_1.22.0            bitops_1.1-0            </span></span>
+<span><span class="co">##   [4] filelock_1.0.3           tibble_3.3.1             polyclip_1.10-7         </span></span>
+<span><span class="co">##   [7] XML_3.99-0.25            lifecycle_1.0.5          httr2_1.3.0             </span></span>
+<span><span class="co">##  [10] sf_1.1-3                 edgeR_4.10.5             doParallel_1.0.17       </span></span>
+<span><span class="co">##  [13] lattice_0.23-1           MASS_7.3-66              magrittr_2.0.5          </span></span>
+<span><span class="co">##  [16] limma_3.68.5             plotly_4.12.1            sass_0.4.10             </span></span>
+<span><span class="co">##  [19] rmarkdown_2.32           jquerylib_0.1.4          yaml_2.3.12             </span></span>
+<span><span class="co">##  [22] httpuv_1.6.17            otel_0.2.0               sessioninfo_1.2.4       </span></span>
+<span><span class="co">##  [25] spatstat.sparse_3.2-0    cowplot_1.2.0            DBI_1.3.0               </span></span>
+<span><span class="co">##  [28] RColorBrewer_1.1-3       golem_1.0.1              abind_1.4-8             </span></span>
+<span><span class="co">##  [31] purrr_1.2.2              RCurl_1.98-1.20          tweenr_2.0.3            </span></span>
+<span><span class="co">##  [34] rappdirs_0.3.4           circlize_0.4.18          ggrepel_0.9.8           </span></span>
+<span><span class="co">##  [37] irlba_2.4.1              spatstat.utils_3.2-5     terra_1.9-50            </span></span>
+<span><span class="co">##  [40] units_1.0-1              goftest_1.2-3            spatstat.random_3.5-2   </span></span>
+<span><span class="co">##  [43] pkgdown_2.2.1            codetools_0.2-20         DelayedArray_0.38.2     </span></span>
+<span><span class="co">##  [46] DT_0.34.0                scuttle_1.22.0           tidyselect_1.2.1        </span></span>
 <span><span class="co">##  [49] shape_1.4.6.1            farver_2.1.2             viridis_0.6.5           </span></span>
-<span><span class="co">##  [52] ScaledMatrix_1.18.0      shinyWidgets_0.9.0       BiocFileCache_3.0.0     </span></span>
-<span><span class="co">##  [55] spatstat.explore_3.6-0   GenomicAlignments_1.46.0 jsonlite_2.0.0          </span></span>
-<span><span class="co">##  [58] BiocNeighbors_2.4.0      GetoptLong_1.0.5         e1071_1.7-16            </span></span>
-<span><span class="co">##  [61] scater_1.38.0            iterators_1.0.14         systemfonts_1.3.1       </span></span>
-<span><span class="co">##  [64] foreach_1.5.2            tools_4.5.2              ggnewscale_0.5.2        </span></span>
-<span><span class="co">##  [67] ragg_1.5.0               Rcpp_1.1.0               glue_1.8.0              </span></span>
-<span><span class="co">##  [70] gridExtra_2.3            SparseArray_1.10.3       xfun_0.54               </span></span>
-<span><span class="co">##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.27     </span></span>
+<span><span class="co">##  [52] ScaledMatrix_1.20.0      shinyWidgets_0.9.1       BiocFileCache_3.2.0     </span></span>
+<span><span class="co">##  [55] spatstat.explore_3.8-3   GenomicAlignments_1.48.0 jsonlite_2.0.0          </span></span>
+<span><span class="co">##  [58] BiocNeighbors_2.6.0      GetoptLong_1.1.1         e1071_1.7-17            </span></span>
+<span><span class="co">##  [61] scater_1.40.2            iterators_1.0.14         systemfonts_1.3.2       </span></span>
+<span><span class="co">##  [64] foreach_1.5.2            tools_4.6.1              ggnewscale_0.5.2        </span></span>
+<span><span class="co">##  [67] ragg_1.5.2               Rcpp_1.1.2               glue_1.8.1              </span></span>
+<span><span class="co">##  [70] gridExtra_2.3.1          SparseArray_1.12.3       xfun_0.61               </span></span>
+<span><span class="co">##  [73] dplyr_1.2.1              withr_3.0.3              BiocManager_1.30.27     </span></span>
 <span><span class="co">##  [76] fastmap_1.2.0            rsvd_1.0.5               digest_0.6.39           </span></span>
-<span><span class="co">##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.4       </span></span>
-<span><span class="co">##  [82] colorspace_2.1-2         tensor_1.5.1             spatstat.data_3.1-9     </span></span>
-<span><span class="co">##  [85] RSQLite_2.4.4            cigarillo_1.0.0          config_0.3.2            </span></span>
-<span><span class="co">##  [88] tidyr_1.3.1              data.table_1.17.8        rtracklayer_1.70.0      </span></span>
-<span><span class="co">##  [91] class_7.3-23             httr_1.4.7               htmlwidgets_1.6.4       </span></span>
-<span><span class="co">##  [94] S4Arrays_1.10.0          pkgconfig_2.0.3          gtable_0.3.6            </span></span>
-<span><span class="co">##  [97] blob_1.2.4               ComplexHeatmap_2.26.0    S7_0.2.1                </span></span>
-<span><span class="co">## [100] XVector_0.50.0           htmltools_0.5.8.1        bookdown_0.45           </span></span>
-<span><span class="co">## [103] clue_0.3-66              scales_1.4.0             attempt_0.3.1           </span></span>
-<span><span class="co">## [106] png_0.1-8                spatstat.univar_3.1-5    knitr_1.50              </span></span>
-<span><span class="co">## [109] rjson_0.2.23             nlme_3.1-168             curl_7.0.0              </span></span>
-<span><span class="co">## [112] proxy_0.4-27             cachem_1.1.0             GlobalOptions_0.1.2     </span></span>
-<span><span class="co">## [115] stringr_1.6.0            BiocVersion_3.22.0       KernSmooth_2.23-26      </span></span>
-<span><span class="co">## [118] vipor_0.4.7              parallel_4.5.2           AnnotationDbi_1.72.0    </span></span>
-<span><span class="co">## [121] restfulr_0.0.16          desc_1.4.3               pillar_1.11.1           </span></span>
-<span><span class="co">## [124] grid_4.5.2               vctrs_0.6.5              promises_1.5.0          </span></span>
-<span><span class="co">## [127] BiocSingular_1.26.1      dbplyr_2.5.1             beachmat_2.26.0         </span></span>
-<span><span class="co">## [130] xtable_1.8-4             cluster_2.1.8.1          beeswarm_0.4.0          </span></span>
-<span><span class="co">## [133] paletteer_1.6.0          evaluate_1.0.5           magick_2.9.0            </span></span>
-<span><span class="co">## [136] Rsamtools_2.26.0         cli_3.6.5                locfit_1.5-9.12         </span></span>
-<span><span class="co">## [139] compiler_4.5.2           rlang_1.1.6              crayon_1.5.3            </span></span>
+<span><span class="co">##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.5       </span></span>
+<span><span class="co">##  [82] colorspace_2.1-3         tensor_1.5.1             spatstat.data_3.1-9     </span></span>
+<span><span class="co">##  [85] RSQLite_3.53.3           cigarillo_1.2.1          config_0.3.2            </span></span>
+<span><span class="co">##  [88] tidyr_1.3.2              data.table_1.18.6.1      rtracklayer_1.72.0      </span></span>
+<span><span class="co">##  [91] class_7.3-24             httr_1.4.9               htmlwidgets_1.6.4       </span></span>
+<span><span class="co">##  [94] S4Arrays_1.12.1          pkgconfig_2.0.3          gtable_0.3.6            </span></span>
+<span><span class="co">##  [97] blob_1.3.0               ComplexHeatmap_2.28.0    S7_0.2.2                </span></span>
+<span><span class="co">## [100] XVector_0.52.0           htmltools_0.5.9          bookdown_0.48           </span></span>
+<span><span class="co">## [103] clue_0.3-68              scales_1.4.0             png_0.1-9               </span></span>
+<span><span class="co">## [106] attempt_0.3.1            spatstat.univar_3.2-0    knitr_1.52              </span></span>
+<span><span class="co">## [109] rjson_0.2.23             nlme_3.1-171             curl_8.0.0              </span></span>
+<span><span class="co">## [112] proxy_0.4-29             cachem_1.1.0             GlobalOptions_0.1.4     </span></span>
+<span><span class="co">## [115] stringr_1.6.0            BiocVersion_3.23.1       KernSmooth_2.23-27      </span></span>
+<span><span class="co">## [118] vipor_0.4.7              parallel_4.6.1           AnnotationDbi_1.74.0    </span></span>
+<span><span class="co">## [121] restfulr_0.0.17          desc_1.4.3               pillar_1.11.1           </span></span>
+<span><span class="co">## [124] grid_4.6.1               vctrs_0.7.3              promises_1.5.0          </span></span>
+<span><span class="co">## [127] BiocSingular_1.28.0      dbplyr_2.6.0             beachmat_2.28.0         </span></span>
+<span><span class="co">## [130] xtable_1.8-8             cluster_2.1.8.3          beeswarm_0.4.0          </span></span>
+<span><span class="co">## [133] paletteer_1.7.0          evaluate_1.0.5           magick_2.9.1            </span></span>
+<span><span class="co">## [136] Rsamtools_2.28.0         cli_3.6.6                locfit_1.5-9.12         </span></span>
+<span><span class="co">## [139] compiler_4.6.1           rlang_1.3.0              crayon_1.5.3            </span></span>
 <span><span class="co">## [142] labeling_0.4.3           classInt_0.4-11          rematch2_2.1.2          </span></span>
-<span><span class="co">## [145] ggbeeswarm_0.7.2         fs_1.6.6                 stringi_1.8.7           </span></span>
-<span><span class="co">## [148] viridisLite_0.4.2        deldir_2.0-4             BiocParallel_1.44.0     </span></span>
-<span><span class="co">## [151] assertthat_0.2.1         Biostrings_2.78.0        lazyeval_0.2.2          </span></span>
-<span><span class="co">## [154] spatstat.geom_3.6-1      Matrix_1.7-4             ExperimentHub_3.0.0     </span></span>
-<span><span class="co">## [157] benchmarkme_1.0.8        patchwork_1.3.2          bit64_4.6.0-1           </span></span>
-<span><span class="co">## [160] KEGGREST_1.50.0          statmod_1.5.1            shiny_1.11.1            </span></span>
-<span><span class="co">## [163] AnnotationHub_4.0.0      memoise_2.0.1            bslib_0.9.0             </span></span>
-<span><span class="co">## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.22.0</span></span></code></pre>
+<span><span class="co">## [145] ggbeeswarm_0.7.3         fs_2.1.0                 stringi_1.8.9           </span></span>
+<span><span class="co">## [148] viridisLite_0.4.3        deldir_2.0-4             BiocParallel_1.46.0     </span></span>
+<span><span class="co">## [151] assertthat_0.2.1         Biostrings_2.80.2        spatstat.geom_3.8-3     </span></span>
+<span><span class="co">## [154] Matrix_1.7-6             ExperimentHub_3.2.2      benchmarkme_1.0.8       </span></span>
+<span><span class="co">## [157] patchwork_1.3.2          bit64_4.8.6              KEGGREST_1.52.2         </span></span>
+<span><span class="co">## [160] statmod_1.5.2            shiny_1.14.0             AnnotationHub_4.2.2     </span></span>
+<span><span class="co">## [163] memoise_2.0.1            bslib_0.12.0             benchmarkmeData_2.0.0   </span></span>
+<span><span class="co">## [166] bit_4.6.0                spatialLIBD_1.24.0</span></span></code></pre>
 </div>
 <div class="section level2">
 <h2 class="unnumbered" id="references">References<a class="anchor" aria-label="anchor" href="#references"></a>
 </h2>
-<div id="refs" class="references csl-bib-body hanging-indent" entry-spacing="0">
+<div id="refs" class="references csl-bib-body hanging-indent">
 <div id="ref-LIBD" class="csl-entry">
-Maynard, Kristen R, Leonardo Collado-Torres, Lukas M Weber, Cedric
-Uytingco, Brianna K Barry, Stephen R Williams, Joseph L Catallini, et
-al. 2020. <span>“Transcriptome-Scale Spatial Gene Expression in the
-Human Dorsolateral Prefrontal Cortex.”</span> <em>BioRxiv</em>, 2020–02.
-<a href="https://doi.org/10.1038/s41593-020-00787-0" class="external-link">https://doi.org/10.1038/s41593-020-00787-0</a>.
+<span class="nocase">Maynard, Kristen R, Leonardo Collado-Torres, Lukas
+M Weber, et al.</span> 2020. <span>“Transcriptome-Scale Spatial Gene
+Expression in the Human Dorsolateral Prefrontal Cortex.”</span>
+<em>BioRxiv</em>, 2020–02. <a href="https://doi.org/10.1038/s41593-020-00787-0" class="external-link">https://doi.org/10.1038/s41593-020-00787-0</a>.
 </div>
 <div id="ref-stLearn" class="csl-entry">
-Pham, Duy, Xiao Tan, Jun Xu, Laura F Grice, Pui Yeng Lam, Arti Raghubar,
-Jana Vukovic, Marc J Ruitenberg, and Quan Nguyen. 2020.
-<span>“St<span>L</span>earn: Integrating Spatial Location, Tissue
-Morphology and Gene Expression to Find Cell Types, Cell-Cell
-Interactions and Spatial Trajectories Within Undissociated
-Tissues.”</span> <em>Biorxiv</em>, 2020–05. <a href="https://doi.org/doi:10.1093/bioinformatics/btz914" class="external-link">https://doi.org/doi:10.1093/bioinformatics/btz914</a>.
+Pham, Duy, Xiao Tan, Jun Xu, et al. 2020. <span>“St<span>L</span>earn:
+Integrating Spatial Location, Tissue Morphology and Gene Expression to
+Find Cell Types, Cell-Cell Interactions and Spatial Trajectories Within
+Undissociated Tissues.”</span> <em>Biorxiv</em>, 2020–05. <a href="https://doi.org/doi:10.1093/bioinformatics/btz914" class="external-link">https://doi.org/doi:10.1093/bioinformatics/btz914</a>.
 </div>
 <div id="ref-edgeR" class="csl-entry">
 Robinson, Mark D, Davis J McCarthy, and Gordon K Smyth. 2010.
@@ -1008,10 +1027,9 @@ Analysis of Digital Gene Expression Data.”</span>
 <em>Bioinformatics</em> 26 (1): 139–40. <a href="https://doi.org/10.1093/bioinformatics/btp616" class="external-link">https://doi.org/10.1093/bioinformatics/btp616</a>.
 </div>
 <div id="ref-BayesSpace" class="csl-entry">
-Zhao, Edward, Matthew R Stone, Xing Ren, Jamie Guenthoer, Kimberly S
-Smythe, Thomas Pulliam, Stephen R Williams, et al. 2021. <span>“Spatial
-Transcriptomics at Subspot Resolution with
-<span>B</span>ayes<span>S</span>pace.”</span> <em>Nature
+<span class="nocase">Zhao, Edward, Matthew R Stone, Xing Ren, et
+al.</span> 2021. <span>“Spatial Transcriptomics at Subspot Resolution
+with <span>B</span>ayes<span>S</span>pace.”</span> <em>Nature
 Biotechnology</em> 39 (11): 1375–84. <a href="https://doi.org/10.1038/s41587-021-00935-2" class="external-link">https://doi.org/10.1038/s41587-021-00935-2</a>.
 </div>
 </div>
@@ -1023,11 +1041,11 @@ Biotechnology</em> 39 (11): 1375–84. <a href="https://doi.org/10.1038/s41587-0
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Peiying Cai, Simone Tiberi.</p>
+  <p>Developed by Peiying Cai, Mark D. Robinson, Simone Tiberi.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

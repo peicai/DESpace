@@ -7,12 +7,12 @@
 <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
 <title>DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions • DESpace</title>
 <script src="deps/jquery-3.6.0/jquery-3.6.0.min.js"></script><meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
-<link href="deps/bootstrap-5.3.1/bootstrap.min.css" rel="stylesheet">
-<script src="deps/bootstrap-5.3.1/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
+<link href="deps/bootstrap-5.3.8/bootstrap.min.css" rel="stylesheet">
+<script src="deps/bootstrap-5.3.8/bootstrap.bundle.min.js"></script><link href="deps/font-awesome-6.5.2/css/all.min.css" rel="stylesheet">
 <link href="deps/font-awesome-6.5.2/css/v4-shims.min.css" rel="stylesheet">
 <script src="deps/headroom-0.11.0/headroom.min.js"></script><script src="deps/headroom-0.11.0/jQuery.headroom.min.js"></script><script src="deps/bootstrap-toc-1.0.1/bootstrap-toc.min.js"></script><script src="deps/clipboard.js-2.0.11/clipboard.min.js"></script><script src="deps/search-1.0.0/autocomplete.jquery.min.js"></script><script src="deps/search-1.0.0/fuse.min.js"></script><script src="deps/search-1.0.0/mark.min.js"></script><!-- pkgdown --><script src="pkgdown.js"></script><meta property="og:title" content="DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions">
-<meta name="description" content="Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses. Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. SVGs are then identified by testing the significance of spatial clusters. For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates. DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions.">
-<meta property="og:description" content="Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses. Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. SVGs are then identified by testing the significance of spatial clusters. For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates. DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions.">
+<meta name="description" content="Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses. Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. SVGs are then identified by testing the significance of spatial clusters. For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates. DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions. See Cai et al. (2024) &lt;doi:10.1093/bioinformatics/btae027&gt; and Cai et al. (2026) &lt;doi:10.1093/bioinformatics/btag450&gt;.">
+<meta property="og:description" content="Intuitive framework for identifying spatially variable genes (SVGs) and differential spatial variable pattern (DSP) between conditions via edgeR, a popular method for performing differential expression analyses. Based on pre-annotated spatial clusters as summarized spatial information, DESpace models gene expression using a negative binomial (NB), via edgeR, with spatial clusters as covariates. SVGs are then identified by testing the significance of spatial clusters. For multi-sample, multi-condition datasets, we again fit a NB model via edgeR, incorporating spatial clusters, conditions and their interactions as covariates. DSP genes-representing differences in spatial gene expression patterns across experimental conditions-are identified by testing the interaction between spatial clusters and conditions. See Cai et al. (2024) &lt;doi:10.1093/bioinformatics/btae027&gt; and Cai et al. (2026) &lt;doi:10.1093/bioinformatics/btag450&gt;.">
 </head>
 <body>
     <a href="#main" class="visually-hidden-focusable">Skip to contents</a>
@@ -22,7 +22,7 @@
 
     <a class="navbar-brand me-2" href="index.html">DESpace</a>
 
-    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.3.2</small>
+    <small class="nav-text text-muted me-auto" data-bs-toggle="tooltip" data-bs-placement="bottom" title="">2.5.1</small>
 
 
     <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbar" aria-controls="navbar" aria-expanded="false" aria-label="Toggle navigation">
@@ -55,21 +55,24 @@
   <main id="main" class="col-md-9"><div class="section level1">
 <div class="page-header"><h1 id="despace-a-framework-to-discover-spatially-variable-genes-and-differential-spatial-patterns-across-conditions">DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions<a class="anchor" aria-label="anchor" href="#despace-a-framework-to-discover-spatially-variable-genes-and-differential-spatial-patterns-across-conditions"></a>
 </h1></div>
-<p><img src="reference/figures/DESpace.png" width="200" align="right" alt="Alt text"></p>
+<p><img src="reference/figures/DESpace.png" width="200" align="right" alt="DESpace logo"></p>
+<p><a href="https://bioconductor.org/checkResults/release/bioc-LATEST/DESpace" class="external-link"><img src="https://bioconductor.org/shields/build/release/bioc/DESpace.svg" alt="Bioc release"></a> <a href="https://bioconductor.org/checkResults/devel/bioc-LATEST/DESpace" class="external-link"><img src="https://bioconductor.org/shields/build/devel/bioc/DESpace.svg" alt="Bioc devel"></a> <a href="https://bioconductor.org/packages/DESpace" class="external-link"><img src="https://bioconductor.org/shields/years-in-bioc/DESpace.svg" alt="Bioc years"></a> <a href="https://bioconductor.org/packages/stats/bioc/DESpace" class="external-link"><img src="https://bioconductor.org/shields/downloads/release/DESpace.svg" alt="Bioc downloads"></a></p>
 <p><code>DESpace</code> is a framework for identifying spatially variable genes (SVGs), a common task in spatial transcriptomics analyses, and differential spatial variable pattern (DSP) genes, which identify differences in spatial gene expression patterns across experimental conditions.</p>
 <p>By leveraging pre-annotated spatial clusters as summarized spatial information, <code>DESpace</code> models gene expression with a negative binomial (NB), via <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html" class="external-link">edgeR</a>, with spatial clusters as covariates. SV genes are then identified by testing the significance of spatial clusters.</p>
 <p>For multi-sample, multi-condition datasets, again we fit a NB model via <a href="https://bioconductor.org/packages/release/bioc/html/edgeR.html" class="external-link">edgeR</a>, but this time we use spatial clusters, conditions and their interactions as covariates. DSP genes are then identified by testing the interaction between spatial clusters and conditions.</p>
 <p>Check the <a href="https://peicai.github.io/DESpace/articles/SVG.html">vignettes</a> for a description of the main conceptual and mathematical aspects, as well as usage guidelines.</p>
+<div class="section level2">
+<h2 id="citation">Citation<a class="anchor" aria-label="anchor" href="#citation"></a>
+</h2>
+<p>If you use <code>DESpace</code>, please cite:</p>
 <blockquote>
-<p>Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024).</p>
-<p>DESpace: spatially variable gene detection via differential expression testing of spatial clusters.</p>
-<p>Bioinformatics. Available <a href="https://doi.org/10.1093/bioinformatics/btae027" class="external-link">here</a></p>
+<p>Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024). DESpace: spatially variable gene detection via differential expression testing of spatial clusters. <em>Bioinformatics</em>, 40(2), btae027. <a href="https://doi.org/10.1093/bioinformatics/btae027" class="external-link">doi:10.1093/bioinformatics/btae027</a></p>
 </blockquote>
 <blockquote>
-<p>Peiying Cai, Mark D. Robinson, and Simone Tiberi (2025).</p>
-<p>DESpace2: detection of differential spatial patterns in spatial omics data.</p>
-<p>bioRxiv preprint. Available <a href="https://www.biorxiv.org/content/10.1101/2025.06.30.662268v1" class="external-link">here</a></p>
+<p>Peiying Cai, Mark D. Robinson, and Simone Tiberi (2026). DESpace2: detection of differential spatial patterns in spatial omics data. <em>Bioinformatics</em>, 42(Supplement_2), btag450. <a href="https://doi.org/10.1093/bioinformatics/btag450" class="external-link">doi:10.1093/bioinformatics/btag450</a></p>
 </blockquote>
+<p>The citation information is also available from R via <code>citation("DESpace")</code>.</p>
+</div>
 <div class="section level2">
 <h2 id="bioconductor-installation">Bioconductor installation<a class="anchor" aria-label="anchor" href="#bioconductor-installation"></a>
 </h2>
@@ -118,6 +121,7 @@
 <h2 data-toc-skip>Developers</h2>
 <ul class="list-unstyled">
 <li>Peiying Cai <br><small class="roles"> Author, maintainer </small> <a href="https://orcid.org/0009-0001-9229-2244" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
+<li>Mark D. Robinson <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-3048-5518" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 <li>Simone Tiberi <br><small class="roles"> Author </small> <a href="https://orcid.org/0000-0002-3054-9964" target="orcid.widget" aria-label="ORCID" class="external-link"><span class="fab fa-orcid orcid" aria-hidden="true"></span></a>  </li>
 </ul>
 </div>
@@ -129,11 +133,11 @@
 
 
     <footer><div class="pkgdown-footer-left">
-  <p>Developed by Peiying Cai, Simone Tiberi.</p>
+  <p>Developed by Peiying Cai, Mark D. Robinson, Simone Tiberi.</p>
 </div>
 
 <div class="pkgdown-footer-right">
-  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.0.</p>
+  <p>Site built with <a href="https://pkgdown.r-lib.org/" class="external-link">pkgdown</a> 2.2.1.</p>
 </div>
 
     </footer>

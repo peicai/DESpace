@@ -5,15 +5,14 @@
 ## Introduction
 
 *DESpace* is an intuitive framework for identifying spatially variable
-(SV) genes (SVGs) via *edgeR* (Robinson, McCarthy, and Smyth 2010), one
-of the most common methods for performing differential expression
-analyses.
+(SV) genes (SVGs) via *edgeR* (Robinson et al. 2010), one of the most
+common methods for performing differential expression analyses.
 
 Based on pre-annotated spatial clusters as summarized spatial
 information, *DESpace* models gene expression using a negative binomial
-(NB), via *edgeR* (Robinson, McCarthy, and Smyth 2010), with spatial
-clusters as covariates. SV genes (SVGs) are then identified by testing
-the significance of spatial clusters.
+(NB), via *edgeR* (Robinson et al. 2010), with spatial clusters as
+covariates. SV genes (SVGs) are then identified by testing the
+significance of spatial clusters.
 
 Our approach assumes that the spatial structure can be summarized by
 spatial clusters, which should reproduce the key features of the tissue
@@ -40,6 +39,7 @@ packages (e.g., SpatialLIBD, and edgeR).
 the following command:
 
 ``` r
+
 if (!requireNamespace("BiocManager", quietly = TRUE)) {
     install.packages("BiocManager")
 }
@@ -56,6 +56,7 @@ Bioconductor-devel branch or from GitHub.
 To access the R code used in the vignettes, type:
 
 ``` r
+
 browseVignettes("DESpace")
 ```
 
@@ -65,12 +66,14 @@ Questions relative to *DESpace* should be reported as a new issue at
 To cite *DESpace*, type:
 
 ``` r
+
 citation("DESpace")
 ```
 
 Load R packages:
 
 ``` r
+
 suppressMessages({
     library(DESpace)
     library(ggplot2)
@@ -99,6 +102,7 @@ single sample, whose data is stored in `spe3` whereas all 3 samples will
 later be jointly used in Section 4 *Multiple samples*.
 
 ``` r
+
 # Connect to ExperimentHub
 ehub <- ExperimentHub::ExperimentHub()
 # Download the full real data (about 2.1 GB in RAM) use:
@@ -106,6 +110,7 @@ spe_all <- spatialLIBD::fetch_data(type = "spe", eh = ehub)
 ```
 
 ``` r
+
 # Specify column names of spatial coordinates in colData(spe) 
 coordinates <- c("array_row", "array_col")
 # Specify column names of spatial clusters in colData(spe) 
@@ -137,6 +142,7 @@ the `colData`, while columns `array_col` and `array_row` provide the
 spatial coordinates of spots.
 
 ``` r
+
 # We select a subset of columns
 keep_col <- c(coordinates,cluster_col,"expr_chrM_ratio","cell_count")
 head(colData(spe3)[keep_col])
@@ -172,9 +178,22 @@ expression, and number of cells per spot are used to identify
 low-quality spots.
 
 ``` r
+
 # Sample 1:
 # Calculate per-spot QC metrics and store in colData
 spe1 <- scuttle::addPerCellQC(spe1,)
+```
+
+    ## Warning in scuttle::addPerCellQC(spe1, ): 'scuttle::addPerCellQC' is deprecated.
+    ## Use 'scrapper::quickRnaQc.se' instead.
+    ## See help("Deprecated")
+
+    ## Warning in .per_cell_qc_metrics(assay(x, assay.type), subsets = subsets, : 'perCellQCMetrics' is deprecated.
+    ## Use 'scrapper::computeRnaQcMetrics' instead.
+    ## See help("Deprecated")
+
+``` r
+
 # Remove combined set of low-quality spots
 spe1 <- spe1[, !(colData(spe1)$sum < 10 |             # library size
                 colData(spe1)$detected < 10 |         # number of expressed genes
@@ -183,6 +202,17 @@ spe1 <- spe1[, !(colData(spe1)$sum < 10 |             # library size
 # Sample 2:
 # Calculate per-spot QC metrics and store in colData
 spe2 <- scuttle::addPerCellQC(spe2,)
+```
+
+    ## Warning in scuttle::addPerCellQC(spe2, ): 'scuttle::addPerCellQC' is deprecated.
+    ## Use 'scrapper::quickRnaQc.se' instead.
+    ## See help("Deprecated")
+    ## Warning in scuttle::addPerCellQC(spe2, ): 'perCellQCMetrics' is deprecated.
+    ## Use 'scrapper::computeRnaQcMetrics' instead.
+    ## See help("Deprecated")
+
+``` r
+
 # Remove combined set of low-quality spots
 spe2 <- spe2[, !(colData(spe2)$sum < 20 |
                 colData(spe2)$detected < 15 |
@@ -190,6 +220,17 @@ spe2 <- spe2[, !(colData(spe2)$sum < 20 |
                 colData(spe2)$cell_count > 8)]
 # Sample 3:
 spe3 <- scuttle::addPerCellQC(spe3,)
+```
+
+    ## Warning in scuttle::addPerCellQC(spe3, ): 'scuttle::addPerCellQC' is deprecated.
+    ## Use 'scrapper::quickRnaQc.se' instead.
+    ## See help("Deprecated")
+    ## Warning in scuttle::addPerCellQC(spe3, ): 'perCellQCMetrics' is deprecated.
+    ## Use 'scrapper::computeRnaQcMetrics' instead.
+    ## See help("Deprecated")
+
+``` r
+
 # Remove combined set of low-quality spots
 spe3 <- spe3[, !(colData(spe3)$sum < 25 |
                 colData(spe3)$detected < 25 |
@@ -201,6 +242,7 @@ Then, we discard lowly abundant genes, which were detected in less than
 20 spots.
 
 ``` r
+
 # For each sample i:
 for(i in seq_len(3)){
     spe_i <- eval(parse(text = paste0("spe", i)))
@@ -239,6 +281,7 @@ we can directly use those. With the `spe` or `spe` object that contains
 coordinates of the spot-level data, we can visualize spatial clusters.
 
 ``` r
+
 # View LIBD layers for one sample
 CD <- as.data.frame(colData(spe3))
 ggplot(CD, 
@@ -294,6 +337,7 @@ Then, we can load these results in R and store spatial clusters in the
 `spe` object.
 
 ``` r
+
 stLearn_results <- read.csv("stLearn_clusters.csv", sep = ',', 
                             header = TRUE)
 # Match colData(spe) and stLearn results
@@ -315,6 +359,7 @@ spatial clusters. To obtain all statistics, set `verbose` to `TRUE`
 (default value).
 
 ``` r
+
 set.seed(123)
 results <- svg_test(spe = spe3,
                         cluster_col = cluster_col, 
@@ -331,6 +376,8 @@ results <- svg_test(spe = spe3,
 
     ## single sample test
 
+    ## calcNormFactors has been renamed to normLibSizes
+
 A list of results is returned. The main results of interest are stored
 in the `gene_results`: a `data.fame`, where columns contain gene names
 (`gene_id`), likelihood ratio test statistics (`LR`), average (across
@@ -338,6 +385,7 @@ spots) log-2 counts per million (`logCPM`), raw p-values (`PValue`) and
 Benjamini-Hochberg adjusted p-values (`FDR`).
 
 ``` r
+
 head(results$gene_results, 3)
 ```
 
@@ -356,6 +404,7 @@ objects) contain full statistics from
 [`edgeR::glmLRT`](https://rdrr.io/pkg/edgeR/man/glmLRT.html).
 
 ``` r
+
 class(results$estimated_y); class(results$glmLrt); class(results$glmFit)
 ```
 
@@ -379,12 +428,14 @@ coordinates of spots is only necessary when they are not named `row` and
 `col`.
 
 ``` r
+
 (feature <- results$gene_results$gene_id[seq_len(3)])
 ```
 
     ## [1] "SNCG"    "ATP1A3"  "PLEKHH1"
 
 ``` r
+
 FeaturePlot(spe3, feature, 
             coordinates = coordinates, 
             ncol = 3, title = TRUE)
@@ -397,6 +448,7 @@ Additionally, function
 can draw an outline around each cluster.
 
 ``` r
+
 FeaturePlot(spe3, feature, 
             coordinates = coordinates, 
             annotation_cluster = TRUE,
@@ -429,6 +481,7 @@ estimates (significantly slower, but marginally more accurate option),
 leave `edgeR_y` empty.
 
 ``` r
+
 set.seed(123)
 cluster_results <- individual_svg(spe3, 
                                     edgeR_y = results$estimated_y,
@@ -460,12 +513,14 @@ is (4 times) higher than the average gene expression in non-WM tissue.
 Visualize results for WM.
 
 ``` r
+
 class(cluster_results)
 ```
 
     ## [1] "list"
 
 ``` r
+
 names(cluster_results)
 ```
 
@@ -481,6 +536,7 @@ the gene-level testing, while the subsequent columns indicate the
 cluster-specific results.
 
 ``` r
+
 merge_res <- top_results(results$gene_results, cluster_results)
 head(merge_res,3)
 ```
@@ -503,6 +559,7 @@ head(merge_res,3)
     ## 3   -0.8053808   -0.1317911  2.320300
 
 ``` r
+
 merge_res <- top_results(results$gene_results, cluster_results, 
                         select = "FDR")
 head(merge_res,3)
@@ -525,6 +582,7 @@ We can further specify a cluster and check top genes detected by
 *DESpace*.
 
 ``` r
+
 # Check top genes for WM
 results_WM <- top_results(cluster_results = cluster_results, 
                         cluster = "WM")
@@ -547,6 +605,7 @@ abundance in the rest of the tissue. By default, `high_low = “both”` and
 all results are provided.
 
 ``` r
+
 results_WM_both <- top_results(cluster_results = cluster_results, 
                                 cluster = "WM", 
                                 high_low = "both")
@@ -556,6 +615,7 @@ Here we present the highly abundant cluster SVGs; i.e., SVGs with higher
 expression in WM compared to the rest of the area.
 
 ``` r
+
 head(results_WM_both$high_genes, 3)
 ```
 
@@ -572,6 +632,7 @@ We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the area.
 
 ``` r
+
 head(results_WM_both$low_genes, 3)
 ```
 
@@ -590,6 +651,7 @@ in `colData(spe)` and the vector of cluster names via `cluster_col` and
 `cluster`.
 
 ``` r
+
 # SVGs with higher than average abundance in WM
 feature <- rownames(results_WM_both$high_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, cluster_col = cluster_col, 
@@ -601,6 +663,7 @@ FeaturePlot(spe3, feature, cluster_col = cluster_col,
 ![](SVG_files/figure-html/expression%20plots%20high_low-1.png)
 
 ``` r
+
 # SVGs with lower than average abundance in WM
 feature <- rownames(results_WM_both$low_genes)[seq_len(3)]
 FeaturePlot(spe3, feature, cluster_col = cluster_col, 
@@ -635,6 +698,7 @@ object that contains coordinates of the spot-level data, we can
 visualize spatial clusters.
 
 ``` r
+
 set.seed(123)
 # Use common genes
 a <- rownames(counts(spe1)); 
@@ -701,6 +765,7 @@ The second element of the result (a `DGEList` object
 multi-sample case.
 
 ``` r
+
 set.seed(123)
 multi_results <- svg_test(spe = spe.combined,
                                 cluster_col = cluster_col,
@@ -720,10 +785,13 @@ multi_results <- svg_test(spe = spe.combined,
 
     ## Repeated column names found in count matrix
 
+    ## calcNormFactors has been renamed to normLibSizes
+
 A list of results are returned. The main results of interest are stored
 in the `gene_results`.
 
 ``` r
+
 head(multi_results$gene_results,3)
 ```
 
@@ -737,6 +805,7 @@ contains the estimated common dispersion, which can later be used to
 speed-up calculation when testing individual clusters.
 
 ``` r
+
 class(multi_results$estimated_y)
 ```
 
@@ -749,6 +818,7 @@ significant SVGs. Note that column names of spatial coordinates of spots
 should be `row` and `col`.
 
 ``` r
+
 ## Top three spatially variable genes
 feature <- multi_results$gene_results$gene_id[seq_len(3)]; feature
 ```
@@ -756,6 +826,7 @@ feature <- multi_results$gene_results$gene_id[seq_len(3)]; feature
     ## [1] "HPCAL1" "NSF"    "ATP1A3"
 
 ``` r
+
 ## Sample names
 samples <- unique(colData(spe.combined)$sample_id); samples
 ```
@@ -763,6 +834,7 @@ samples <- unique(colData(spe.combined)$sample_id); samples
     ## [1] "151507" "151669" "151673"
 
 ``` r
+
 ## Use purrr::map to combine multiple figures
 spot_plots <- purrr::map(seq_along(samples), function(j) {
     ## Subset spe for each sample j
@@ -787,6 +859,7 @@ multiple samples. For a multi-sample testing, set `replicates = TRUE` in
 [`individual_svg()`](https://peicai.github.io/DESpace/reference/individual_svg.md).
 
 ``` r
+
 set.seed(123)
 cluster_results <- individual_svg(spe.combined, 
                                 edgeR_y = multi_results$estimated_y,
@@ -816,12 +889,14 @@ tissue).
 Visualize results for WM.
 
 ``` r
+
 class(cluster_results)
 ```
 
     ## [1] "list"
 
 ``` r
+
 names(cluster_results)
 ```
 
@@ -831,6 +906,7 @@ As above, `top_results` function can be used to combine gene-level and
 cluster-level results.
 
 ``` r
+
 merge_res <- top_results(multi_results$gene_results, cluster_results, 
                         select = "FDR")
 head(merge_res,3)
@@ -849,6 +925,7 @@ We can further select a cluster of interest, and check the top genes
 detected in that cluster.
 
 ``` r
+
 # Check top genes for WM
 results_WM <- top_results(cluster_results = cluster_results, 
                         cluster = "WM")
@@ -869,6 +946,7 @@ With `high_low = "both"`, we can further filter genes to visualize
 highly and lowly abundant SVGs.
 
 ``` r
+
 results_WM_both <- top_results(cluster_results = cluster_results, 
                             cluster = "WM", high_low = "both")
 ```
@@ -877,6 +955,7 @@ Here we present the highly abundant cluster SVGs; i.e., SVGs with higher
 expression in WM compared to the rest of the tissue.
 
 ``` r
+
 head(results_WM_both$high_genes,3)
 ```
 
@@ -893,6 +972,7 @@ We visualize the lowly abundant cluster SVGs; i.e., SVGs with lower
 expression in WM compared to the rest of the tissue.
 
 ``` r
+
 head(results_WM_both$low_genes,3)
 ```
 
@@ -908,6 +988,7 @@ head(results_WM_both$low_genes,3)
 Visualize the gene expression of top three genes for layer WM.
 
 ``` r
+
 # SVGs with higher abundance in WM, than in non-WM tissue
 feature_high <- rownames(results_WM_both$high_genes)[seq_len(3)]
 # SVGs with lower abundance in WM, than in non-WM tissue
@@ -940,6 +1021,7 @@ patchwork::wrap_plots(plot_list_high, ncol=1)
 ![](SVG_files/figure-html/unnamed-chunk-13-1.png)
 
 ``` r
+
 # Expression plots for SVGs with lower abundance in WM, than in non-WM tissue
 patchwork::wrap_plots(plot_list_low, ncol=1)
 ```
@@ -962,6 +1044,7 @@ To show an example application, we artificially separate samples in 2
 batches:
 
 ``` r
+
 spe.combined$batch_id = ifelse(spe.combined$sample_id == "151507", "batch_1", "batch_2")
 
 table(spe.combined$batch_id, spe.combined$sample_id)
@@ -976,6 +1059,7 @@ Analyses are performed, as explained above, in Section 5; yet, when
 running `svg_test`, we set the `sample_col` to `batch_id`:
 
 ``` r
+
 set.seed(123)
 batch_results <- svg_test(spe = spe.combined,
                                 cluster_col = cluster_col,
@@ -986,12 +1070,13 @@ batch_results <- svg_test(spe = spe.combined,
 ## Session info
 
 ``` r
+
 sessionInfo()
 ```
 
-    ## R version 4.5.2 Patched (2025-11-24 r89071)
+    ## R version 4.6.1 Patched (2026-10-05 r90643)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.5 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -1011,86 +1096,84 @@ sessionInfo()
     ## [8] base     
     ## 
     ## other attached packages:
-    ##  [1] SpatialExperiment_1.20.0    SingleCellExperiment_1.32.0
-    ##  [3] SummarizedExperiment_1.40.0 Biobase_2.70.0             
-    ##  [5] GenomicRanges_1.62.0        Seqinfo_1.0.0              
-    ##  [7] IRanges_2.44.0              S4Vectors_0.48.0           
-    ##  [9] BiocGenerics_0.56.0         generics_0.1.4             
-    ## [11] MatrixGenerics_1.22.0       matrixStats_1.5.0          
-    ## [13] ggforce_0.5.0               ggplot2_4.0.1              
-    ## [15] DESpace_2.3.2               BiocStyle_2.38.0           
+    ##  [1] SpatialExperiment_1.22.0    SingleCellExperiment_1.34.0
+    ##  [3] SummarizedExperiment_1.42.0 Biobase_2.72.0             
+    ##  [5] GenomicRanges_1.64.0        Seqinfo_1.2.0              
+    ##  [7] IRanges_2.46.0              S4Vectors_0.50.3           
+    ##  [9] BiocGenerics_0.58.1         generics_0.1.4             
+    ## [11] MatrixGenerics_1.24.0       matrixStats_1.5.0          
+    ## [13] ggforce_0.5.0               ggplot2_4.0.3              
+    ## [15] DESpace_2.5.1               BiocStyle_2.40.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] later_1.4.4              BiocIO_1.20.0            bitops_1.0-9            
-    ##   [4] filelock_1.0.3           tibble_3.3.0             polyclip_1.10-7         
-    ##   [7] XML_3.99-0.20            lifecycle_1.0.4          httr2_1.2.1             
-    ##  [10] sf_1.0-22                edgeR_4.8.0              doParallel_1.0.17       
-    ##  [13] lattice_0.22-7           MASS_7.3-65              magrittr_2.0.4          
-    ##  [16] limma_3.66.0             plotly_4.11.0            sass_0.4.10             
-    ##  [19] rmarkdown_2.30           jquerylib_0.1.4          yaml_2.3.10             
-    ##  [22] httpuv_1.6.16            otel_0.2.0               sessioninfo_1.2.3       
-    ##  [25] spatstat.sparse_3.1-0    cowplot_1.2.0            DBI_1.2.3               
-    ##  [28] RColorBrewer_1.1-3       golem_0.5.1              abind_1.4-8             
-    ##  [31] purrr_1.2.0              RCurl_1.98-1.17          tweenr_2.0.3            
-    ##  [34] rappdirs_0.3.3           circlize_0.4.16          ggrepel_0.9.6           
-    ##  [37] irlba_2.3.5.1            spatstat.utils_3.2-0     terra_1.8-80            
-    ##  [40] units_1.0-0              goftest_1.2-3            spatstat.random_3.4-3   
-    ##  [43] pkgdown_2.2.0            codetools_0.2-20         DelayedArray_0.36.0     
-    ##  [46] DT_0.34.0                scuttle_1.20.0           tidyselect_1.2.1        
+    ##   [1] later_1.4.8              BiocIO_1.22.0            bitops_1.1-0            
+    ##   [4] filelock_1.0.3           tibble_3.3.1             polyclip_1.10-7         
+    ##   [7] XML_3.99-0.25            lifecycle_1.0.5          httr2_1.3.0             
+    ##  [10] sf_1.1-3                 edgeR_4.10.5             doParallel_1.0.17       
+    ##  [13] lattice_0.23-1           MASS_7.3-66              magrittr_2.0.5          
+    ##  [16] limma_3.68.5             plotly_4.12.1            sass_0.4.10             
+    ##  [19] rmarkdown_2.32           jquerylib_0.1.4          yaml_2.3.12             
+    ##  [22] httpuv_1.6.17            otel_0.2.0               sessioninfo_1.2.4       
+    ##  [25] spatstat.sparse_3.2-0    cowplot_1.2.0            DBI_1.3.0               
+    ##  [28] RColorBrewer_1.1-3       golem_1.0.1              abind_1.4-8             
+    ##  [31] purrr_1.2.2              RCurl_1.98-1.20          tweenr_2.0.3            
+    ##  [34] rappdirs_0.3.4           circlize_0.4.18          ggrepel_0.9.8           
+    ##  [37] irlba_2.4.1              spatstat.utils_3.2-5     terra_1.9-50            
+    ##  [40] units_1.0-1              goftest_1.2-3            spatstat.random_3.5-2   
+    ##  [43] pkgdown_2.2.1            codetools_0.2-20         DelayedArray_0.38.2     
+    ##  [46] DT_0.34.0                scuttle_1.22.0           tidyselect_1.2.1        
     ##  [49] shape_1.4.6.1            farver_2.1.2             viridis_0.6.5           
-    ##  [52] ScaledMatrix_1.18.0      shinyWidgets_0.9.0       BiocFileCache_3.0.0     
-    ##  [55] spatstat.explore_3.6-0   GenomicAlignments_1.46.0 jsonlite_2.0.0          
-    ##  [58] BiocNeighbors_2.4.0      GetoptLong_1.0.5         e1071_1.7-16            
-    ##  [61] scater_1.38.0            iterators_1.0.14         systemfonts_1.3.1       
-    ##  [64] foreach_1.5.2            tools_4.5.2              ggnewscale_0.5.2        
-    ##  [67] ragg_1.5.0               Rcpp_1.1.0               glue_1.8.0              
-    ##  [70] gridExtra_2.3            SparseArray_1.10.3       xfun_0.54               
-    ##  [73] dplyr_1.1.4              withr_3.0.2              BiocManager_1.30.27     
+    ##  [52] ScaledMatrix_1.20.0      shinyWidgets_0.9.1       BiocFileCache_3.2.0     
+    ##  [55] spatstat.explore_3.8-3   GenomicAlignments_1.48.0 jsonlite_2.0.0          
+    ##  [58] BiocNeighbors_2.6.0      GetoptLong_1.1.1         e1071_1.7-17            
+    ##  [61] scater_1.40.2            iterators_1.0.14         systemfonts_1.3.2       
+    ##  [64] foreach_1.5.2            tools_4.6.1              ggnewscale_0.5.2        
+    ##  [67] ragg_1.5.2               Rcpp_1.1.2               glue_1.8.1              
+    ##  [70] gridExtra_2.3.1          SparseArray_1.12.3       xfun_0.61               
+    ##  [73] dplyr_1.2.1              withr_3.0.3              BiocManager_1.30.27     
     ##  [76] fastmap_1.2.0            rsvd_1.0.5               digest_0.6.39           
-    ##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.4       
-    ##  [82] colorspace_2.1-2         tensor_1.5.1             spatstat.data_3.1-9     
-    ##  [85] RSQLite_2.4.4            cigarillo_1.0.0          config_0.3.2            
-    ##  [88] tidyr_1.3.1              data.table_1.17.8        rtracklayer_1.70.0      
-    ##  [91] class_7.3-23             httr_1.4.7               htmlwidgets_1.6.4       
-    ##  [94] S4Arrays_1.10.0          pkgconfig_2.0.3          gtable_0.3.6            
-    ##  [97] blob_1.2.4               ComplexHeatmap_2.26.0    S7_0.2.1                
-    ## [100] XVector_0.50.0           htmltools_0.5.8.1        bookdown_0.45           
-    ## [103] clue_0.3-66              scales_1.4.0             attempt_0.3.1           
-    ## [106] png_0.1-8                spatstat.univar_3.1-5    knitr_1.50              
-    ## [109] rjson_0.2.23             nlme_3.1-168             curl_7.0.0              
-    ## [112] proxy_0.4-27             cachem_1.1.0             GlobalOptions_0.1.2     
-    ## [115] stringr_1.6.0            BiocVersion_3.22.0       KernSmooth_2.23-26      
-    ## [118] vipor_0.4.7              parallel_4.5.2           AnnotationDbi_1.72.0    
-    ## [121] restfulr_0.0.16          desc_1.4.3               pillar_1.11.1           
-    ## [124] grid_4.5.2               vctrs_0.6.5              promises_1.5.0          
-    ## [127] BiocSingular_1.26.1      dbplyr_2.5.1             beachmat_2.26.0         
-    ## [130] xtable_1.8-4             cluster_2.1.8.1          beeswarm_0.4.0          
-    ## [133] paletteer_1.6.0          evaluate_1.0.5           magick_2.9.0            
-    ## [136] Rsamtools_2.26.0         cli_3.6.5                locfit_1.5-9.12         
-    ## [139] compiler_4.5.2           rlang_1.1.6              crayon_1.5.3            
+    ##  [79] R6_2.6.1                 mime_0.13                textshaping_1.0.5       
+    ##  [82] colorspace_2.1-3         tensor_1.5.1             spatstat.data_3.1-9     
+    ##  [85] RSQLite_3.53.3           cigarillo_1.2.1          config_0.3.2            
+    ##  [88] tidyr_1.3.2              data.table_1.18.6.1      rtracklayer_1.72.0      
+    ##  [91] class_7.3-24             httr_1.4.9               htmlwidgets_1.6.4       
+    ##  [94] S4Arrays_1.12.1          pkgconfig_2.0.3          gtable_0.3.6            
+    ##  [97] blob_1.3.0               ComplexHeatmap_2.28.0    S7_0.2.2                
+    ## [100] XVector_0.52.0           htmltools_0.5.9          bookdown_0.48           
+    ## [103] clue_0.3-68              scales_1.4.0             png_0.1-9               
+    ## [106] attempt_0.3.1            spatstat.univar_3.2-0    knitr_1.52              
+    ## [109] rjson_0.2.23             nlme_3.1-171             curl_8.0.0              
+    ## [112] proxy_0.4-29             cachem_1.1.0             GlobalOptions_0.1.4     
+    ## [115] stringr_1.6.0            BiocVersion_3.23.1       KernSmooth_2.23-27      
+    ## [118] vipor_0.4.7              parallel_4.6.1           AnnotationDbi_1.74.0    
+    ## [121] restfulr_0.0.17          desc_1.4.3               pillar_1.11.1           
+    ## [124] grid_4.6.1               vctrs_0.7.3              promises_1.5.0          
+    ## [127] BiocSingular_1.28.0      dbplyr_2.6.0             beachmat_2.28.0         
+    ## [130] xtable_1.8-8             cluster_2.1.8.3          beeswarm_0.4.0          
+    ## [133] paletteer_1.7.0          evaluate_1.0.5           magick_2.9.1            
+    ## [136] Rsamtools_2.28.0         cli_3.6.6                locfit_1.5-9.12         
+    ## [139] compiler_4.6.1           rlang_1.3.0              crayon_1.5.3            
     ## [142] labeling_0.4.3           classInt_0.4-11          rematch2_2.1.2          
-    ## [145] ggbeeswarm_0.7.2         fs_1.6.6                 stringi_1.8.7           
-    ## [148] viridisLite_0.4.2        deldir_2.0-4             BiocParallel_1.44.0     
-    ## [151] assertthat_0.2.1         Biostrings_2.78.0        lazyeval_0.2.2          
-    ## [154] spatstat.geom_3.6-1      Matrix_1.7-4             ExperimentHub_3.0.0     
-    ## [157] benchmarkme_1.0.8        patchwork_1.3.2          bit64_4.6.0-1           
-    ## [160] KEGGREST_1.50.0          statmod_1.5.1            shiny_1.11.1            
-    ## [163] AnnotationHub_4.0.0      memoise_2.0.1            bslib_0.9.0             
-    ## [166] benchmarkmeData_1.0.4    bit_4.6.0                spatialLIBD_1.22.0
+    ## [145] ggbeeswarm_0.7.3         fs_2.1.0                 stringi_1.8.9           
+    ## [148] viridisLite_0.4.3        deldir_2.0-4             BiocParallel_1.46.0     
+    ## [151] assertthat_0.2.1         Biostrings_2.80.2        spatstat.geom_3.8-3     
+    ## [154] Matrix_1.7-6             ExperimentHub_3.2.2      benchmarkme_1.0.8       
+    ## [157] patchwork_1.3.2          bit64_4.8.6              KEGGREST_1.52.2         
+    ## [160] statmod_1.5.2            shiny_1.14.0             AnnotationHub_4.2.2     
+    ## [163] memoise_2.0.1            bslib_0.12.0             benchmarkmeData_2.0.0   
+    ## [166] bit_4.6.0                spatialLIBD_1.24.0
 
 ## References
 
-Maynard, Kristen R, Leonardo Collado-Torres, Lukas M Weber, Cedric
-Uytingco, Brianna K Barry, Stephen R Williams, Joseph L Catallini, et
-al. 2020. “Transcriptome-Scale Spatial Gene Expression in the Human
-Dorsolateral Prefrontal Cortex.” *BioRxiv*, 2020–02.
+Maynard, Kristen R, Leonardo Collado-Torres, Lukas M Weber, et al. 2020.
+“Transcriptome-Scale Spatial Gene Expression in the Human Dorsolateral
+Prefrontal Cortex.” *BioRxiv*, 2020–02.
 <https://doi.org/10.1038/s41593-020-00787-0>.
 
-Pham, Duy, Xiao Tan, Jun Xu, Laura F Grice, Pui Yeng Lam, Arti Raghubar,
-Jana Vukovic, Marc J Ruitenberg, and Quan Nguyen. 2020. “StLearn:
-Integrating Spatial Location, Tissue Morphology and Gene Expression to
-Find Cell Types, Cell-Cell Interactions and Spatial Trajectories Within
-Undissociated Tissues.” *Biorxiv*, 2020–05.
+Pham, Duy, Xiao Tan, Jun Xu, et al. 2020. “StLearn: Integrating Spatial
+Location, Tissue Morphology and Gene Expression to Find Cell Types,
+Cell-Cell Interactions and Spatial Trajectories Within Undissociated
+Tissues.” *Biorxiv*, 2020–05.
 <https://doi.org/doi:10.1093/bioinformatics/btz914>.
 
 Robinson, Mark D, Davis J McCarthy, and Gordon K Smyth. 2010. “edgeR: A
@@ -1098,8 +1181,7 @@ Bioconductor Package for Differential Expression Analysis of Digital
 Gene Expression Data.” *Bioinformatics* 26 (1): 139–40.
 <https://doi.org/10.1093/bioinformatics/btp616>.
 
-Zhao, Edward, Matthew R Stone, Xing Ren, Jamie Guenthoer, Kimberly S
-Smythe, Thomas Pulliam, Stephen R Williams, et al. 2021. “Spatial
+Zhao, Edward, Matthew R Stone, Xing Ren, et al. 2021. “Spatial
 Transcriptomics at Subspot Resolution with BayesSpace.” *Nature
 Biotechnology* 39 (11): 1375–84.
 <https://doi.org/10.1038/s41587-021-00935-2>.

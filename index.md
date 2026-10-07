@@ -1,6 +1,15 @@
 # DESpace: a framework to discover spatially variable genes and differential spatial patterns across conditions
 
-![Alt text](reference/figures/DESpace.png)
+![DESpace logo](reference/figures/DESpace.png)
+
+[![Bioc
+release](https://bioconductor.org/shields/build/release/bioc/DESpace.svg)](https://bioconductor.org/checkResults/release/bioc-LATEST/DESpace)
+[![Bioc
+devel](https://bioconductor.org/shields/build/devel/bioc/DESpace.svg)](https://bioconductor.org/checkResults/devel/bioc-LATEST/DESpace)
+[![Bioc
+years](https://bioconductor.org/shields/years-in-bioc/DESpace.svg)](https://bioconductor.org/packages/DESpace)
+[![Bioc
+downloads](https://bioconductor.org/shields/downloads/release/DESpace.svg)](https://bioconductor.org/packages/stats/bioc/DESpace)
 
 `DESpace` is a framework for identifying spatially variable genes
 (SVGs), a common task in spatial transcriptomics analyses, and
@@ -26,21 +35,22 @@ Check the
 description of the main conceptual and mathematical aspects, as well as
 usage guidelines.
 
-> Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024).
->
-> DESpace: spatially variable gene detection via differential expression
-> testing of spatial clusters.
->
-> Bioinformatics. Available
-> [here](https://doi.org/10.1093/bioinformatics/btae027)
+## Citation
 
-> Peiying Cai, Mark D. Robinson, and Simone Tiberi (2025).
->
-> DESpace2: detection of differential spatial patterns in spatial omics
-> data.
->
-> bioRxiv preprint. Available
-> [here](https://www.biorxiv.org/content/10.1101/2025.06.30.662268v1)
+If you use `DESpace`, please cite:
+
+> Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024). DESpace:
+> spatially variable gene detection via differential expression testing
+> of spatial clusters. *Bioinformatics*, 40(2), btae027.
+> [doi:10.1093/bioinformatics/btae027](https://doi.org/10.1093/bioinformatics/btae027)
+
+> Peiying Cai, Mark D. Robinson, and Simone Tiberi (2026). DESpace2:
+> detection of differential spatial patterns in spatial omics data.
+> *Bioinformatics*, 42(Supplement_2), btag450.
+> [doi:10.1093/bioinformatics/btag450](https://doi.org/10.1093/bioinformatics/btag450)
+
+The citation information is also available from R via
+`citation("DESpace")`.
 
 ## Bioconductor installation
 
@@ -49,6 +59,7 @@ usage guidelines.
 installed with the command:
 
 ``` r
+
 if (!requireNamespace("BiocManager", quietly=TRUE))
     install.packages("BiocManager")
 BiocManager::install("DESpace")
@@ -60,11 +71,13 @@ The vignette illustrating how to use the package can be accessed on
 [Bioconductor](https://bioconductor.org/packages/DESpace) or from R via:
 
 ``` r
+
 vignette("DESpace")
 ```
 
 or
 
 ``` r
+
 browseVignettes("DESpace")
 ```

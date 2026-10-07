@@ -166,6 +166,7 @@ results_dsp <- dsp_test(spe = spe,
 #>          condition2DPI:cluster_id4
 #> 2DPI_1_0                         0
 #> 2DPI_2_0                         0
+#> calcNormFactors has been renamed to normLibSizes
 
 # dsp_test returns of an object:
 # "gene_results": a dataframe contains main edgeR test results.
@@ -173,27 +174,27 @@ results_dsp <- dsp_test(spe = spe,
 # We visualize differential results:
 head(results_dsp, 3)
 #>                       gene_id logFC.condition20DPI.cluster_id1
-#> AMEX60DD014721 AMEX60DD014721                      -0.06833567
-#> AMEX60DD045083 AMEX60DD045083                       0.09389617
-#> AMEX60DD011151 AMEX60DD011151                      -0.95581559
+#> AMEX60DD014721 AMEX60DD014721                      -0.06935701
+#> AMEX60DD045083 AMEX60DD045083                       0.09262813
+#> AMEX60DD011151 AMEX60DD011151                      -0.96000279
 #>                logFC.condition2DPI.cluster_id1 logFC.condition20DPI.cluster_id2
-#> AMEX60DD014721                      -0.3889827                       -0.8473123
-#> AMEX60DD045083                       0.5489107                       -1.3304455
-#> AMEX60DD011151                      -2.0941135                        0.1954802
+#> AMEX60DD014721                      -0.3892637                       -0.8484362
+#> AMEX60DD045083                       0.5474369                       -1.3319239
+#> AMEX60DD011151                      -2.0955778                        0.1933357
 #>                logFC.condition2DPI.cluster_id2 logFC.condition20DPI.cluster_id3
-#> AMEX60DD014721                       0.8520273                       -0.8295217
-#> AMEX60DD045083                       1.1215511                        0.2403202
-#> AMEX60DD011151                       0.4696708                       -0.3879388
+#> AMEX60DD014721                       0.8522171                       -0.8305364
+#> AMEX60DD045083                       1.1218265                        0.2418323
+#> AMEX60DD011151                       0.4691729                       -0.3910272
 #>                logFC.condition2DPI.cluster_id3 logFC.condition20DPI.cluster_id4
-#> AMEX60DD014721                      -0.9450144                      0.225834891
-#> AMEX60DD045083                       1.2768794                     -0.988959429
-#> AMEX60DD011151                       0.4134572                     -0.005150601
+#> AMEX60DD014721                      -0.9450399                      0.224922592
+#> AMEX60DD045083                       1.2749710                     -0.990433737
+#> AMEX60DD011151                       0.4123802                     -0.007782088
 #>                logFC.condition2DPI.cluster_id4   logCPM        F       PValue
-#> AMEX60DD014721                       0.2097897 9.344907 17.14731 1.401391e-08
-#> AMEX60DD045083                      -0.8093096 7.505402 13.65550 1.458452e-07
-#> AMEX60DD011151                       0.1887139 7.959492 11.55525 7.505891e-07
+#> AMEX60DD014721                       0.2094252 9.344907 17.05839 1.514597e-08
+#> AMEX60DD045083                      -0.8071333 7.505402 13.49192 1.676387e-07
+#> AMEX60DD011151                       0.1872899 7.959492 11.67885 6.888665e-07
 #>                         FDR
-#> AMEX60DD014721 7.006953e-05
-#> AMEX60DD045083 3.646131e-04
-#> AMEX60DD011151 1.058324e-03
+#> AMEX60DD014721 7.572984e-05
+#> AMEX60DD045083 4.190966e-04
+#> AMEX60DD011151 1.097488e-03
 ```

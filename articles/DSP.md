@@ -12,23 +12,24 @@ conditions.
 
 By leveraging pre-annotated spatial clusters as summarized spatial
 information, *DESpace* models gene expression with a negative binomial
-(NB), via *edgeR* (Robinson, McCarthy, and Smyth 2010), with spatial
-clusters as covariates. SV genes are then identified by testing the
-significance of spatial clusters. For detailed guidance on detecting
-SVGs with *DESpace*, refer to [*SVGs
+(NB), via *edgeR* (Robinson et al. 2010), with spatial clusters as
+covariates. SV genes are then identified by testing the significance of
+spatial clusters. For detailed guidance on detecting SVGs with
+*DESpace*, refer to [*SVGs
 vignettes*](https://www.bioconductor.org/packages/release/bioc/vignettes/DESpace/inst/doc/DESpace.html).
 
 For multi-sample, multi-condition datasets, again we fit a NB model via
-*edgeR* (Robinson, McCarthy, and Smyth 2010), but this time we use
-spatial clusters, conditions and their interactions as covariates. DSP
-genes are then identified by testing the interaction between spatial
-clusters and conditions. Notably, this framework can identify
-differences also between more than 2 groups. This vignette will
-demonstrate how to perform DSP analyses.
+*edgeR* (Robinson et al. 2010), but this time we use spatial clusters,
+conditions and their interactions as covariates. DSP genes are then
+identified by testing the interaction between spatial clusters and
+conditions. Notably, this framework can identify differences also
+between more than 2 groups. This vignette will demonstrate how to
+perform DSP analyses.
 
 ## Load packages
 
 ``` r
+
 suppressMessages({
     library(DESpace)
     library(ggplot2)
@@ -64,6 +65,7 @@ Here, we use a subset of the original data, consisting of three distinct
 regeneration stages: 2, 10 and 20 DPI, with two sections for each stage.
 
 ``` r
+
 # Load the small example data
 spe <- Wei22_example()
 # The following columns from colData(spe) are specified:
@@ -137,6 +139,7 @@ also be found in [*muSpaData R
 scripts*](https://github.com/peicai/muSpaData/blob/main/inst/scripts/make-data.R#L131-L230).
 
 ``` r
+
 # View Banksy clusters 
 # The spatial cluster assignments are available in the `colData(spe)`
 CD <- colData(spe) |> as.data.frame()
@@ -184,6 +187,7 @@ default setting, `test = QLF`. Set `verbose = TRUE` (default) to view
 detailed statistics.
 
 ``` r
+
 results <- dsp_test(spe = spe,
                     cluster_col = spatial_cluster,
                     sample_col = sample_col,
@@ -219,6 +223,8 @@ results <- dsp_test(spe = spe,
     ## 2DPI_1_0                         0
     ## 2DPI_2_0                         0
 
+    ## calcNormFactors has been renamed to normLibSizes
+
 A list of results is returned, with the main results of interest stored
 in the `gene_results` data frame. This frame contains several columns,
 including gene names (`gene_id`), log2-fold changes between groups (e.g,
@@ -235,27 +241,28 @@ In other words, we are testing whether the spatial structure of gene
 expression (summarized by the clusters) differs between 2 and 10 DPI.
 
 ``` r
+
 head(results$gene_results, 2)
 ```
 
     ##                       gene_id logFC.condition20DPI.cluster_id1
-    ## AMEX60DD014721 AMEX60DD014721                      -0.06833567
-    ## AMEX60DD045083 AMEX60DD045083                       0.09389617
+    ## AMEX60DD014721 AMEX60DD014721                      -0.06935701
+    ## AMEX60DD045083 AMEX60DD045083                       0.09262813
     ##                logFC.condition2DPI.cluster_id1 logFC.condition20DPI.cluster_id2
-    ## AMEX60DD014721                      -0.3889827                       -0.8473123
-    ## AMEX60DD045083                       0.5489107                       -1.3304455
+    ## AMEX60DD014721                      -0.3892637                       -0.8484362
+    ## AMEX60DD045083                       0.5474369                       -1.3319239
     ##                logFC.condition2DPI.cluster_id2 logFC.condition20DPI.cluster_id3
-    ## AMEX60DD014721                       0.8520273                       -0.8295217
-    ## AMEX60DD045083                       1.1215511                        0.2403202
+    ## AMEX60DD014721                       0.8522171                       -0.8305364
+    ## AMEX60DD045083                       1.1218265                        0.2418323
     ##                logFC.condition2DPI.cluster_id3 logFC.condition20DPI.cluster_id4
-    ## AMEX60DD014721                      -0.9450144                        0.2258349
-    ## AMEX60DD045083                       1.2768794                       -0.9889594
+    ## AMEX60DD014721                      -0.9450399                        0.2249226
+    ## AMEX60DD045083                       1.2749710                       -0.9904337
     ##                logFC.condition2DPI.cluster_id4   logCPM        F       PValue
-    ## AMEX60DD014721                       0.2097897 9.344907 17.14731 1.401391e-08
-    ## AMEX60DD045083                      -0.8093096 7.505402 13.65550 1.458452e-07
+    ## AMEX60DD014721                       0.2094252 9.344907 17.05839 1.514597e-08
+    ## AMEX60DD045083                      -0.8071333 7.505402 13.49192 1.676387e-07
     ##                         FDR
-    ## AMEX60DD014721 7.006953e-05
-    ## AMEX60DD045083 3.646131e-04
+    ## AMEX60DD014721 7.572984e-05
+    ## AMEX60DD045083 4.190966e-04
 
 The second element of the results (a `DGEList` object `estimated_y`)
 contains the estimated common dispersion.
@@ -266,6 +273,7 @@ testing framework. For `test = "QLF"`, these are `glmQLFit` and
 `glmQLFTest`; for `test = "LRT`, they are `glmFit` and `glmLRT`.
 
 ``` r
+
 class(results$estimated_y)
 ```
 
@@ -274,6 +282,7 @@ class(results$estimated_y)
     ## [1] "edgeR"
 
 ``` r
+
 class(results$glmQLFit)    # or results$glmFit  depending on test
 ```
 
@@ -282,6 +291,7 @@ class(results$glmQLFit)    # or results$glmFit  depending on test
     ## [1] "edgeR"
 
 ``` r
+
 class(results$glmQLFTest)  # or results$glmLRT  depending on test
 ```
 
@@ -297,6 +307,7 @@ coordinates of spots is only necessary when they are not named `row` and
 `col`.
 
 ``` r
+
 sample_ids <- levels(CD$sample_id)
 
 # Identify the top DSP
@@ -306,6 +317,7 @@ sample_ids <- levels(CD$sample_id)
     ## [1] "AMEX60DD014721"
 
 ``` r
+
 # Extract the gene_name by matching the gene_id
 (feature_name <- rowData(spe)$gene_id[
   rowData(spe)$gene_name %in% feature
@@ -315,6 +327,7 @@ sample_ids <- levels(CD$sample_id)
     ## [1] "ECM1"
 
 ``` r
+
 # generate a list of plots
 plots <- lapply(sample_ids, function(sample_id) {
   
@@ -340,6 +353,7 @@ transitioning from more localized patterns at earlier stages (2 and 10
 DPI) to a broader distribution at a later stage (20 DPI).
 
 ``` r
+
 combined_plot <- wrap_plots(plots, ncol = 3) + 
     # common legend
     plot_layout(guides = 'collect')  
@@ -361,6 +375,7 @@ column names in `colData(spe)` for spatial clusters, sample ids, and
 condition ids, respectively.
 
 ``` r
+
 cluster_results <- individual_dsp(spe,
                                   cluster_col = spatial_cluster,
                                   sample_col = sample_col,
@@ -385,40 +400,44 @@ the increase in gene expression in **all other clusters** from 10 DPI to
 20 DPI.
 
 ``` r
+
 class(cluster_results)
 ```
 
     ## [1] "list"
 
 ``` r
+
 names(cluster_results)
 ```
 
     ## [1] "0" "1" "2" "3" "4"
 
 ``` r
+
 cluster_results$`2` |> head(n = 4)
 ```
 
     ##                       gene_id logFC.condition20DPI.cluster_id2
-    ## AMEX60DD014721 AMEX60DD014721                       -0.5804007
-    ## AMEX60DD045083 AMEX60DD045083                       -1.0629587
-    ## AMEX60DD055246 AMEX60DD055246                       -0.2621394
-    ## AMEX60DD014991 AMEX60DD014991                        2.7065895
+    ## AMEX60DD014721 AMEX60DD014721                       -0.5803072
+    ## AMEX60DD045083 AMEX60DD045083                       -1.0629944
+    ## AMEX60DD055246 AMEX60DD055246                       -0.2626440
+    ## AMEX60DD014991 AMEX60DD014991                        2.7057982
     ##                logFC.condition2DPI.cluster_id2   logCPM        F       PValue
-    ## AMEX60DD014721                       1.2700217 9.582333 79.74974 7.282047e-08
-    ## AMEX60DD045083                       0.9054036 8.266790 40.96951 3.136418e-06
-    ## AMEX60DD055246                      -2.2986562 5.661946 37.18572 5.300901e-06
-    ## AMEX60DD014991                       3.0257108 7.330327 36.55611 5.813224e-06
+    ## AMEX60DD014721                       1.2700321 9.582333 79.67672 7.294354e-08
+    ## AMEX60DD045083                       0.9056552 8.266790 41.02294 3.106511e-06
+    ## AMEX60DD055246                      -2.2986675 5.661946 36.89376 5.517131e-06
+    ## AMEX60DD014991                       3.0251633 7.330327 36.59843 5.763521e-06
     ##                         FDR
-    ## AMEX60DD014721 0.0003641023
-    ## AMEX60DD045083 0.0072665306
-    ## AMEX60DD055246 0.0072665306
-    ## AMEX60DD014991 0.0072665306
+    ## AMEX60DD014721 0.0003647177
+    ## AMEX60DD045083 0.0072044008
+    ## AMEX60DD055246 0.0072044008
+    ## AMEX60DD014991 0.0072044008
 
 Visualize the gene expression of the top gene for cluster 2.
 
 ``` r
+
 # one of top DSPs for cluster 2
 (feature <- rownames(cluster_results[["2"]])[4])
 ```
@@ -426,6 +445,7 @@ Visualize the gene expression of the top gene for cluster 2.
     ## [1] "AMEX60DD014991"
 
 ``` r
+
 # Extract the gene_name by matching the gene_id
 (feature_name <- rowData(spe)$gene_id[
   rowData(spe)$gene_name == feature
@@ -452,6 +472,7 @@ constant overall.
 Code
 
 ``` r
+
 # calculate log cpm
 cps <- cpm(results$estimated_y, log = TRUE)
 cps_name <- colnames(cps)
@@ -475,6 +496,7 @@ plt <- ggplot(mdata, aes(x = factor(day), y = log_cpm)) +
 ```
 
 ``` r
+
 # figure
 plt
 ```
@@ -492,6 +514,7 @@ stored in `colData(spe)` and the vector of cluster names via
 Code
 
 ``` r
+
 # generate a list of FeaturePlots
 plots <- lapply(sample_ids, function(sample_id) {
     # Subset spe for each sample
@@ -521,6 +544,7 @@ in the plot), compared to the rest of the tissue, while at 20 DPI
 abundance is more homogeneous.
 
 ``` r
+
 # figure
 combined_plot 
 ```
@@ -540,6 +564,7 @@ each cluster level, there are 3 time phases (i.e., `day`) and 2
 replicates (i.e., \`rep\`\`) for each time point.
 
 ``` r
+
 # all combinations of sample and cluster
 metadata <- expand.grid(sample_id = levels(spe$sample_id),
                         cluster = levels(spe$Banksy_smooth)
@@ -568,6 +593,7 @@ freedom, which determine the total number of parameters in the
 intercept.
 
 ``` r
+
 design_model <- model.matrix(~ cluster * ns(day, df = 2), 
                              data = metadata)
 rownames(design_model) <- paste0(metadata$sample_id, "_",
@@ -578,6 +604,7 @@ dim(design_model)
     ## [1] 30 15
 
 ``` r
+
 design_model |> head(n = 3)
 ```
 
@@ -605,6 +632,7 @@ design_model |> head(n = 3)
 Fit the model via `dsp_test` function.
 
 ``` r
+
 results <- dsp_test(spe,
                     design = design_model,
                     cluster_col = spatial_cluster,
@@ -614,6 +642,7 @@ results <- dsp_test(spe,
 ```
 
 ``` r
+
 # count significant DSP genes (at 5% FDR significance level)
 res_global <- results$gene_results
 table(res_global$FDR <= 0.05)
@@ -621,7 +650,7 @@ table(res_global$FDR <= 0.05)
 
     ## 
     ## FALSE  TRUE 
-    ##  4943    57
+    ##  4942    58
 
 To identify key spatial clusters where expression changes across
 conditions, we apply the smooth spline with a single-cluster design.
@@ -630,6 +659,7 @@ the target cluster and all other clusters. We then apply the same test
 as in the global test above.
 
 ``` r
+
 # example: testing for cluster 2
 # convert 5 Banksy clusters into 2 groups: cluster 2 vs. all other clusters
 new_cluster <- factor(ifelse(spe$Banksy_smooth %in% '2', '2', 'Other'))
@@ -645,6 +675,7 @@ metadata2 <- expand.grid(sample_id = levels(spe$sample_id),
 Create a single-cluster design.
 
 ``` r
+
 # design model for testing the cluster 2
 design_model2 <- model.matrix(~ cluster * ns(day, df = 2),
                               data = metadata2)
@@ -665,6 +696,7 @@ design_model2 |> head(n = 3)
 Fit the single-cluster model via `dsp_test`.
 
 ``` r
+
 spe$cluster2 <- new_cluster
 results2 <- dsp_test(spe,
                     design = design_model2,
@@ -675,6 +707,7 @@ results2 <- dsp_test(spe,
 ```
 
 ``` r
+
 # count significant DSP genes (at 5% FDR significance level)
 res_global2 <- results2$gene_results
 table(res_global2$FDR <= 0.05)
@@ -685,6 +718,7 @@ table(res_global2$FDR <= 0.05)
     ##  4994     6
 
 ``` r
+
 # identify the top DSP for cluster 2
 (feature <- results2$gene_results$gene_id[5])
 ```
@@ -692,6 +726,7 @@ table(res_global2$FDR <= 0.05)
     ## [1] "AMEX60DD002984"
 
 ``` r
+
 # extract the gene_name by matching the gene_id
 (feature_name <- rowData(spe)$gene_id[
   rowData(spe)$gene_name %in% feature
@@ -712,6 +747,7 @@ remaining regions, the expression slightly increase over time.
 Code
 
 ``` r
+
 fitted_values <- results2[["glmQLFit"]][["fitted.values"]]
 m <- melt(fitted_values[feature,]) |>
     rownames_to_column("row_name_column") |>
@@ -724,11 +760,12 @@ m |> head(n = 3)
 ```
 
     ##   sample_id    fitted day cluster
-    ## 1  2DPI_1_2  151.6301   2       2
-    ## 2  2DPI_2_2  130.7843   2       2
-    ## 3 10DPI_1_2 1025.4625  10       2
+    ## 1  2DPI_1_2  151.6424   2       2
+    ## 2  2DPI_2_2  130.7949   2       2
+    ## 3 10DPI_1_2 1025.2682  10       2
 
 ``` r
+
 plt <- ggplot(m, aes(x=day, y=fitted, group=cluster, colour = cluster)) +
     geom_jitter(size = 3, width = 0.2, height = 0) +
     scale_y_sqrt() + 
@@ -738,6 +775,7 @@ plt <- ggplot(m, aes(x=day, y=fitted, group=cluster, colour = cluster)) +
 ```
 
 ``` r
+
 # figure
 plt
 ```
@@ -753,6 +791,7 @@ expression plots.
 Code
 
 ``` r
+
 plots <- lapply(sample_ids, function(sample_id) {
     # Subset spe for each sample
     spe_j <- spe[, colData(spe)$sample_id == sample_id]
@@ -777,6 +816,7 @@ The trend aligns with the model’s prediction: gene abundance in cluster
 2 peaks at 10 DPI compared to other clusters.
 
 ``` r
+
 combined_plot
 ```
 
@@ -785,12 +825,13 @@ combined_plot
 ## Session info
 
 ``` r
+
 sessionInfo()
 ```
 
-    ## R version 4.5.2 Patched (2025-11-24 r89071)
+    ## R version 4.6.1 Patched (2026-10-05 r90643)
     ## Platform: x86_64-pc-linux-gnu
-    ## Running under: Ubuntu 24.04.3 LTS
+    ## Running under: Ubuntu 24.04.5 LTS
     ## 
     ## Matrix products: default
     ## BLAS:   /usr/lib/x86_64-linux-gnu/openblas-pthread/libblas.so.3 
@@ -810,61 +851,61 @@ sessionInfo()
     ## [8] methods   base     
     ## 
     ## other attached packages:
-    ##  [1] edgeR_4.8.0                 limma_3.66.0               
-    ##  [3] patchwork_1.3.2             lubridate_1.9.4            
+    ##  [1] edgeR_4.10.5                limma_3.68.5               
+    ##  [3] patchwork_1.3.2             lubridate_1.9.5            
     ##  [5] forcats_1.0.1               stringr_1.6.0              
-    ##  [7] dplyr_1.1.4                 purrr_1.2.0                
-    ##  [9] readr_2.1.6                 tidyr_1.3.1                
-    ## [11] tibble_3.3.0                tidyverse_2.0.0            
-    ## [13] reshape2_1.4.5              muSpaData_1.2.0            
-    ## [15] ExperimentHub_3.0.0         AnnotationHub_4.0.0        
-    ## [17] BiocFileCache_3.0.0         dbplyr_2.5.1               
-    ## [19] SpatialExperiment_1.20.0    SingleCellExperiment_1.32.0
-    ## [21] SummarizedExperiment_1.40.0 Biobase_2.70.0             
-    ## [23] GenomicRanges_1.62.0        Seqinfo_1.0.0              
-    ## [25] IRanges_2.44.0              S4Vectors_0.48.0           
-    ## [27] BiocGenerics_0.56.0         generics_0.1.4             
-    ## [29] MatrixGenerics_1.22.0       matrixStats_1.5.0          
-    ## [31] ggplot2_4.0.1               DESpace_2.3.2              
-    ## [33] BiocStyle_2.38.0           
+    ##  [7] dplyr_1.2.1                 purrr_1.2.2                
+    ##  [9] readr_2.2.0                 tidyr_1.3.2                
+    ## [11] tibble_3.3.1                tidyverse_2.0.0            
+    ## [13] reshape2_1.4.5              muSpaData_1.4.0            
+    ## [15] ExperimentHub_3.2.2         AnnotationHub_4.2.2        
+    ## [17] BiocFileCache_3.2.0         dbplyr_2.6.0               
+    ## [19] SpatialExperiment_1.22.0    SingleCellExperiment_1.34.0
+    ## [21] SummarizedExperiment_1.42.0 Biobase_2.72.0             
+    ## [23] GenomicRanges_1.64.0        Seqinfo_1.2.0              
+    ## [25] IRanges_2.46.0              S4Vectors_0.50.3           
+    ## [27] BiocGenerics_0.58.1         generics_0.1.4             
+    ## [29] MatrixGenerics_1.24.0       matrixStats_1.5.0          
+    ## [31] ggplot2_4.0.3               DESpace_2.5.1              
+    ## [33] BiocStyle_2.40.0           
     ## 
     ## loaded via a namespace (and not attached):
-    ##   [1] RColorBrewer_1.1-3     jsonlite_2.0.0         magrittr_2.0.4        
-    ##   [4] spatstat.utils_3.2-0   magick_2.9.0           farver_2.1.2          
-    ##   [7] rmarkdown_2.30         fs_1.6.6               ragg_1.5.0            
-    ##  [10] vctrs_0.6.5            memoise_2.0.1          spatstat.explore_3.6-0
-    ##  [13] terra_1.8-80           htmltools_0.5.8.1      S4Arrays_1.10.0       
-    ##  [16] curl_7.0.0             SparseArray_1.10.3     sass_0.4.10           
-    ##  [19] KernSmooth_2.23-26     bslib_0.9.0            htmlwidgets_1.6.4     
-    ##  [22] desc_1.4.3             plyr_1.8.9             httr2_1.2.1           
-    ##  [25] cachem_1.1.0           lifecycle_1.0.4        pkgconfig_2.0.3       
-    ##  [28] Matrix_1.7-4           R6_2.6.1               fastmap_1.2.0         
-    ##  [31] digest_0.6.39          ggnewscale_0.5.2       AnnotationDbi_1.72.0  
-    ##  [34] tensor_1.5.1           textshaping_1.0.4      RSQLite_2.4.4         
-    ##  [37] beachmat_2.26.0        labeling_0.4.3         filelock_1.0.3        
-    ##  [40] timechange_0.3.0       spatstat.sparse_3.1-0  httr_1.4.7            
-    ##  [43] polyclip_1.10-7        abind_1.4-8            compiler_4.5.2        
-    ##  [46] proxy_0.4-27           bit64_4.6.0-1          withr_3.0.2           
-    ##  [49] S7_0.2.1               BiocParallel_1.44.0    DBI_1.2.3             
-    ##  [52] ggforce_0.5.0          MASS_7.3-65            rappdirs_0.3.3        
-    ##  [55] DelayedArray_0.36.0    rjson_0.2.23           classInt_0.4-11       
-    ##  [58] tools_4.5.2            units_1.0-0            goftest_1.2-3         
-    ##  [61] glue_1.8.0             nlme_3.1-168           grid_4.5.2            
-    ##  [64] sf_1.0-22              gtable_0.3.6           spatstat.data_3.1-9   
-    ##  [67] tzdb_0.5.0             class_7.3-23           hms_1.1.4             
-    ##  [70] data.table_1.17.8      XVector_0.50.0         spatstat.geom_3.6-1   
-    ##  [73] BiocVersion_3.22.0     pillar_1.11.1          tweenr_2.0.3          
-    ##  [76] lattice_0.22-7         bit_4.6.0              deldir_2.0-4          
-    ##  [79] tidyselect_1.2.1       locfit_1.5-9.12        Biostrings_2.78.0     
-    ##  [82] scuttle_1.20.0         knitr_1.50             bookdown_0.45         
-    ##  [85] xfun_0.54              statmod_1.5.1          stringi_1.8.7         
-    ##  [88] yaml_2.3.10            evaluate_1.0.5         codetools_0.2-20      
-    ##  [91] BiocManager_1.30.27    cli_3.6.5              systemfonts_1.3.1     
-    ##  [94] jquerylib_0.1.4        Rcpp_1.1.0             spatstat.random_3.4-3 
-    ##  [97] png_0.1-8              spatstat.univar_3.1-5  parallel_4.5.2        
-    ## [100] pkgdown_2.2.0          assertthat_0.2.1       blob_1.2.4            
-    ## [103] scales_1.4.0           e1071_1.7-16           crayon_1.5.3          
-    ## [106] rlang_1.1.6            KEGGREST_1.50.0
+    ##   [1] RColorBrewer_1.1-3     jsonlite_2.0.0         magrittr_2.0.5        
+    ##   [4] spatstat.utils_3.2-5   magick_2.9.1           farver_2.1.2          
+    ##   [7] rmarkdown_2.32         fs_2.1.0               ragg_1.5.2            
+    ##  [10] vctrs_0.7.3            memoise_2.0.1          spatstat.explore_3.8-3
+    ##  [13] terra_1.9-50           htmltools_0.5.9        S4Arrays_1.12.1       
+    ##  [16] curl_8.0.0             SparseArray_1.12.3     sass_0.4.10           
+    ##  [19] KernSmooth_2.23-27     bslib_0.12.0           htmlwidgets_1.6.4     
+    ##  [22] desc_1.4.3             plyr_1.8.9             httr2_1.3.0           
+    ##  [25] cachem_1.1.0           lifecycle_1.0.5        pkgconfig_2.0.3       
+    ##  [28] Matrix_1.7-6           R6_2.6.1               fastmap_1.2.0         
+    ##  [31] digest_0.6.39          ggnewscale_0.5.2       AnnotationDbi_1.74.0  
+    ##  [34] tensor_1.5.1           textshaping_1.0.5      RSQLite_3.53.3        
+    ##  [37] beachmat_2.28.0        labeling_0.4.3         filelock_1.0.3        
+    ##  [40] timechange_0.4.0       spatstat.sparse_3.2-0  httr_1.4.9            
+    ##  [43] polyclip_1.10-7        abind_1.4-8            compiler_4.6.1        
+    ##  [46] proxy_0.4-29           bit64_4.8.6            withr_3.0.3           
+    ##  [49] S7_0.2.2               BiocParallel_1.46.0    DBI_1.3.0             
+    ##  [52] ggforce_0.5.0          MASS_7.3-66            rappdirs_0.3.4        
+    ##  [55] DelayedArray_0.38.2    rjson_0.2.23           classInt_0.4-11       
+    ##  [58] tools_4.6.1            units_1.0-1            otel_0.2.0            
+    ##  [61] goftest_1.2-3          glue_1.8.1             nlme_3.1-171          
+    ##  [64] grid_4.6.1             sf_1.1-3               gtable_0.3.6          
+    ##  [67] spatstat.data_3.1-9    tzdb_0.5.0             class_7.3-24          
+    ##  [70] hms_1.1.4              data.table_1.18.6.1    XVector_0.52.0        
+    ##  [73] spatstat.geom_3.8-3    BiocVersion_3.23.1     pillar_1.11.1         
+    ##  [76] tweenr_2.0.3           lattice_0.23-1         bit_4.6.0             
+    ##  [79] deldir_2.0-4           tidyselect_1.2.1       locfit_1.5-9.12       
+    ##  [82] Biostrings_2.80.2      scuttle_1.22.0         knitr_1.52            
+    ##  [85] bookdown_0.48          xfun_0.61              statmod_1.5.2         
+    ##  [88] stringi_1.8.9          yaml_2.3.12            evaluate_1.0.5        
+    ##  [91] codetools_0.2-20       BiocManager_1.30.27    cli_3.6.6             
+    ##  [94] systemfonts_1.3.2      jquerylib_0.1.4        Rcpp_1.1.2            
+    ##  [97] spatstat.random_3.5-2  png_0.1-9              spatstat.univar_3.2-0 
+    ## [100] parallel_4.6.1         pkgdown_2.2.1          assertthat_0.2.1      
+    ## [103] blob_1.3.0             scales_1.4.0           e1071_1.7-17          
+    ## [106] crayon_1.5.3           rlang_1.3.0            KEGGREST_1.52.2
 
 ## References
 
@@ -873,18 +914,17 @@ Bioconductor Package for Differential Expression Analysis of Digital
 Gene Expression Data.” *Bioinformatics* 26 (1): 139–40.
 <https://doi.org/10.1093/bioinformatics/btp616>.
 
-Singhal, Vipul, Nigel Chou, Joseph Lee, Yifei Yue, Jinyue Liu, Wan Kee
-Chock, Li Lin, et al. 2024. “BANKSY Unifies Cell Typing and Tissue
-Domain Segmentation for Scalable Spatial Omics Data Analysis.” *Nature
-Genetics* 56 (3): 431–41. <https://doi.org/10.1038/s41588-024-01664-3>.
+Singhal, Vipul, Nigel Chou, Joseph Lee, et al. 2024. “BANKSY Unifies
+Cell Typing and Tissue Domain Segmentation for Scalable Spatial Omics
+Data Analysis.” *Nature Genetics* 56 (3): 431–41.
+<https://doi.org/10.1038/s41588-024-01664-3>.
 
-Wei, Xiaoyu, Sulei Fu, Hanbo Li, Yang Liu, Shuai Wang, Weimin Feng,
-Yunzhi Yang, et al. 2022. “Single-Cell Stereo-Seq Reveals Induced
-Progenitor Cells Involved in Axolotl Brain Regeneration.” *Science* 377
-(6610): eabp9444. <https://doi.org/10.1126/science.abp9444>.
+Wei, Xiaoyu, Sulei Fu, Hanbo Li, et al. 2022. “Single-Cell Stereo-Seq
+Reveals Induced Progenitor Cells Involved in Axolotl Brain
+Regeneration.” *Science* 377 (6610): eabp9444.
+<https://doi.org/10.1126/science.abp9444>.
 
-Zhao, Edward, Matthew R Stone, Xing Ren, Jamie Guenthoer, Kimberly S
-Smythe, Thomas Pulliam, Stephen R Williams, et al. 2021. “Spatial
+Zhao, Edward, Matthew R Stone, Xing Ren, et al. 2021. “Spatial
 Transcriptomics at Subspot Resolution with BayesSpace.” *Nature
 Biotechnology* 39 (11): 1375–84.
 <https://doi.org/10.1038/s41587-021-00935-2>.

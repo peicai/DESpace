@@ -130,6 +130,7 @@ results_svg_test <- svg_test(spe = LIBD_subset,
 #> min_counts = 20; min_non_zero_spots = 10.
 #> The number of genes that pass filtering is 237.
 #> single sample test
+#> calcNormFactors has been renamed to normLibSizes
 
 # svg_test returns of a list of 2 objects:
 # "gene_results": a dataframe contains main edgeR test results;

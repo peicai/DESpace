@@ -119,6 +119,7 @@ results_individual_dsp <- individual_dsp(spe,
 #>              condition20DPI:cluster_id0 condition2DPI:cluster_id0
 #> 2DPI_1_Other                          0                         0
 #> 2DPI_2_Other                          0                         0
+#> calcNormFactors has been renamed to normLibSizes
 #> Conducting tests for layer '1' against all other layers.
 #> Design model: row names represent sample names, followed by underscores and cluster names.
 #>              (Intercept) condition20DPI condition2DPI cluster_id1
@@ -127,6 +128,7 @@ results_individual_dsp <- individual_dsp(spe,
 #>              condition20DPI:cluster_id1 condition2DPI:cluster_id1
 #> 2DPI_1_Other                          0                         0
 #> 2DPI_2_Other                          0                         0
+#> calcNormFactors has been renamed to normLibSizes
 #> Conducting tests for layer '2' against all other layers.
 #> Design model: row names represent sample names, followed by underscores and cluster names.
 #>              (Intercept) condition20DPI condition2DPI cluster_id2
@@ -135,6 +137,7 @@ results_individual_dsp <- individual_dsp(spe,
 #>              condition20DPI:cluster_id2 condition2DPI:cluster_id2
 #> 2DPI_1_Other                          0                         0
 #> 2DPI_2_Other                          0                         0
+#> calcNormFactors has been renamed to normLibSizes
 #> Conducting tests for layer '3' against all other layers.
 #> Design model: row names represent sample names, followed by underscores and cluster names.
 #>              (Intercept) condition20DPI condition2DPI cluster_id3
@@ -143,6 +146,7 @@ results_individual_dsp <- individual_dsp(spe,
 #>              condition20DPI:cluster_id3 condition2DPI:cluster_id3
 #> 2DPI_1_Other                          0                         0
 #> 2DPI_2_Other                          0                         0
+#> calcNormFactors has been renamed to normLibSizes
 #> Conducting tests for layer '4' against all other layers.
 #> Design model: row names represent sample names, followed by underscores and cluster names.
 #>              (Intercept) condition20DPI condition2DPI cluster_id4
@@ -151,21 +155,22 @@ results_individual_dsp <- individual_dsp(spe,
 #>              condition20DPI:cluster_id4 condition2DPI:cluster_id4
 #> 2DPI_1_Other                          0                         0
 #> 2DPI_2_Other                          0                         0
+#> calcNormFactors has been renamed to normLibSizes
 #> Returning results
                                            
 # We visualize results for the cluster '3'
 results <- results_individual_dsp[['3']]
 head(results,3)
 #>                       gene_id logFC.condition20DPI.cluster_id3
-#> AMEX60DD046788 AMEX60DD046788                       -1.1700137
-#> AMEX60DD002984 AMEX60DD002984                        1.6467572
-#> AMEX60DD005921 AMEX60DD005921                       -0.4105442
+#> AMEX60DD046788 AMEX60DD046788                        -1.170381
+#> AMEX60DD002984 AMEX60DD002984                         1.646538
+#> AMEX60DD005921 AMEX60DD005921                        -0.410721
 #>                logFC.condition2DPI.cluster_id3   logCPM        F       PValue
-#> AMEX60DD046788                       0.2544327 5.623569 23.11317 5.933891e-05
-#> AMEX60DD002984                       1.2951010 7.473809 22.94955 6.144564e-05
-#> AMEX60DD005921                       1.7236189 5.262614 22.35051 7.045976e-05
+#> AMEX60DD046788                       0.2543955 5.623569 23.06416 5.999599e-05
+#> AMEX60DD002984                       1.2951059 7.473809 22.95286 6.143037e-05
+#> AMEX60DD005921                       1.7237631 5.262614 22.52222 6.786643e-05
 #>                       FDR
-#> AMEX60DD046788 0.09002682
-#> AMEX60DD002984 0.09002682
-#> AMEX60DD005921 0.09002682
+#> AMEX60DD046788 0.09025954
+#> AMEX60DD002984 0.09025954
+#> AMEX60DD005921 0.09025954
 ```

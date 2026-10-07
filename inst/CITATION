@@ -1,33 +1,39 @@
 citHeader("To cite DESpace in publications use:")
 
-citEntry(entry 	= "Article",
-         title        	= "DESpace: spatially variable gene detection via differential expression testing of spatial clusters",
-         author       	= personList(as.person("Peiying Cai"),
-                                    as.person("Mark D. Robinson"),
-                                    as.person("Simone Tiberi")),
-         eprint = "https://doi.org/10.1093/bioinformatics/btae027",
+bibentry(bibtype = "Article",
+         title   = "DESpace: spatially variable gene detection via differential expression testing of spatial clusters",
+         author  = c(person("Peiying", "Cai"),
+                     person("Mark D.", "Robinson"),
+                     person("Simone", "Tiberi")),
          journal = "Bioinformatics",
-         year = "2024",
-         url  = "https://doi.org/10.1093/bioinformatics/btae027",
+         year    = "2024",
+         volume  = "40",
+         number  = "2",
+         pages   = "btae027",
+         doi     = "10.1093/bioinformatics/btae027",
          publisher = "Oxford University Press",
+         textVersion =
          paste("Peiying Cai, Mark D. Robinson, and Simone Tiberi (2024).",
                "DESpace: spatially variable gene detection via differential expression testing of spatial clusters.",
-               "Bioinformatics.",
-               "URL https://doi.org/10.1093/bioinformatics/btae027")
+               "Bioinformatics, 40(2), btae027.",
+               "https://doi.org/10.1093/bioinformatics/btae027")
 )
 
-citEntry(entry 	= "Article",
-         title        	= "DESpace2: detection of differential spatial patterns in spatial omics data",
-         author       	= personList(as.person("Peiying Cai"),
-                                    as.person("Mark D. Robinson"),
-                                    as.person("Simone Tiberi")),
-         eprint = "https://www.biorxiv.org/content/early/2025/07/02/2025.06.30.662268.full.pdf",
-         journal = "bioRxiv",
-         year = "2025",
-         url  = "https://www.biorxiv.org/content/early/2025/07/02/2025.06.30.662268",
-         publisher = "Cold Spring Harbor Laboratory",
-         paste("Peiying Cai, Mark D. Robinson, and Simone Tiberi (2025).",
+bibentry(bibtype = "Article",
+         title   = "DESpace2: detection of differential spatial patterns in spatial omics data",
+         author  = c(person("Peiying", "Cai"),
+                     person("Mark D.", "Robinson"),
+                     person("Simone", "Tiberi")),
+         journal = "Bioinformatics",
+         year    = "2026",
+         volume  = "42",
+         number  = "Supplement_2",
+         pages   = "btag450",
+         doi     = "10.1093/bioinformatics/btag450",
+         publisher = "Oxford University Press",
+         textVersion =
+         paste("Peiying Cai, Mark D. Robinson, and Simone Tiberi (2026).",
                "DESpace2: detection of differential spatial patterns in spatial omics data.",
-               "bioRxiv.",
-               "URL https://www.biorxiv.org/content/early/2025/07/02/2025.06.30.662268")
+               "Bioinformatics, 42(Supplement_2), btag450.",
+               "https://doi.org/10.1093/bioinformatics/btag450")
 )
